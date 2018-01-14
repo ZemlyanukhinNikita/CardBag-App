@@ -6,7 +6,12 @@
           <option name="url" value="http://gitlab.com" />
           <option name="userName" value="roman0532" />
         </UrlAndUserName>
+        <UrlAndUserName>
+          <option name="url" value="https://gitlab.com/cardholder/backend.git" />
+          <option name="userName" value="" />
+        </UrlAndUserName>
       </list>
     </option>
+    <option name="cloneParentDir" value="/var/www/html" />
   </component>
 </application>
