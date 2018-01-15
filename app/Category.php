@@ -2,11 +2,10 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class User extends Model
+class Category extends Model
 {
     public function cards()
     {
         return $this->hasMany(Card::class);
     }
 }
-
