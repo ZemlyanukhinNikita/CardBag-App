@@ -10,3 +10,4 @@ class User extends Model
     }
 }
 
+

@@ -9,3 +9,4 @@ class Category extends Model
         return $this->hasMany(Card::class);
     }
 }
+

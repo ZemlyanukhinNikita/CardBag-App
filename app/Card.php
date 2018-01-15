@@ -18,3 +18,4 @@ class Card extends Model
         }
     }
 }
+
