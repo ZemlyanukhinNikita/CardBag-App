@@ -11,9 +11,12 @@
 |
 */
 
-$factory->define(App\User::class, function (Faker\Generator $faker) {
+$factory->define(App\Card::class, function (Faker\Generator $faker) {
     return [
-        'name' => $faker->name,
-        'email' => $faker->email,
+        'title' => $faker->unique(),
+        'category_id' => $faker->numberBetween(1, 16),
+        'front_foto' => $faker->imageUrl(),
+        'back_foto' => $faker->imageUrl(),
+        'discount' => $faker->randomFloat(1, 0, 100)
     ];
 });
