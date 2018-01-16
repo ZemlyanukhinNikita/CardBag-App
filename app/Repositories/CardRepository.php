@@ -6,7 +6,7 @@
  * Time: 19:43
  */
 
-namespace Repository;
+namespace Repositories;
 
 
 use App\Card;
@@ -19,7 +19,7 @@ class CardRepository implements RepositoryInterface
     private $request;
     private $user;
 
-    public function __construct(Request $request, User $user, Card $card)
+    private function __construct(Request $request, User $user, Card $card)
     {
         $this->request = $request;
         $this->card = $card;
@@ -37,5 +37,14 @@ class CardRepository implements RepositoryInterface
     public function getUserUuid()
     {
         return $this->user->select('uuid')->where('uuid', $this->request->header('uuid'))->first();
+    }
+
+    public function addUserUuidToDb()
+    {
+        $user = new User();
+        $user->fill(array(
+            'uuid' => $this->request->header('uuid')
+        ));
+        $user->save();
     }
 }

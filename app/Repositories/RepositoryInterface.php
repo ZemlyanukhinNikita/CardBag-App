@@ -6,7 +6,7 @@
  * Time: 19:40
  */
 
-namespace Repository;
+namespace Repositories;
 
 
 interface RepositoryInterface
@@ -14,4 +14,6 @@ interface RepositoryInterface
     public function getUserUuid();
 
     public function getAllUsersCards();
+
+    public function addUserUuidToDb();
 }
