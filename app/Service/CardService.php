@@ -14,14 +14,14 @@ use Repositories\CardRepository;
 
 class CardService
 {
-    private $cardRepository;
+    public $cardRepository;
 
     /**
      * CardService constructor.
      * @param Request $request
      * @param CardRepository $cardRepository
      */
-    private function __construct(Request $request, CardRepository $cardRepository)
+    public function __construct(Request $request, CardRepository $cardRepository)
     {
         $this->cardRepository = $cardRepository;
     }

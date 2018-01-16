@@ -15,5 +15,6 @@
  * Routes for resource card
  */
 $router->group(['middleware' => 'authorization'], function () use ($router) {
-    $router->get('/cards', 'CardsController@getAllUserCards');
 });
+
+$router->get('/cards', 'CardsController@getAllUserCards');

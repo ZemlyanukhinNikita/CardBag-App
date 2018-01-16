@@ -19,7 +19,7 @@ class CardRepository implements RepositoryInterface
     private $request;
     private $user;
 
-    private function __construct(Request $request, User $user, Card $card)
+    public function __construct(Request $request, User $user, Card $card)
     {
         $this->request = $request;
         $this->card = $card;
