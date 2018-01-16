@@ -4,6 +4,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Card extends Model
 {
+    protected $hidden = ['uuid'];
+    
     public function categories()
     {
         {
