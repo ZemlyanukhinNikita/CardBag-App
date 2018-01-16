@@ -6,8 +6,6 @@ use App\Service\CardService;
 
 class CardsController extends Controller
 {
-    private $cardService;
-
     /**
      * @param CardService $cardService
      * @param CardGenerateService $cardGenerateService
