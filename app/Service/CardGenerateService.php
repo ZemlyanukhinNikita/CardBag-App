@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Card;
-use app\Repositories\UserRepository;
+use App\User;
 use Illuminate\Http\Request;
 use Repositories\CardRepository;
 
@@ -25,14 +25,13 @@ class CardGenerateService
 
     /**
      * Генерация случайного количества карточек пользователю
-     * @param UserRepository $userRepository
+     * @param User $user
      * @return mixed
      */
-    public function generateUserCards(UserRepository $userRepository)
+    public function generateUserCards(User $user)
     {
-        $id = $userRepository->findOneBy('uuid', $this->uuid)->id;
         return factory(Card::class, random_int(0, 10))->create([
-            'user_id' => $id,
+            'user_id' => $user->id,
         ]);
     }
 }

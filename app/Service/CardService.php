@@ -34,19 +34,14 @@ class CardService
      * Вокврат карточек если UUID существует в базе данных
      * иначе добавить UUID в базу и сгененировать случайное число карт
      * @param CardGenerateService $cardGenerateService
-     * @param UserRepository $userRepository
-     * @return static
+     * @return mixed
      */
     public function checkUserCards(CardGenerateService $cardGenerateService)
     {
-        if ($this->userRepository->findOneBy('uuid', $this->uuid)) {
-            return $this->cardRepository->findAllBy('user_id',
-                $this->userRepository->findOneBy('uuid', $this->uuid)->id);
-        } else {
-            $this->userRepository->create(['uuid' => $this->uuid]);
-            $cardGenerateService->generateUserCards($this->userRepository);
-            return $this->cardRepository->findAllBy('user_id',
-                $this->userRepository->findOneBy('uuid', $this->uuid)->id);
+        if (!$user = $this->userRepository->findOneBy('uuid', $this->uuid)) {
+            $user = $this->userRepository->create(['uuid' => $this->uuid]);
+            $cardGenerateService->generateUserCards($user);
         }
+        return $this->cardRepository->findAllBy('user_id', $user->id);
     }
 }
