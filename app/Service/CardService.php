@@ -11,7 +11,6 @@ class CardService
 {
     public $userRepository;
     public $cardRepository;
-    public $request;
     public $uuid;
 
     /**
@@ -25,7 +24,6 @@ class CardService
     {
         $this->userRepository = $userRepository;
         $this->cardRepository = $cardRepository;
-        $this->request = $request;
         $this->uuid = $request->header('uuid');
     }
 

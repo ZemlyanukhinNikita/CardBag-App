@@ -4,23 +4,21 @@ namespace App\Service;
 
 use App\Card;
 use App\User;
-use Illuminate\Http\Request;
 use Repositories\CardRepository;
 
-
+/**
+ * Если UUID который пришел в header неизвестен, то он добавляется в базу данных
+ * и вызывается метод generateUserCards который описан в данном классе.
+ * Этот метод генерирует случайное количество карточек от 0-10 штук этому пользователю.
+ * Пока что это временное решение.
+ */
 class CardGenerateService
 {
-    public $request;
-    public $uuid;
-
     /**
      * CardGenerateService constructor.
-     * @param Request $request
      */
-    public function __construct(Request $request)
+    public function __construct()
     {
-        $this->request = $request;
-        $this->uuid = $request->header('uuid');
     }
 
     /**
