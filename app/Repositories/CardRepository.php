@@ -28,10 +28,8 @@ class CardRepository implements RepositoryInterface
 
     public function getAllUsersCards()
     {
-        return $this->card->join('users', function ($join) {
-            $join->on('users.id', 'cards.user_id')->where('users.uuid',
-                $this->request->header('uuid'));
-        })->get();
+        $id = $this->user->select('id')->where('uuid', $this->request->header('uuid'))->first();
+        return $this->card->all()->where('user_id', $id->id);
     }
 
     public function getUserUuid()
