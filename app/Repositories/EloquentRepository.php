@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 abstract class EloquentRepository implements ModelInterface
 {
 
+    /**
+     * Абстрактный метод получения модели, реализуется в дочерних классах
+     * @return mixed
+     */
     public abstract function getModel();
 
     public function create(array $values): Model

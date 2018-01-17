@@ -8,6 +8,10 @@ use App\Card;
 class CardRepository extends EloquentRepository implements CardInterface
 {
 
+    /**
+     * Метод возвращения модели Card
+     * @return Card
+     */
     public function getModel()
     {
         return new Card();
