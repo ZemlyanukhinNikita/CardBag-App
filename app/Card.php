@@ -4,6 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Card extends Model
 {
+    
     public function categories()
     {
         {
@@ -18,4 +19,3 @@ class Card extends Model
         }
     }
 }
-

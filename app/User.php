@@ -9,5 +9,3 @@ class User extends Model
         return $this->hasMany(Card::class);
     }
 }
-
-
