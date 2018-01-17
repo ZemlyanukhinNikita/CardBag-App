@@ -9,6 +9,7 @@ class CardRepository extends EloquentRepository implements CardInterface
 {
 
     /**
+     * {@inheritDoc}
      * Метод возвращения модели Card
      * @return Card
      */
