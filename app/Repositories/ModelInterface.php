@@ -3,6 +3,8 @@
 namespace app\Repositories;
 
 
+use Illuminate\Database\Eloquent\Model;
+
 interface ModelInterface
 {
 
@@ -14,7 +16,7 @@ interface ModelInterface
     public function create(array $values): Model;
 
     /**
-     * Метод получения всех значений таблицы, где $field == $value
+     * Метод получения моеделей, где $field == $value
      * @param string $field
      * @param $value
      * @return mixed
@@ -22,7 +24,7 @@ interface ModelInterface
     public function findAllBy(string $field, $value);
 
     /**
-     * Метод получения значения $field из таблицы, где $field == $value
+     * Метод получения модели, где $field == $value
      * @param string $field
      * @param $value
      * @return mixed
@@ -30,16 +32,7 @@ interface ModelInterface
     public function findOneBy(string $field, $value);
 
     /**
-     * Метод получения значения $field из таблицы, где $value == $arg
-     * @param string $field
-     * @param $value
-     * @param $arg
-     * @return mixed
-     */
-    public function findOneByTwoArguments(string $field, $value, $arg);
-
-    /**
-     * Метод получения всех значений таблицы
+     * Метод получения всех моделей
      * @return mixed
      */
     public function findAll();

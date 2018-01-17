@@ -5,10 +5,15 @@ namespace app\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ *
+ * {@inheritdoc}
+ */
 abstract class EloquentRepository implements ModelInterface
 {
 
     /**
+     * {@inheritDoc}
      * Абстрактный метод получения модели, реализуется в дочерних классах
      * @return mixed
      */
@@ -21,17 +26,12 @@ abstract class EloquentRepository implements ModelInterface
 
     public function findAllBy(string $field, $value)
     {
-        return $this->getModel()->all()->where($field, $value);
+        return $this->getModel()->where($field, $value)->get();
     }
 
     public function findOneBy(string $field, $value)
     {
-        return $this->getModel()->select($field)->where($field, $value)->first();
-    }
-
-    public function findOneByTwoArguments(string $field, $value, $arg)
-    {
-        return $this->getModel()->select($field)->where($value, $arg)->first();
+        return $this->getModel()->where($field, $value)->first();
     }
 
     public function findAll()
