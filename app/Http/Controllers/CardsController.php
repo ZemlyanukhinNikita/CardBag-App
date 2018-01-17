@@ -14,7 +14,7 @@ class CardsController extends Controller
     public function getAllUserCards(CardService $cardService, CardGenerateService $cardGenerateService)
     {
         $cards = $cardService->checkUserCards($cardGenerateService);
-        if ($cards !== null) {
+        if (count($cards) !== 0) {
             return response()->json($cards, 200);
         } else {
             return response()->json(['status' => '204', 'message' => 'No content']);
