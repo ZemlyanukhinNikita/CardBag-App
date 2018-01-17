@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: user
- * Date: 15.01.18
- * Time: 22:01
- */
 
 namespace App\Service;
-
 
 use Illuminate\Http\Request;
 use Repositories\CardRepository;
@@ -26,25 +19,32 @@ class CardService
         $this->cardRepository = $cardRepository;
     }
 
-    private function isUserExist(): bool
+    /**
+     * Проверка на существование UUID в базе данных
+     * @return bool
+     */
+    private function isUserExist()
     {
         $data = $this->cardRepository->getUserUuid();
-        if (!empty($data)) {
+        if ($data) {
             return true;
         }
         return false;
     }
 
+    /**
+     * Вокврат карточек если UUID существует в базе данных
+     * иначе добавить UUID в базу и сгененировать случайное число карт
+     * @param CardGenerateService $cardGenerateService
+     * @return static
+     */
     public function checkUserCards(CardGenerateService $cardGenerateService)
     {
         if ($this->isUserExist()) {
-            $data = $this->cardRepository->getAllUsersCards();
-            return $data;
-        } else {
-            $this->cardRepository->addUserUuidToDb();
-            $cardGenerateService->addUserCards();
-            $data = $this->cardRepository->getAllUsersCards();
-            return $data;
+            return $this->cardRepository->getAllUsersCards();
         }
+        $this->cardRepository->addUserUuidToDb();
+        $cardGenerateService->generateUserCards($this->cardRepository);
+        return $this->cardRepository->getAllUsersCards();
     }
 }

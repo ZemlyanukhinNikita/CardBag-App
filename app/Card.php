@@ -4,8 +4,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Card extends Model
 {
-    protected $hidden = ['uuid'];
-    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function categories()
     {
         {
@@ -13,6 +14,9 @@ class Card extends Model
         }
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function users()
     {
         {

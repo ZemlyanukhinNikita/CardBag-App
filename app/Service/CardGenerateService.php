@@ -1,19 +1,23 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: user
- * Date: 16.01.18
- * Time: 18:30
- */
 
 namespace App\Service;
 
 use App\Card;
+use Repositories\CardRepository;
+
 
 class CardGenerateService
 {
-    public function addUserCards()
+    /**
+     * Генерация случайного количества карточек пользователю
+     * @param CardRepository $cardRepository
+     * @return mixed
+     */
+    public function generateUserCards(CardRepository $cardRepository)
     {
-        factory(Card::class, random_int(1, 10))->create();
+        $id = $cardRepository->getUsersId();
+        return factory(Card::class, random_int(0, 10))->create([
+            'user_id' => $id,
+        ]);
     }
 }
