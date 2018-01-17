@@ -3,6 +3,8 @@
 namespace app\Repositories;
 
 
+use Illuminate\Database\Eloquent\Model;
+
 interface ModelInterface
 {
 

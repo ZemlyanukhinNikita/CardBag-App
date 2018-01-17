@@ -2,49 +2,51 @@
 
 namespace App\Service;
 
+use app\Repositories\CardRepository;
+use app\Repositories\UserRepository;
 use Illuminate\Http\Request;
-use Repositories\CardRepository;
+
 
 class CardService
 {
+    public $userRepository;
     public $cardRepository;
+    public $request;
+    public $uuid;
 
     /**
      * CardService constructor.
      * @param Request $request
+     * @param UserRepository $userRepository
      * @param CardRepository $cardRepository
+     * @internal param CardRepository $cardRepository
      */
-    public function __construct(Request $request, CardRepository $cardRepository)
+    public function __construct(Request $request, UserRepository $userRepository, CardRepository $cardRepository)
     {
+        $this->userRepository = $userRepository;
         $this->cardRepository = $cardRepository;
+        $this->request = $request;
+        $this->uuid = $request->header('uuid');
     }
 
-    /**
-     * Проверка на существование UUID в базе данных
-     * @return bool
-     */
-    private function isUserExist()
-    {
-        $data = $this->cardRepository->getUserUuid();
-        if ($data) {
-            return true;
-        }
-        return false;
-    }
 
     /**
      * Вокврат карточек если UUID существует в базе данных
      * иначе добавить UUID в базу и сгененировать случайное число карт
      * @param CardGenerateService $cardGenerateService
+     * @param UserRepository $userRepository
      * @return static
      */
     public function checkUserCards(CardGenerateService $cardGenerateService)
     {
-        if ($this->isUserExist()) {
-            return $this->cardRepository->getAllUsersCards();
+        if ($this->userRepository->findOneBy('uuid', $this->request->header('uuid'))) {
+            return $this->cardRepository->findAllBy('user_id',
+                $this->userRepository->findOneBy('uuid', $this->uuid)->id);
+        } else {
+            $this->userRepository->create(['uuid' => $this->request->header('uuid')]);
+            $cardGenerateService->generateUserCards($this->userRepository);
+            return $this->cardRepository->findAllBy('user_id',
+                $this->userRepository->findOneBy('uuid', $this->uuid)->id);
         }
-        $this->cardRepository->addUserUuidToDb();
-        $cardGenerateService->generateUserCards($this->cardRepository);
-        return $this->cardRepository->getAllUsersCards();
     }
 }

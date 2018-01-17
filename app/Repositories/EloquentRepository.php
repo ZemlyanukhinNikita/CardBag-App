@@ -21,12 +21,12 @@ abstract class EloquentRepository implements ModelInterface
 
     public function findAllBy(string $field, $value)
     {
-        return $this->getModel()->all()->where($field, $value);
+        return $this->getModel()->where($field, $value)->get();
     }
 
     public function findOneBy(string $field, $value)
     {
-        return $this->getModel()->select($field)->where($field, $value)->first();
+        return $this->getModel()->where($field, $value)->first();
     }
 
     public function findOneByTwoArguments(string $field, $value, $arg)
