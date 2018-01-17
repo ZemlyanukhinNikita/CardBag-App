@@ -39,11 +39,11 @@ class CardService
      */
     public function checkUserCards(CardGenerateService $cardGenerateService)
     {
-        if ($this->userRepository->findOneBy('uuid', $this->request->header('uuid'))) {
+        if ($this->userRepository->findOneBy('uuid', $this->uuid)) {
             return $this->cardRepository->findAllBy('user_id',
                 $this->userRepository->findOneBy('uuid', $this->uuid)->id);
         } else {
-            $this->userRepository->create(['uuid' => $this->request->header('uuid')]);
+            $this->userRepository->create(['uuid' => $this->uuid]);
             $cardGenerateService->generateUserCards($this->userRepository);
             return $this->cardRepository->findAllBy('user_id',
                 $this->userRepository->findOneBy('uuid', $this->uuid)->id);
