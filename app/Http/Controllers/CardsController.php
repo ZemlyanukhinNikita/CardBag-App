@@ -16,7 +16,7 @@ class CardsController extends Controller
     {
         try {
             if (!count($cards = $cardService->getUserCards($request->header('uuid')))) {
-                return response()->json(['status' => '204', 'message' => 'No content']);
+                return response()->json([], 204);
             }
             return response()->json($cards);
         } catch (Exception $e) {
