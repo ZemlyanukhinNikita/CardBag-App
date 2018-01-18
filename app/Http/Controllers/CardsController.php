@@ -15,14 +15,12 @@ class CardsController extends Controller
     public function getAllUserCards(CardService $cardService, CardGenerateService $cardGenerateService)
     {
         try {
-            $cards = $cardService->checkUserCards($cardGenerateService);
-            if (count($cards) !== 0) {
-                return response()->json($cards, 200);
-            } else {
-                return response()->json(['message' => 'no content', 'status' => '204']);
+            if (!count($cards = $cardService->checkUserCards($cardGenerateService))) {
+                return response()->json(['message' => 'no content', 'status' => '204'], 200);
             }
         } catch (Exception $e) {
             return response()->json(['message' => 'Server error', 'status' => '500'], 500);
         }
+        return response()->json($cards, 200);
     }
 }

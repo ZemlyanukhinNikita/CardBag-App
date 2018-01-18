@@ -6,7 +6,6 @@ use app\Repositories\CardRepository;
 use app\Repositories\UserRepository;
 use Illuminate\Http\Request;
 
-
 class CardService
 {
     public $userRepository;

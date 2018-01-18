@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Card;
 use App\User;
-use Repositories\CardRepository;
 
 /**
  * Если UUID который пришел в header неизвестен, то он добавляется в базу данных
@@ -14,13 +13,6 @@ use Repositories\CardRepository;
  */
 class CardGenerateService
 {
-    /**
-     * CardGenerateService constructor.
-     */
-    public function __construct()
-    {
-    }
-
     /**
      * Генерация случайного количества карточек пользователю
      * @param User $user
