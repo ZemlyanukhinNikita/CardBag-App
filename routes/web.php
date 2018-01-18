@@ -17,3 +17,5 @@
 $router->group(['middleware' => 'authorization'], function () use ($router) {
     $router->get('/cards', 'CardsController@getAllUserCards');
 });
+
+

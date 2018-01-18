@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 abstract class EloquentRepository implements ModelInterface
 {
-
     /**
      * {@inheritDoc}
      * Абстрактный метод получения модели, реализуется в дочерних классах
