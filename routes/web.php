@@ -11,6 +11,11 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
+/**
+ * Routes for resource card
+ */
+$router->group(['middleware' => 'authorization'], function () use ($router) {
+    $router->get('/cards', 'CardsController@getAllUserCards');
 });
+
+

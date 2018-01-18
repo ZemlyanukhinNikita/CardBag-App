@@ -2,13 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * @property mixed id
- */
-class User extends Model
+class Category extends Model
 {
-    protected $fillable = ['uuid'];
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -17,3 +12,4 @@ class User extends Model
         return $this->hasMany(Card::class);
     }
 }
+
