@@ -16,10 +16,10 @@ class CardsController extends Controller
     {
         try {
             if (!count($cards = $cardService->checkUserCards($cardGenerateService))) {
-                return response()->json(['message' => 'no content', 'status' => '204'], 200);
+                return response()->json(['message' => 'No content', 'status' => '204'], 200);
             }
         } catch (Exception $e) {
-            return response()->json(['message' => 'Server error', 'status' => '500'], 500);
+            return response()->json(['message' => 'Internal server error', 'status' => '500'], 500);
         }
         return response()->json($cards, 200);
     }
