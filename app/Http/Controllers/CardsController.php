@@ -1,26 +1,26 @@
 <?php namespace App\Http\Controllers;
 
 use App\Service;
-use App\Service\CardGenerateService;
 use App\Service\CardService;
 use Exception;
+use Illuminate\Http\Request;
 
 class CardsController extends Controller
 {
     /**
+     * @param Request $request
      * @param CardService $cardService
-     * @param CardGenerateService $cardGenerateService
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getAllUserCards(CardService $cardService, CardGenerateService $cardGenerateService)
+    public function getAllUserCards(Request $request, CardService $cardService)
     {
         try {
-            if (!count($cards = $cardService->checkUserCards($cardGenerateService))) {
-                return response()->json(['message' => 'No content', 'status' => '204'], 200);
+            if (!count($cards = $cardService->getUserCards($request->header('uuid')))) {
+                return response()->json(['status' => '204', 'message' => 'No content']);
             }
+            return response()->json($cards);
         } catch (Exception $e) {
-            return response()->json(['message' => 'Internal server error', 'status' => '500'], 500);
+            return response()->json(['status' => '500', 'message' => 'Internal server error'], 500);
         }
-        return response()->json($cards, 200);
     }
 }
