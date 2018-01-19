@@ -26,7 +26,7 @@ class UpdateTableCards extends Migration
     public function down()
     {
         Schema::table('cards', function (Blueprint $table) {
-            //
+            $table->float('discount')->change();
         });
     }
 }
