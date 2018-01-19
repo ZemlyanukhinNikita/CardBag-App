@@ -14,7 +14,7 @@
 /**
  * Routes for resource card
  */
-$router->group(['middleware' => 'authorization'], function () use ($router) {
+$router->group(['middleware' => ['authorization', 'invalidUuid']], function () use ($router) {
     $router->get('/cards', 'CardsController@getAllUserCards');
 });
 
