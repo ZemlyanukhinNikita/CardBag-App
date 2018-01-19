@@ -7,7 +7,6 @@ try {
 } catch (Dotenv\Exception\InvalidPathException $e) {
     //
 }
-
 /*
 |--------------------------------------------------------------------------
 | Create The Application
@@ -23,7 +22,7 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
- $app->withFacades();
+$app->withFacades();
 
 $app->withEloquent(); 
 
@@ -63,9 +62,11 @@ $app->singleton(
 //    App\Http\Middleware\ExampleMiddleware::class
 // ]);
 
-// $app->routeMiddleware([
-//     'auth' => App\Http\Middleware\Authenticate::class,
-// ]);
+$app->routeMiddleware([
+    'auth' => App\Http\Middleware\Authenticate::class,
+    'authorization' => App\Http\Middleware\AuthMiddleware::class,
+    'invalidUuid' => App\Http\Middleware\InvalidUuidMiddleware::class
+]);
 
 /*
 |--------------------------------------------------------------------------
@@ -78,10 +79,10 @@ $app->singleton(
 |
 */
 
-// $app->register(App\Providers\AppServiceProvider::class);
+//$app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
-
+$app->register('Wn\Generators\CommandsServiceProvider');
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
