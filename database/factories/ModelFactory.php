@@ -12,6 +12,6 @@ $factory->define(App\Card::class, function (Faker $faker) {
         'category_id' => $faker->numberBetween(1, 16),
         'front_photo' => $faker->imageUrl(),
         'back_photo' => $faker->imageUrl(),
-        'discount' => $faker->randomFloat(1, 0, 100)
+        'discount' => $faker->numberBetween(0, 100)
     ];
 });
