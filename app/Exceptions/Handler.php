@@ -34,7 +34,7 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $e)
     {
-        //
+        parent::report($e);
     }
 
     /**
@@ -50,6 +50,6 @@ class Handler extends ExceptionHandler
             return response()->json(['status' => $e->getStatusCode(), 'message' => $e->getMessage()],
                 $e->getStatusCode());
         }
-        return response()->json(['status' => '500', 'message' => 'Internal server error'], 500);
+        return response()->json(['status' => 500, 'message' => 'Internal server error'], 500);
     }
 }
