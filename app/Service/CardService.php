@@ -7,8 +7,8 @@ use app\Repositories\UserInterface;
 
 class CardService
 {
-    public $userInterface;
-    public $cardInterface;
+    public $userRepository;
+    public $cardRepository;
     public $cardGenerateService;
 
     /**
@@ -25,8 +25,8 @@ class CardService
         CardGenerateService $cardGenerateService
     )
     {
-        $this->userInterface = $userRepository;
-        $this->cardInterface = $cardRepository;
+        $this->userRepository = $userRepository;
+        $this->cardRepository = $cardRepository;
         $this->cardGenerateService = $cardGenerateService;
     }
 
@@ -38,10 +38,10 @@ class CardService
      */
     public function getUserCards($uuid)
     {
-        if (!$user = $this->userInterface->findOneBy('uuid', $uuid)) {
-            $user = $this->userInterface->create(['uuid' => $uuid]);
+        if (!$user = $this->userRepository->findOneBy('uuid', $uuid)) {
+            $user = $this->userRepository->create(['uuid' => $uuid]);
             $this->cardGenerateService->generateUserCards($user);
         }
-        return $this->cardInterface->findAllBy('user_id', $user->id);
+        return $this->cardRepository->findAllBy('user_id', $user->id);
     }
 }
