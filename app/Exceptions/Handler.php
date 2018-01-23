@@ -3,12 +3,11 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-
 
 class Handler extends ExceptionHandler
 {
@@ -19,7 +18,7 @@ class Handler extends ExceptionHandler
      */
     protected $dontReport = [
         AuthorizationException::class,
-        //HttpException::class,
+        HttpException::class,
         ModelNotFoundException::class,
         ValidationException::class,
     ];
@@ -29,27 +28,23 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception $e
+     * @param  \Exception  $e
      * @return void
      */
     public function report(Exception $e)
     {
-        //
+        parent::report($e);
     }
 
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Exception $e
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Exception  $e
      * @return \Illuminate\Http\Response
      */
     public function render($request, Exception $e)
     {
-        if ($e instanceof HttpException) {
-            return response()->json(['status' => $e->getStatusCode(), 'message' => $e->getMessage()],
-                $e->getStatusCode());
-        }
-        return response()->json(['status' => '500', 'message' => 'Internal server error'], 500);
+        return parent::render($request, $e);
     }
 }
