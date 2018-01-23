@@ -9,6 +9,7 @@ use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+
 class Handler extends ExceptionHandler
 {
     /**
@@ -18,7 +19,7 @@ class Handler extends ExceptionHandler
      */
     protected $dontReport = [
         AuthorizationException::class,
-        HttpException::class,
+        //HttpException::class,
         ModelNotFoundException::class,
         ValidationException::class,
     ];
@@ -33,7 +34,7 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $e)
     {
-        parent::report($e);
+        //
     }
 
     /**
@@ -45,6 +46,10 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        return parent::render($request, $e);
+        if ($e instanceof HttpException) {
+            return response()->json(['status' => $e->getStatusCode(), 'message' => $e->getMessage()],
+                $e->getStatusCode());
+        }
+        return response()->json(['status' => '500', 'message' => 'Internal server error'], 500);
     }
 }
