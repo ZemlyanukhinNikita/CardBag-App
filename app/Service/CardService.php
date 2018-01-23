@@ -13,19 +13,20 @@ class CardService
 
     /**
      * CardService constructor.
-     * @param UserInterface $userInterface
-     * @param CardInterface $cardInterface
+     * @param UserInterface $userRepository
+     * @param CardInterface $cardRepository
      * @param CardGenerateService $cardGenerateService
+     * @internal param CardInterface $cardInterface
      * @internal param CardRepository $cardRepository
      */
     public function __construct(
-        UserInterface $userInterface,
-        CardInterface $cardInterface,
+        UserInterface $userRepository,
+        CardInterface $cardRepository,
         CardGenerateService $cardGenerateService
     )
     {
-        $this->userInterface = $userInterface;
-        $this->cardInterface = $cardInterface;
+        $this->userInterface = $userRepository;
+        $this->cardInterface = $cardRepository;
         $this->cardGenerateService = $cardGenerateService;
     }
 

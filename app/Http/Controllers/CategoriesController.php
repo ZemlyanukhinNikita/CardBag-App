@@ -5,15 +5,15 @@ use app\Repositories\CategoryInterface;
 class CategoriesController extends Controller
 {
     /**
-     * @param CategoryInterface $categoryInterface
+     * @param CategoryInterface $categoryRepository
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getAllCategories(CategoryInterface $categoryInterface)
+    public function getAllCategories(CategoryInterface $categoryRepository)
     {
-        $category = $categoryInterface->findAllOrderBy('title');
-        if ($category->isEmpty()) {
+        $categories = $categoryRepository->findAllOrderBy('title');
+        if ($categories->isEmpty()) {
             return response()->json([], 204);
         }
-        return response()->json($category);
+        return response()->json($categories);
     }
 }
