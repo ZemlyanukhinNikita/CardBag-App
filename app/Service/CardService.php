@@ -2,30 +2,30 @@
 
 namespace App\Service;
 
-use app\Repositories\CardRepository;
-use app\Repositories\UserRepository;
+use app\Repositories\CardInterface;
+use app\Repositories\UserInterface;
 
 class CardService
 {
-    public $userRepository;
-    public $cardRepository;
+    public $userInterface;
+    public $cardInterface;
     public $cardGenerateService;
 
     /**
      * CardService constructor.
-     * @param UserRepository $userRepository
-     * @param CardRepository $cardRepository
+     * @param UserInterface $userInterface
+     * @param CardInterface $cardInterface
      * @param CardGenerateService $cardGenerateService
      * @internal param CardRepository $cardRepository
      */
     public function __construct(
-        UserRepository $userRepository,
-        CardRepository $cardRepository,
+        UserInterface $userInterface,
+        CardInterface $cardInterface,
         CardGenerateService $cardGenerateService
     )
     {
-        $this->userRepository = $userRepository;
-        $this->cardRepository = $cardRepository;
+        $this->userInterface = $userInterface;
+        $this->cardInterface = $cardInterface;
         $this->cardGenerateService = $cardGenerateService;
     }
 
@@ -37,10 +37,10 @@ class CardService
      */
     public function getUserCards($uuid)
     {
-        if (!$user = $this->userRepository->findOneBy('uuid', $uuid)) {
-            $user = $this->userRepository->create(['uuid' => $uuid]);
+        if (!$user = $this->userInterface->findOneBy('uuid', $uuid)) {
+            $user = $this->userInterface->create(['uuid' => $uuid]);
             $this->cardGenerateService->generateUserCards($user);
         }
-        return $this->cardRepository->findAllBy('user_id', $user->id);
+        return $this->cardInterface->findAllBy('user_id', $user->id);
     }
 }

@@ -22,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment() == 'local') {
             $this->app->register('Wn\Generators\CommandsServiceProvider');
         }
+
         $this->app->bind(UserInterface::class, UserRepository::class);
         $this->app->bind(CardInterface::class, CardRepository::class);
         $this->app->bind(CategoryInterface::class, CategoryRepository::class);

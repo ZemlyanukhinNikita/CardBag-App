@@ -1,16 +1,16 @@
 <?php namespace App\Http\Controllers;
 
-use app\Repositories\CategoryRepository;
+use app\Repositories\CategoryInterface;
 
 class CategoriesController extends Controller
 {
     /**
-     * @param CategoryRepository $categoryRepository
+     * @param CategoryInterface $categoryInterface
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getAllCategories(CategoryRepository $categoryRepository)
+    public function getAllCategories(CategoryInterface $categoryInterface)
     {
-        $category = $categoryRepository->findAllOrderBy('title');
+        $category = $categoryInterface->findAllOrderBy('title');
         if ($category->isEmpty()) {
             return response()->json([], 204);
         }
