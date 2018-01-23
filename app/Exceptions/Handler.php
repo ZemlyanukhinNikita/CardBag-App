@@ -19,7 +19,7 @@ class Handler extends ExceptionHandler
      */
     protected $dontReport = [
         AuthorizationException::class,
-        HttpException::class,
+        //HttpException::class,
         ModelNotFoundException::class,
         ValidationException::class,
     ];
@@ -46,17 +46,10 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        if ($e instanceof Exception) {
-            return response()->json(['status' => 401, 'message' => 'Unauthorized'], 401);
+        if ($e instanceof HttpException) {
+            return response()->json(['status' => $e->getStatusCode(), 'message' => $e->getMessage()],
+                $e->getStatusCode());
         }
-
-        if ($e instanceof Exception) {
-            return response()->json(['status' => 400, 'message' => 'Invalid uuid'], 400);
-        }
-
-        if ($e instanceof Exception) {
-            return response()->json(['status' => '500', 'message' => 'Internal server error'], 500);
-        }
-        return parent::render($request, $e);
+        return response()->json(['status' => '500', 'message' => 'Internal server error'], 500);
     }
 }
