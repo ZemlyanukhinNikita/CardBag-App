@@ -47,18 +47,15 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $e)
     {
         if ($e instanceof Exception) {
-            return response()->json(['message' => 'Invalid uuid', 'code' => 400], 400);
+            return response()->json(['status' => 401, 'message' => 'Unauthorized'], 401);
         }
 
         if ($e instanceof Exception) {
-            return response()->json(['message' => 'Unauthorized', 'code' => 401], 401);
+            return response()->json(['status' => 400, 'message' => 'Invalid uuid'], 400);
         }
 
         if ($e instanceof Exception) {
-            return response()->json([
-                'status' => '500',
-                'message' => 'Internal server error'
-            ], 500);
+            return response()->json(['status' => '500', 'message' => 'Internal server error'], 500);
         }
         return parent::render($request, $e);
     }
