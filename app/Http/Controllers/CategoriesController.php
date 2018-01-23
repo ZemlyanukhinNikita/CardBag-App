@@ -10,7 +10,7 @@ class CategoriesController extends Controller
      */
     public function getAllCategories(CategoryRepository $categoryRepository)
     {
-        if (!count($category = $categoryRepository->getModel()->orderBy('title')->get())) {
+        if (!count($category = $categoryRepository->findAllOrderBy('title'))) {
             return response()->json([], 204);
         }
         return response()->json($category);

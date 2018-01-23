@@ -37,4 +37,9 @@ abstract class EloquentRepository implements ModelInterface
     {
         return $this->getModel()->all();
     }
+
+    public function findAllOrderBy($field)
+    {
+        return $this->getModel()->orderBy($field)->get();
+    }
 }
