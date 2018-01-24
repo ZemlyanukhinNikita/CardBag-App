@@ -6,7 +6,6 @@ use App\Service;
 use App\Service\CardService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class CardsController extends Controller
 {
@@ -30,6 +29,10 @@ class CardsController extends Controller
         ]));
     }
 
+    /**
+     * Метод валидации полей
+     * @param Request $request
+     */
     public function validator(Request $request)
     {
         $messages = [
@@ -42,7 +45,7 @@ class CardsController extends Controller
             'category_id.exists' => 'Такой категории в базе данных нет'
         ];
 
-        return Validator::make($request->all(), [
+        $this->validate($request, [
             'title' => 'required|max:40',
             'category_id' => 'exists:categories,id',
             'front_photo' => 'required|url',
@@ -62,12 +65,7 @@ class CardsController extends Controller
         UserInterface $userRepository,
         CardInterface $cardRepository
     ) {
-
-        $validator = $this->validator($request);
-
-        if ($validator->fails()) {
-            abort(400, $validator->errors()->first());
-        }
+        $this->validator($request);
 
         $user = $userRepository->findOneBy('uuid', $request->header('uuid'));
         if ($user === null) {
