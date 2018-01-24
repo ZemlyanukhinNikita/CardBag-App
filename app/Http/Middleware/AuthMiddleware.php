@@ -16,7 +16,7 @@ class AuthMiddleware
     public function handle(Request $request, Closure $next)
     {
         if (!$request->header('uuid')) {
-            return response()->json(['status' => '401', 'message' => 'Unauthorized'], 401);
+            abort(401, 'Unauthorized');
         }
         return $next($request);
     }
