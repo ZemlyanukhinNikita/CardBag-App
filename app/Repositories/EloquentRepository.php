@@ -5,10 +5,6 @@ namespace app\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 
-/**
- *
- * {@inheritdoc}
- */
 abstract class EloquentRepository implements ModelInterface
 {
     /**
@@ -18,23 +14,59 @@ abstract class EloquentRepository implements ModelInterface
      */
     public abstract function getModel();
 
+    /**
+     * {@inheritDoc}
+     * Метод сохранения модели в базу данных
+     * @param array $values
+     * @return Model
+     */
     public function create(array $values): Model
     {
         return $this->getModel()->create($values);
     }
 
+    /**
+     * {@inheritDoc}
+     * Метод получения моеделей, где $field == $value
+     * @param string $field
+     * @param $value
+     * @return mixed
+     */
     public function findAllBy(string $field, $value)
     {
         return $this->getModel()->where($field, $value)->get();
     }
 
+    /**
+     * {@inheritDoc}
+     * Метод получения модели, где $field == $value
+     * @param string $field
+     * @param $value
+     * @return mixed
+     */
     public function findOneBy(string $field, $value)
     {
         return $this->getModel()->where($field, $value)->first();
     }
 
+    /**
+     * {@inheritDoc}
+     * Метод получения всех моделей
+     * @return mixed
+     */
     public function findAll()
     {
         return $this->getModel()->all();
+    }
+
+    /**
+     * {@inheritDoc}
+     * Метод получения всех моделей отсортированных по алфавиту
+     * @param String $field
+     * @return mixed
+     */
+    public function findAllOrderBy(String $field)
+    {
+        return $this->getModel()->orderBy($field)->get();
     }
 }

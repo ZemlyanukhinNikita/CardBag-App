@@ -2,8 +2,8 @@
 
 namespace App\Service;
 
-use app\Repositories\CardRepository;
-use app\Repositories\UserRepository;
+use app\Repositories\CardInterface;
+use app\Repositories\UserInterface;
 
 class CardService
 {
@@ -13,14 +13,15 @@ class CardService
 
     /**
      * CardService constructor.
-     * @param UserRepository $userRepository
-     * @param CardRepository $cardRepository
+     * @param UserInterface $userRepository
+     * @param CardInterface $cardRepository
      * @param CardGenerateService $cardGenerateService
+     * @internal param CardInterface $cardInterface
      * @internal param CardRepository $cardRepository
      */
     public function __construct(
-        UserRepository $userRepository,
-        CardRepository $cardRepository,
+        UserInterface $userRepository,
+        CardInterface $cardRepository,
         CardGenerateService $cardGenerateService
     )
     {
