@@ -1,7 +1,6 @@
 <?php namespace App\Http\Controllers;
 
 use app\Repositories\CardInterface;
-use app\Repositories\CategoryInterface;
 use app\Repositories\UserInterface;
 use App\Service;
 use App\Service\CardService;
@@ -31,11 +30,6 @@ class CardsController extends Controller
         ]));
     }
 
-    /**
-     * Метод валидации полей
-     * @param Request $request
-     * @return mixed
-     */
     public function validator(Request $request)
     {
         $messages = [
@@ -45,13 +39,14 @@ class CardsController extends Controller
             'discount.max' => 'Значение скидки должно быть от 0 до :max',
             'front_photo.required' => 'Загрузите лицевое фото карты',
             'back_photo.required' => 'Загрузите фото обратной стороны карты',
+            'category_id.exists' => 'Такой категории в базе данных нет'
         ];
 
         return Validator::make($request->all(), [
             'title' => 'required|max:40',
-            'category_id' => 'required',
-            'front_photo' => 'required',
-            'back_photo' => 'required',
+            'category_id' => 'exists:categories,id',
+            'front_photo' => 'required|url',
+            'back_photo' => 'required|url',
             'discount' => 'required|integer:discount|min:0|max:100',
         ], $messages);
     }
@@ -61,15 +56,15 @@ class CardsController extends Controller
      * @param Request $request
      * @param UserInterface $userRepository
      * @param CardInterface $cardRepository
-     * @param CategoryInterface $categoryRepository
      */
     public function addCard(
         Request $request,
         UserInterface $userRepository,
-        CardInterface $cardRepository,
-        CategoryInterface $categoryRepository
+        CardInterface $cardRepository
     ) {
+
         $validator = $this->validator($request);
+
         if ($validator->fails()) {
             abort(400, $validator->errors()->first());
         }
@@ -79,18 +74,13 @@ class CardsController extends Controller
             abort(401, 'Unauthorized');
         }
 
-        $category = $categoryRepository->findAllBy('id', $request->input('category_id'));
-        if ($category->isEmpty()) {
-            abort(404);
-        }
-
-        $cardRepository->create(array(
+        $cardRepository->create([
             'user_id' => $user->id,
             'title' => $request->input('title'),
             'category_id' => $request->input('category_id'),
             'front_photo' => $request->input('front_photo'),
             'back_photo' => $request->input('back_photo'),
             'discount' => $request->input('discount'),
-        ));
+        ]);
     }
 }
