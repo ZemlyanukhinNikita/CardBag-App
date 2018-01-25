@@ -16,6 +16,7 @@
  */
 $router->group(['middleware' => ['authorization', 'invalidUuid']], function () use ($router) {
     $router->get('/cards', 'CardsController@getAllUserCards');
+    $router->post('/cards', 'CardsController@addCard');
 });
 $router->get('/categories', 'CategoriesController@getAllCategories');
 
