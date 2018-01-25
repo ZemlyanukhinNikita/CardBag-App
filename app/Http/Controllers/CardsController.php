@@ -33,7 +33,7 @@ class CardsController extends Controller
      * Метод валидации полей
      * @param Request $request
      */
-    public function validator(Request $request)
+    private function validator(Request $request)
     {
         $messages = [
             'title.required' => "Не заполнено поле 'Название карты'",
@@ -47,7 +47,7 @@ class CardsController extends Controller
 
         $this->validate($request, [
             'title' => 'required|max:40',
-            'category_id' => 'exists:categories,id',
+            'category_id' => 'required|exists:categories,id',
             'front_photo' => 'required|url',
             'back_photo' => 'required|url',
             'discount' => 'required|integer:discount|min:0|max:100',
@@ -67,8 +67,7 @@ class CardsController extends Controller
     ) {
         $this->validator($request);
 
-        $user = $userRepository->findOneBy('uuid', $request->header('uuid'));
-        if ($user === null) {
+        if (!$user = $userRepository->findOneBy('uuid', $request->header('uuid'))) {
             abort(401, 'Unauthorized');
         }
 
