@@ -18,7 +18,7 @@ class UploadPhotosController extends Controller
             'file' => 'required|image',
         ]);
 
-        if (!$user = $userRepository->findOneBy('uuid', $request->header('uuid'))) {
+        if (!$userRepository->findOneBy('uuid', $request->header('uuid'))) {
             abort(401, 'Unauthorized');
         }
 
