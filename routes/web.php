@@ -15,9 +15,9 @@
  * Routes for resource card
  */
 $router->group(['middleware' => ['authorization', 'invalidUuid']], function () use ($router) {
-    $router->get('/cards', 'CardsController@getAllUserCards');
-    $router->post('/cards', 'CardsController@addCard');
-    $router->post('/photo/upload', 'UploadPhotosController@uploadPhoto');
+    $router->get('/api/cards', 'CardsController@getAllUserCards');
+    $router->post('/api/cards', 'CardsController@addCard');
+    $router->post('/api/photo/upload', 'UploadPhotosController@uploadPhoto');
 });
-$router->get('/categories', 'CategoriesController@getAllCategories');
+$router->get('/api/categories', 'CategoriesController@getAllCategories');
 
