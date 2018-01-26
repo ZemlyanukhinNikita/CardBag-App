@@ -29,8 +29,5 @@ class AddCategoryInTableCategory extends Migration
      */
     public function down()
     {
-        Schema::table('categories', function () {
-            DB::table('categories')->where('title', 'Супермаркеты')->delete();
-        });
     }
 }
