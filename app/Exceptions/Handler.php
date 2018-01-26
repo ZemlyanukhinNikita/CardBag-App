@@ -46,10 +46,15 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
+        if ($e instanceof ValidationException) {
+            return $e->getResponse();
+        }
+
         if ($e instanceof HttpException) {
             return response()->json(['status' => $e->getStatusCode(), 'message' => $e->getMessage()],
                 $e->getStatusCode());
         }
+
         return response()->json(['status' => 500, 'message' => 'Internal server error'], 500);
     }
 }
