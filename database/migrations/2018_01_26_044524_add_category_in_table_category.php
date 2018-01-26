@@ -31,7 +31,6 @@ class AddCategoryInTableCategory extends Migration
     {
         Schema::table('categories', function () {
             DB::table('categories')->where('title', 'Супермаркеты')->delete();
-            DB::update("update categories set title = 'Книги, искуство и кино' where title = ?", ['Книги, искусство и кино']);
         });
     }
 }
