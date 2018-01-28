@@ -10,3 +10,4 @@ web-browsers.xml
 composer.lock
 _linux/*
 inspection/*
+.phpstorm.meta.php
