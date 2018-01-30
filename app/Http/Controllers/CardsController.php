@@ -1,7 +1,6 @@
 <?php namespace App\Http\Controllers;
 
 use app\Repositories\CardInterface;
-use app\Repositories\UserInterface;
 use App\Service;
 use App\Service\CardService;
 use Illuminate\Database\Eloquent\Collection;
@@ -57,22 +56,16 @@ class CardsController extends Controller
     /**
      * Метод добавления карты
      * @param Request $request
-     * @param UserInterface $userRepository
      * @param CardInterface $cardRepository
      */
     public function addCard(
         Request $request,
-        UserInterface $userRepository,
         CardInterface $cardRepository
     ) {
         $this->validateCardFields($request);
 
-        if (!$user = $userRepository->findOneBy('uuid', $request->header('uuid'))) {
-            abort(401, 'Unauthorized');
-        }
-
         $cardRepository->create([
-            'user_id' => $user->id,
+            'user_id' => $request->user()->id,
             'title' => $request->input('title'),
             'category_id' => $request->input('category_id'),
             'front_photo' => $request->input('front_photo'),
