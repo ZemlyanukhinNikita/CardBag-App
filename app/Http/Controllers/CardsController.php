@@ -32,7 +32,7 @@ class CardsController extends Controller
      * Метод валидации полей
      * @param Request $request
      */
-    private function validator(Request $request)
+    private function validateCardFields(Request $request)
     {
         $messages = [
             'title.required' => "Не заполнено поле 'Название карты'",
@@ -61,9 +61,8 @@ class CardsController extends Controller
     public function addCard(
         Request $request,
         CardInterface $cardRepository
-    )
-    {
-        $this->validator($request);
+    ) {
+        $this->validateCardFields($request);
 
         $cardRepository->create([
             'user_id' => $request->user()->id,
