@@ -64,14 +64,11 @@ class Handler extends ExceptionHandler
             return response()->json(['status' => 500, 'message' => 'Internal server error'], 500);
         }
 
-        return response()->json(['status' => $e->getCode(), 'message' => $e->getMessage()]);
+        return response()->json(['status' => $e->getCode(), 'message' => $e->getMessage()], 500);
     }
 
     private function isProduction()
     {
-        if (env('APP_ENV') === 'production') {
-            return true;
-        }
-        return false;
+        return (env('APP_ENV') === 'production');
     }
 }
