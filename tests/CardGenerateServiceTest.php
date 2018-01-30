@@ -4,6 +4,10 @@ use App\Card;
 use App\Service\CardGenerateService;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Class CardGenerateServiceTest
+ * Тест генерации карточек
+ */
 class CardGenerateServiceTest extends TestCase
 {
     public function test()
