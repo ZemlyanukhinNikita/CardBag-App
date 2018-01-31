@@ -50,6 +50,11 @@ class CardServiceTest extends TestCase
     }
 
 
+    /**
+     * Тест ищет uuid в базе данных, если его нету, вызываем CardService,
+     * где создается пользователь и для него генерируются от 0 до 10 карточек,
+     * далее проверяет коллекцию на наличие сгенерированных карточек
+     */
     public function testGenerateCardsForUser()
     {
         $uuid = '96c01fb3-3238-43b2-820a-3f57f2eb6919';
