@@ -2,14 +2,18 @@
 
 namespace tests;
 
+use App\Card;
 use app\Repositories\CardRepository;
 use app\Repositories\UserRepository;
 use App\Service\CardGenerateService;
 use App\Service\CardService;
+use App\User;
+use Laravel\Lumen\Testing\DatabaseTransactions;
 use TestCase;
 
 class CardServiceTest extends TestCase
 {
+    use DatabaseTransactions;
     private $userRepo;
     private $cardRepo;
     private $cardGenerateService;
@@ -25,34 +29,31 @@ class CardServiceTest extends TestCase
     }
 
 
-    public function testGetCards()
+    public function testGetUserCards()
     {
-        $uuid = 'a5124bbc-ab56-4798-bd53-9535c6d6bfb8';
-        $this->seeInDatabase('users', ['uuid' => $uuid]);
+        $user = factory(User::class)->create();
+        $this->seeInDatabase('users', ['uuid' => $user->uuid]);
+        $cards = factory(Card::class, 2)->create([
+            'user_id' => $user->id,
+        ]);
 
-        $userCards = $this->cardService->getUserCards($uuid);
-        $testCardsResponse = [
-            [
-                'id' => 126,
-                'user_id' => 16,
-                'title' => 'Drake Stokes',
-                'category_id' => 4,
-                'front_photo' => 'https://lorempixel.com/640/480/?73296',
-                'back_photo' => 'https://lorempixel.com/640/480/?71724',
-                'discount' => 79,
-                'created_at' => '2018-01-24 08:49:29',
-                'updated_at' => '2018-01-24 08:49:29'
-
-            ]
-        ];
-
-        $this->assertEquals(json_encode($userCards), json_encode($testCardsResponse));
-
+        if (count($cards) == 2) {
+            return $this->assertTrue(true);
+        }
+        $this->assertTrue(false);
     }
 
-    public function testHasNotUuid()
+
+    public function testGenerateCardsForUser()
     {
-        $uuid = 'a5124bbc-ab56-4798-bd53-9535c6d6bf11';
+        $uuid = '96c01fb3-3238-43b2-820a-3f57f2eb6919';
         $this->notSeeInDatabase('users', ['uuid' => $uuid]);
+
+        $cards = $this->cardService->getUserCards($uuid);
+
+        if ((count($cards) >= 0) && (count($cards) <= 10)) {
+            return $this->assertTrue(true);
+        }
+        $this->assertTrue(false);
     }
 }
