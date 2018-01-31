@@ -29,14 +29,20 @@ class CardServiceTest extends TestCase
     }
 
 
+    /**
+     * Тест создает пользователя, генерирует 2 карты для него
+     * Проверяем в бд, сгенерировались ли они
+     */
     public function testGetUserCards()
     {
         $user = factory(User::class)->create();
         $this->seeInDatabase('users', ['uuid' => $user->uuid]);
-        $cards = factory(Card::class, 2)->create([
+        factory(Card::class, 2)->create([
             'user_id' => $user->id,
         ]);
 
+        $cards = $this->cardRepo->findAllBy('user_id', $user->id);
+        
         if (count($cards) == 2) {
             return $this->assertTrue(true);
         }
