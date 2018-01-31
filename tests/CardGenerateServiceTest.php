@@ -1,8 +1,9 @@
 <?php
 
-use App\Card;
+use app\Repositories\CardRepository;
 use App\Service\CardGenerateService;
-use Illuminate\Support\Facades\DB;
+use App\User;
+use Laravel\Lumen\Testing\DatabaseTransactions;
 
 /**
  * Class CardGenerateServiceTest
@@ -10,22 +11,31 @@ use Illuminate\Support\Facades\DB;
  */
 class CardGenerateServiceTest extends TestCase
 {
+    use DatabaseTransactions;
+
+    private $cardService;
+    private $cardRepository;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->cardService = new CardGenerateService();
+        $this->cardRepository = new CardRepository();
+    }
+
+
     public function test()
     {
-        $card = ['title' => 'title',
-            'user_id' => 1,
-            'category_id' => 1,
-            'front_photo' => 'http://yandex',
-            'back_photo' => 'http://yandex',
-            'discount' => 55];
+        $user = factory(User::class)->create();
 
-        $stub = $this->createMock(CardGenerateService::class);
+        $this->cardService->generateUserCards($user);
 
-        $stub->method('generateUserCards')
-            ->willReturn(factory(Card::class, 1)->create($card));
+        $cards = $this->cardRepository->findAllBy('user_id', $user->id);
 
-        $this->seeInDatabase('cards', $card);
-
-        DB::table('cards')->where($card)->delete();
+        if (count($cards) > 0 && count($cards) <= 10) {
+            return $this->assertTrue(true);
+        }
+        $this->assertTrue(false);
     }
 }

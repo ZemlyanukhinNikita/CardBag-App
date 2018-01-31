@@ -20,7 +20,7 @@ class CardGenerateService
      */
     public function generateUserCards(User $user)
     {
-        return factory(Card::class, random_int(0, 10))->create([
+        return factory(Card::class, random_int(1, 10))->create([
             'user_id' => $user->id,
         ]);
     }
