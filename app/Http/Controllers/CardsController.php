@@ -80,7 +80,7 @@ class CardsController extends Controller
      */
     public function deleteCard($id, CardInterface $cardRepository)
     {
-        if (!is_numeric($id)) {
+        if (!preg_match('/^\+?\d+$/', $id)) {
             abort(422, 'Invalid ID supplied');
         }
 

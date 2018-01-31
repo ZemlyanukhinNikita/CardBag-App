@@ -46,8 +46,8 @@ interface ModelInterface
     /**
      * Метод удаления модели из базы данных, реализуется в дочерних классах
      * @param string $field
-     * @param string $values
+     * @param string $value
      * @return mixed
      */
-    public function delete(string $field, string $values);
+    public function delete(string $field, string $value);
 }
