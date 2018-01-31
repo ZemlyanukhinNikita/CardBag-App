@@ -59,7 +59,8 @@ class CardsController extends Controller
     public function addCard(
         Request $request,
         CardInterface $cardRepository
-    ) {
+    )
+    {
         $this->validateCardFields($request);
 
         $cardRepository->create([
@@ -70,5 +71,23 @@ class CardsController extends Controller
             'back_photo' => $request->input('back_photo'),
             'discount' => $request->input('discount'),
         ]);
+    }
+
+    /**
+     * Метод удаления карты
+     * @param $id
+     * @param CardInterface $cardRepository
+     */
+    public function deleteCard($id, CardInterface $cardRepository)
+    {
+        if (!is_numeric($id)) {
+            abort(422, 'Invalid ID supplied');
+        }
+
+        if ($cardRepository->findAllBy('id', $id)->isEmpty()) {
+            abort(400, 'ID not found in database');
+        }
+
+        $cardRepository->delete('id', $id);
     }
 }

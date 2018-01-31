@@ -19,6 +19,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
         $router->post('cards', 'CardsController@addCard');
         $router->post('photo/upload', 'UploadPhotosController@uploadPhoto');
+        $router->delete('delete/card/{id}', 'CardsController@deleteCard');
     });
 
     $router->group(['middleware' => ['authorization', 'invalidUuid']], function () use ($router) {
@@ -27,4 +28,6 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
     $router->get('categories', 'CategoriesController@getAllCategories');
 });
- 
+
+
+
