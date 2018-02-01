@@ -33,9 +33,6 @@ class CardGenerateServiceTest extends TestCase
 
         $cards = $this->cardRepository->findAllBy('user_id', $user->id);
 
-        if (count($cards) > 0 && count($cards) <= 10) {
-            return $this->assertTrue(true);
-        }
-        $this->assertTrue(false);
+        $this->assertTrue(count($cards) > 0 && count($cards) <= 10);
     }
 }
