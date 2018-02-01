@@ -33,10 +33,10 @@ class CardsController extends Controller
     private function validateCardFields(Request $request)
     {
         $messages = [
-            'title.required' => "Не заполнено поле 'Название карты'",
+            'title.required' => 'Введите название карты',
             'discount.integer' => 'Введите числовое значение',
-            'discount.min' => 'Значение скидки должно быть от :min до 100',
-            'discount.max' => 'Значение скидки должно быть от 0 до :max',
+            'discount.min' => 'Введите размер скидки от :min до 100',
+            'discount.max' => 'Введите размер скидки от 0 до :max',
             'front_photo.required' => 'Загрузите лицевое фото карты',
             'back_photo.required' => 'Загрузите фото обратной стороны карты',
             'category_id.exists' => 'Такой категории в базе данных нет'
@@ -44,10 +44,10 @@ class CardsController extends Controller
 
         $this->validate($request, [
             'title' => 'required|max:40',
-            'category_id' => 'required|exists:categories,id',
+            'category_id' => 'exists:categories,id',
             'front_photo' => 'required|url',
             'back_photo' => 'required|url',
-            'discount' => 'required|integer:discount|min:0|max:100',
+            'discount' => 'integer:discount|min:0|max:100',
         ], $messages);
     }
 
