@@ -14,10 +14,17 @@
 /**
  * Routes for resource card
  */
-$router->group(['middleware' => ['authorization', 'invalidUuid']], function () use ($router) {
-    $router->get('/api/cards', 'CardsController@getAllUserCards');
-    $router->post('/api/cards', 'CardsController@addCard');
-    $router->post('/api/photo/upload', 'UploadPhotosController@uploadPhoto');
-});
-$router->get('/api/categories', 'CategoriesController@getAllCategories');
+$router->group(['prefix' => 'api'], function () use ($router) {
+    $router->group(['middleware' => ['authorization', 'auth', 'invalidUuid']], function () use ($router) {
 
+        $router->post('cards', 'CardsController@addCard');
+        $router->post('photo/upload', 'UploadPhotosController@uploadPhoto');
+    });
+
+    $router->group(['middleware' => ['authorization', 'invalidUuid']], function () use ($router) {
+        $router->get('cards', 'CardsController@getAllUserCards');
+    });
+
+    $router->get('categories', 'CategoriesController@getAllCategories');
+});
+ 

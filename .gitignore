@@ -1,5 +1,5 @@
-/vendor
-/.idea
+vendor
+.idea
 Homestead.json
 Homestead.yaml
 .env
@@ -7,6 +7,6 @@ databaseSettings.xml
 diff.xml
 IntelliLang.xml
 web-browsers.xml
-composer.lock
-_linux/*
-inspection/*
+_linux
+inspection
+.phpstorm.meta.php
