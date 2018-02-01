@@ -80,11 +80,11 @@ class CardsController extends Controller
      */
     public function deleteCard($id, CardInterface $cardRepository)
     {
-        if (!preg_match('/^\+?\d+$/', $id)) {
+        if (!preg_match('^\d+$', $id)) {
             abort(422, 'Invalid ID supplied');
         }
 
-        if ($cardRepository->findAllBy('id', $id)->isEmpty()) {
+        if ($cardRepository->findAllBy('id', (int)$id)->isEmpty()) {
             abort(400, 'ID not found in database');
         }
 
