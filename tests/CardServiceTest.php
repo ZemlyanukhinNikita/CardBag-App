@@ -36,23 +36,17 @@ class CardServiceTest extends TestCase
     public function testGetUserCards()
     {
         $user = factory(User::class)->create();
-        $this->seeInDatabase('users', ['uuid' => $user->uuid]);
-        factory(Card::class, 2)->create([
+        $cards = factory(Card::class, 2)->create([
             'user_id' => $user->id,
         ]);
 
-        $cards = $this->cardRepo->findAllBy('user_id', $user->id);
-        
-        if (count($cards) == 2) {
-            return $this->assertTrue(true);
-        }
-        $this->assertTrue(false);
+        $this->assertTrue(count($cards) === 2);
     }
 
 
     /**
      * Тест ищет uuid в базе данных, если его нету, вызываем CardService,
-     * где создается пользователь и для него генерируются от 0 до 10 карточек,
+     * где создается пользователь и для него генерируется коллекция карточек,
      * далее проверяет коллекцию на наличие сгенерированных карточек
      */
     public function testGenerateCardsForUser()
@@ -62,9 +56,6 @@ class CardServiceTest extends TestCase
 
         $cards = $this->cardService->getUserCards($uuid);
 
-        if ((count($cards) >= 0) && (count($cards) <= 10)) {
-            return $this->assertTrue(true);
-        }
-        $this->assertTrue(false);
+        $this->assertTrue($cards->isNotEmpty());
     }
 }
