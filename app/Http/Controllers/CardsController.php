@@ -70,6 +70,7 @@ class CardsController extends Controller
             'front_photo' => $request->input('front_photo'),
             'back_photo' => $request->input('back_photo'),
             'discount' => $request->input('discount'),
+            'uuid' => $request->input('uuid')
         ]);
     }
 
