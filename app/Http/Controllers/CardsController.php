@@ -48,6 +48,7 @@ class CardsController extends Controller
             'front_photo' => 'required|url',
             'back_photo' => 'required|url',
             'discount' => 'integer:discount|min:0|max:100',
+            'uuid' => 'unique:cards'
         ], $messages);
     }
 
@@ -59,9 +60,12 @@ class CardsController extends Controller
     public function addCard(
         Request $request,
         CardInterface $cardRepository
-    )
-    {
+    ) {
         $this->validateCardFields($request);
+
+        if (!preg_match(('/(https?:\/\/.*\.(?:png|jpg|gif|bmp|svg))/i'), $request->input('front_photo'))) {
+            abort(422, 'Not valid url image');
+        }
 
         $cardRepository->create([
             'user_id' => $request->user()->id,
