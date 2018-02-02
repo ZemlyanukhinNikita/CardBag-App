@@ -48,6 +48,7 @@ class CardsController extends Controller
             'front_photo' => 'required|url',
             'back_photo' => 'required|url',
             'discount' => 'integer:discount|min:0|max:100',
+            'uuid' => 'unique:cards'
         ], $messages);
     }
 
@@ -62,6 +63,10 @@ class CardsController extends Controller
     ) {
         $this->validateCardFields($request);
 
+        if (!preg_match(('/(https?:\/\/.*\.(?:png|jpg|gif|bmp|svg))/i'), $request->input('front_photo'))) {
+            abort(422, 'Not valid url image');
+        }
+
         $cardRepository->create([
             'user_id' => $request->user()->id,
             'title' => $request->input('title'),
@@ -71,5 +76,23 @@ class CardsController extends Controller
             'discount' => $request->input('discount'),
             'uuid' => $request->input('uuid')
         ]);
+    }
+
+    /**
+     * Метод удаления карты
+     * @param $id
+     * @param CardInterface $cardRepository
+     */
+    public function deleteCard($id, CardInterface $cardRepository)
+    {
+        if (!preg_match('/^\d+$/', $id)) {
+            abort(422, 'Invalid ID supplied');
+        }
+
+        if ($cardRepository->findAllBy('id', (int)$id)->isEmpty()) {
+            abort(400, 'ID not found in database');
+        }
+
+        $cardRepository->delete('id', $id);
     }
 }
