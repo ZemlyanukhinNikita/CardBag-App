@@ -33,10 +33,10 @@ class CardsController extends Controller
     private function validateCardFields(Request $request)
     {
         $messages = [
-            'title.required' => "Не заполнено поле 'Название карты'",
+            'title.required' => 'Введите название карты',
             'discount.integer' => 'Введите числовое значение',
-            'discount.min' => 'Значение скидки должно быть от :min до 100',
-            'discount.max' => 'Значение скидки должно быть от 0 до :max',
+            'discount.min' => 'Введите размер скидки от :min до 100',
+            'discount.max' => 'Введите размер скидки от 0 до :max',
             'front_photo.required' => 'Загрузите лицевое фото карты',
             'back_photo.required' => 'Загрузите фото обратной стороны карты',
             'category_id.exists' => 'Такой категории в базе данных нет'
@@ -44,10 +44,11 @@ class CardsController extends Controller
 
         $this->validate($request, [
             'title' => 'required|max:40',
-            'category_id' => 'required|exists:categories,id',
+            'category_id' => 'exists:categories,id',
             'front_photo' => 'required|url',
             'back_photo' => 'required|url',
-            'discount' => 'required|integer:discount|min:0|max:100',
+            'discount' => 'integer:discount|min:0|max:100',
+            'uuid' => 'unique:cards'
         ], $messages);
     }
 
@@ -62,6 +63,10 @@ class CardsController extends Controller
     ) {
         $this->validateCardFields($request);
 
+        if (!preg_match(('/(https?:\/\/.*\.(?:png|jpg|gif|bmp|svg|jpeg))/i'), $request->input('front_photo'))) {
+            abort(422, 'Not valid url image');
+        }
+
         $cardRepository->create([
             'user_id' => $request->user()->id,
             'title' => $request->input('title'),
@@ -69,6 +74,25 @@ class CardsController extends Controller
             'front_photo' => $request->input('front_photo'),
             'back_photo' => $request->input('back_photo'),
             'discount' => $request->input('discount'),
+            'uuid' => $request->input('uuid')
         ]);
+    }
+
+    /**
+     * Метод удаления карты
+     * @param $id
+     * @param CardInterface $cardRepository
+     */
+    public function deleteCard($id, CardInterface $cardRepository)
+    {
+        if (!preg_match('/^\d+$/', $id)) {
+            abort(422, 'Invalid ID supplied');
+        }
+
+        if ($cardRepository->findAllBy('id', (int)$id)->isEmpty()) {
+            abort(400, 'ID not found in database');
+        }
+
+        $cardRepository->delete('id', $id);
     }
 }
