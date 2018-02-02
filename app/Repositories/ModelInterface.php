@@ -39,7 +39,16 @@ interface ModelInterface
     /**
      * Метод получения всех моделей отсортированных по алфавиту, реализуется в дочерних классах
      * @param String $field
+     * @param String $value
      * @return mixed
      */
     public function findAllOrderBy(String $field);
+
+    /**
+     * Метод удаления модели из базы данных, реализуется в дочерних классах
+     * @param string $field
+     * @param string $value
+     * @return mixed
+     */
+    public function delete(string $field, string $value);
 }

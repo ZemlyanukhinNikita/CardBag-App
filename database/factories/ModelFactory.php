@@ -19,9 +19,9 @@ $factory->define(Card::class, function (Faker $faker) {
 });
 
 /**
- * Factory definition for model UserFactory.
+ * Factory definition for model User.
  */
-$factory->define(User::class, function (Faker $faker) {
+$factory->define(User::class, function ($faker) {
     return [
         'uuid' => $faker->uuid,
     ];
