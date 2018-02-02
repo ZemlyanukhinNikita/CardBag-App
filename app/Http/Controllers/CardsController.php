@@ -63,6 +63,10 @@ class CardsController extends Controller
     ) {
         $this->validateCardFields($request);
 
+        if (!preg_match(('/(https?:\/\/.*\.(?:png|jpg|gif|bmp|svg|jpeg))/i'), $request->input('front_photo'))) {
+            abort(422, 'Not valid url image');
+        }
+
         $cardRepository->create([
             'user_id' => $request->user()->id,
             'title' => $request->input('title'),
