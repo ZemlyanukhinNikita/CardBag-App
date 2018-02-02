@@ -51,10 +51,11 @@ class CardServiceTest extends TestCase
      */
     public function testGenerateCardsForUser()
     {
-        $uuid = '96c01fb3-3238-43b2-820a-3f57f2eb6919';
+        $uuid = '98c01fb3-3238-43b2-820a-3f57f2eb6919';
         $this->notSeeInDatabase('users', ['uuid' => $uuid]);
 
         $cards = $this->cardService->getUserCards($uuid);
+        $this->seeInDatabase('users', ['uuid' => $uuid]);
 
         $this->assertTrue($cards->isNotEmpty());
     }
