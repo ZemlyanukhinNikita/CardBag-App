@@ -65,9 +65,9 @@ abstract class EloquentRepository implements ModelInterface
      * @param String $field
      * @return mixed
      */
-    public function findAllOrderBy(String $field, String $value)
+    public function findAllOrderBy(String $field)
     {
-        return $this->getModel()->orderByRaw($field, $value)->orderByRaw($value)->get();
+        return $this->getModel()->orderByRaw($field)->get();
     }
 
     /**

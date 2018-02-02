@@ -10,7 +10,7 @@ class CategoriesController extends Controller
      */
     public function getAllCategories(CategoryInterface $categoryRepository)
     {
-        $categories = $categoryRepository->findAllOrderBy("title = 'Другое'", 'title');
+        $categories = $categoryRepository->findAllOrderBy("title = 'Другое', title");
 
         if ($categories->isEmpty()) {
             return response()->json([], 204);

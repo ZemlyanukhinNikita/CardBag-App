@@ -42,7 +42,7 @@ interface ModelInterface
      * @param String $value
      * @return mixed
      */
-    public function findAllOrderBy(String $field, String $value);
+    public function findAllOrderBy(String $field);
 
     /**
      * Метод удаления модели из базы данных, реализуется в дочерних классах
