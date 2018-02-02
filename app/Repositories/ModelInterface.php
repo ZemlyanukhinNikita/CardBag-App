@@ -39,6 +39,7 @@ interface ModelInterface
     /**
      * Метод получения всех моделей отсортированных по алфавиту, реализуется в дочерних классах
      * @param String $field
+     * @param String $value
      * @return mixed
      */
     public function findAllOrderBy(String $field);
