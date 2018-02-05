@@ -19,7 +19,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
         $router->post('cards', 'CardsController@addCard');
         $router->post('photo/upload', 'UploadPhotosController@uploadPhoto');
-        $router->delete('cards/{id}', 'CardsController@deleteCard');
+        $router->delete('cards/{uuid}', 'CardsController@deleteCard');
     });
 
     $router->group(['middleware' => ['authorization', 'invalidUuid']], function () use ($router) {

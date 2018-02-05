@@ -60,7 +60,8 @@ class CardsController extends Controller
     public function addCard(
         Request $request,
         CardInterface $cardRepository
-    ) {
+    )
+    {
         $this->validateCardFields($request);
 
         if (!preg_match(('/(https?:\/\/.*\.(?:png|jpg|gif|bmp|svg|jpeg))/i'), $request->input('front_photo'))) {
@@ -80,19 +81,21 @@ class CardsController extends Controller
 
     /**
      * Метод удаления карты
-     * @param $id
+     * @param $uuid
      * @param CardInterface $cardRepository
      */
-    public function deleteCard($id, CardInterface $cardRepository)
+    public function deleteCard($uuid, CardInterface $cardRepository)
     {
-        if (!preg_match('/^\d+$/', $id)) {
-            abort(422, 'Invalid ID supplied');
+        if (!preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
+            $uuid)
+        ) {
+            abort(422, 'Invalid uuid');
         }
 
-        if ($cardRepository->findAllBy('id', (int)$id)->isEmpty()) {
-            abort(400, 'ID not found in database');
+        if ($cardRepository->findAllBy('uuid', (string)$uuid)->isEmpty()) {
+            abort(400, 'uuid not found in database');
         }
 
-        $cardRepository->delete('id', $id);
+        $cardRepository->delete('uuid', $uuid);
     }
 }
