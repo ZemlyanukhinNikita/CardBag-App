@@ -93,7 +93,7 @@ class CardsController extends Controller
             abort(400, 'uuid not found in database');
         }
 
-        $this->seeUsersCard($request, $cardRepository, $uuid);
+        $this->checkPermissionUser($request, $cardRepository, $uuid);
 
         $cardRepository->delete('uuid', $uuid);
     }
@@ -117,7 +117,7 @@ class CardsController extends Controller
      * @param CardInterface $cardRepository
      * @param $uuid
      */
-    public function seeUsersCard(Request $request, CardInterface $cardRepository, $uuid)
+    public function checkPermissionUser(Request $request, CardInterface $cardRepository, $uuid)
     {
         if ($cardRepository->findOneBy('uuid', $uuid)->user_id !== $request->user()->id) {
             abort(403, 'Permission denied');
