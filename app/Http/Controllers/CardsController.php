@@ -64,7 +64,7 @@ class CardsController extends Controller
     {
         $this->validateCardFields($request);
 
-        if (!preg_match(('/(https?:\/\/.*\.(?:png|jpg|gif|bmp|svg|jpeg))/i'), $request->input('front_photo'))) {
+        if (!preg_match('/(https?:\\/\\/cardbag.ru\\/storage\\/.*\.(?:png|jpg|gif|bmp|svg|jpeg))/i', $request->input('front_photo'))) {
             abort(422, 'Not valid url image');
         }
 
