@@ -51,4 +51,6 @@ interface ModelInterface
      * @return mixed
      */
     public function delete(string $field, string $value);
+
+    public function update(string $field, string $value, array $values);
 }

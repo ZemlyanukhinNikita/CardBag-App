@@ -60,7 +60,8 @@ class CardsController extends Controller
     public function addCard(
         Request $request,
         CardInterface $cardRepository
-    ) {
+    )
+    {
         $this->validateCardFields($request);
 
         if (!preg_match(('/(https?:\/\/.*\.(?:png|jpg|gif|bmp|svg|jpeg))/i'), $request->input('front_photo'))) {
@@ -94,5 +95,18 @@ class CardsController extends Controller
         }
 
         $cardRepository->delete('id', $id);
+    }
+
+    public function updateCard(Request $request, $uuid, CardInterface $cardRepository)
+    {
+        $cardRepository->update('uuid', $uuid,
+            [
+                'title' => $request->input('title'),
+                'front_photo' => $request->input('front_photo'),
+                'back_photo' => $request->input('back_photo'),
+                'category_id' => $request->input('category_id'),
+                'discount' => $request->input('discount')
+            ]
+        );
     }
 }
