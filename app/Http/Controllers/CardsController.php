@@ -82,20 +82,45 @@ class CardsController extends Controller
     /**
      * Метод удаления карты
      * @param $uuid
+     * @param Request $request
      * @param CardInterface $cardRepository
      */
-    public function deleteCard($uuid, CardInterface $cardRepository)
+    public function deleteCard(Request $request, $uuid, CardInterface $cardRepository)
+    {
+        $this->checkingValidityUuidCard($uuid);
+
+        if ($cardRepository->findAllBy('uuid', (string)$uuid)->isEmpty()) {
+            abort(400, 'uuid not found in database');
+        }
+
+        $this->seeUsersCard($request, $cardRepository, $uuid);
+
+        $cardRepository->delete('uuid', $uuid);
+    }
+
+    /**
+     * Проверка валидности uuid карты
+     * @param $uuid
+     */
+    public function checkingValidityUuidCard($uuid)
     {
         if (!preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
             $uuid)
         ) {
             abort(422, 'Invalid uuid');
         }
+    }
 
-        if ($cardRepository->findAllBy('uuid', (string)$uuid)->isEmpty()) {
-            abort(400, 'uuid not found in database');
+    /**
+     * Проверка того, что карточка принадлежит пользователю
+     * @param Request $request
+     * @param CardInterface $cardRepository
+     * @param $uuid
+     */
+    public function seeUsersCard(Request $request, CardInterface $cardRepository, $uuid)
+    {
+        if ($cardRepository->findOneBy('uuid', $uuid)->user_id !== $request->user()->id) {
+            abort(403, 'Permission denied');
         }
-
-        $cardRepository->delete('uuid', $uuid);
     }
 }
