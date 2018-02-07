@@ -64,8 +64,10 @@ class CardsController extends Controller
     {
         $this->validateCardFields($request);
 
-        if (!preg_match('/(https?:\\/\\/cardbag.ru\\/storage\\/.*\.(?:png|jpg|gif|bmp|svg|jpeg))/i', $request->input('front_photo'))) {
-            abort(422, 'Not valid url image');
+        if (!(file_exists('storage/' . $request->input($request->input('front_photo'))) &&
+            file_exists('storage/' . $request->input($request->input('back_photo'))))
+        ) {
+            abort(400, 'photo not found on server');
         }
 
         $cardRepository->create([
@@ -95,7 +97,24 @@ class CardsController extends Controller
 
         $this->checkPermissionUser($request, $cardRepository, $uuid);
 
+        $this->removingPhotosFromServer(basename($cardRepository->findOneBy('uuid', $uuid)->front_photo),
+            basename($cardRepository->findOneBy('uuid', $uuid)->back_photo));
+
         $cardRepository->delete('uuid', $uuid);
+    }
+
+    /**
+     * Удаление фото с сервера
+     * @param $frontPhoto
+     * @param $backPhoto
+     */
+    public function removingPhotosFromServer($frontPhoto, $backPhoto)
+    {
+        if (!(file_exists('storage/' . $frontPhoto) && file_exists('storage/' . $backPhoto))) {
+            abort(400, 'photo not found');
+        }
+        unlink('storage/' . $frontPhoto);
+        unlink('storage/' . $backPhoto);
     }
 
     /**
