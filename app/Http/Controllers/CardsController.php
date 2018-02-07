@@ -60,11 +60,14 @@ class CardsController extends Controller
     public function addCard(
         Request $request,
         CardInterface $cardRepository
-    ) {
+    )
+    {
         $this->validateCardFields($request);
 
-        if (!preg_match(('/(https?:\/\/.*\.(?:png|jpg|gif|bmp|svg|jpeg))/i'), $request->input('front_photo'))) {
-            abort(422, 'Not valid url image');
+        if (!(file_exists('storage/' . $request->input($request->input('front_photo'))) &&
+            file_exists('storage/' . $request->input($request->input('back_photo'))))
+        ) {
+            abort(400, 'photo not found on server');
         }
 
         $cardRepository->create([
@@ -80,19 +83,63 @@ class CardsController extends Controller
 
     /**
      * Метод удаления карты
-     * @param $id
+     * @param $uuid
+     * @param Request $request
      * @param CardInterface $cardRepository
      */
-    public function deleteCard($id, CardInterface $cardRepository)
+    public function deleteCard(Request $request, $uuid, CardInterface $cardRepository)
     {
-        if (!preg_match('/^\d+$/', $id)) {
-            abort(422, 'Invalid ID supplied');
+        $this->checkingValidityUuidCard($uuid);
+
+        if ($cardRepository->findAllBy('uuid', (string)$uuid)->isEmpty()) {
+            abort(400, 'uuid not found in database');
         }
 
-        if ($cardRepository->findAllBy('id', (int)$id)->isEmpty()) {
-            abort(400, 'ID not found in database');
-        }
+        $this->checkPermissionUser($request, $cardRepository, $uuid);
 
-        $cardRepository->delete('id', $id);
+        $this->removingPhotosFromServer(basename($cardRepository->findOneBy('uuid', $uuid)->front_photo),
+            basename($cardRepository->findOneBy('uuid', $uuid)->back_photo));
+
+        $cardRepository->delete('uuid', $uuid);
+    }
+
+    /**
+     * Удаление фото с сервера
+     * @param $frontPhoto
+     * @param $backPhoto
+     */
+    public function removingPhotosFromServer($frontPhoto, $backPhoto)
+    {
+        if (!(file_exists('storage/' . $frontPhoto) && file_exists('storage/' . $backPhoto))) {
+            abort(400, 'photo not found');
+        }
+        unlink('storage/' . $frontPhoto);
+        unlink('storage/' . $backPhoto);
+    }
+
+    /**
+     * Проверка валидности uuid карты
+     * @param $uuid
+     */
+    public function checkingValidityUuidCard($uuid)
+    {
+        if (!preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
+            $uuid)
+        ) {
+            abort(422, 'Invalid uuid');
+        }
+    }
+
+    /**
+     * Проверка того, что карточка принадлежит пользователю
+     * @param Request $request
+     * @param CardInterface $cardRepository
+     * @param $uuid
+     */
+    public function checkPermissionUser(Request $request, CardInterface $cardRepository, $uuid)
+    {
+        if ($cardRepository->findOneBy('uuid', $uuid)->user_id !== $request->user()->id) {
+            abort(403, 'Permission denied');
+        }
     }
 }
