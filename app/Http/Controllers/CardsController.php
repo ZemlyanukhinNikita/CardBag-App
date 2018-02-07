@@ -64,8 +64,9 @@ class CardsController extends Controller
     {
         $this->validateCardFields($request);
 
-        if (!(file_exists('storage/' . $request->input($request->input('front_photo'))) &&
-            file_exists('storage/' . $request->input($request->input('back_photo'))))
+        if (!(file_exists('storage/' . basename($request->input('front_photo'))) &&
+            file_exists('storage/' . basename($request->input('back_photo')))
+        )
         ) {
             abort(400, 'photo not found on server');
         }
