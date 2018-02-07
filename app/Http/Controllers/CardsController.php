@@ -96,7 +96,7 @@ class CardsController extends Controller
             abort(400, 'uuid not found in database');
         }
 
-        $this->checkPermissionUser($request, $cardRepository, $uuid);
+        //$this->checkPermissionUser($request, $cardRepository, $uuid);
 
         $this->removingPhotosFromServer(basename($cardRepository->findOneBy('uuid', $uuid)->front_photo),
             basename($cardRepository->findOneBy('uuid', $uuid)->back_photo));
@@ -128,6 +128,21 @@ class CardsController extends Controller
             $uuid)
         ) {
             abort(422, 'Invalid uuid');
+        }
+    }
+
+    /**
+     * Проверка имеются ли присланные с формы фотографии на сервере
+     * @param $frontPhoto
+     * @param $backPhoto
+     */
+    public function checkingSentPhotosOnServer($frontPhoto, $backPhoto)
+    {
+        if (!(file_exists('storage/' . basename($frontPhoto)) &&
+            file_exists('storage/' . basename($backPhoto))
+        )
+        ) {
+            abort(400, 'photo not found on server');
         }
     }
 
