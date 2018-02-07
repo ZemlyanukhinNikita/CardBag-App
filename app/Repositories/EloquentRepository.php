@@ -81,4 +81,9 @@ abstract class EloquentRepository implements ModelInterface
     {
         return $this->getModel()->where($field, $value)->delete();
     }
+
+    public function update(string $field, string $value, array $values)
+    {
+        return $this->getModel()->where($field, $value)->update($values);
+    }
 }
