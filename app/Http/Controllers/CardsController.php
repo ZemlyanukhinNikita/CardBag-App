@@ -48,8 +48,8 @@ class CardsController extends Controller
             'category_id' => 'exists:categories,id',
             'front_photo' => 'required|url',
             'back_photo' => 'required|url',
-            'discount' => 'integer:discount|min:0|max:100',
-            'uuid' => 'required|unique:cards'
+            'discount' => 'integer:discount|min:1|max:100',
+            'uuid' => 'required',
         ], $messages);
     }
 
@@ -66,6 +66,10 @@ class CardsController extends Controller
     )
     {
         $this->validateCardFields($request);
+
+        $this->checkingValidityUuidCard($request->input('uuid'));
+
+        $this->isExistUuidInDataBase($request->input('uuid'), $cardRepository);
 
         $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
         $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
@@ -91,13 +95,15 @@ class CardsController extends Controller
     {
         $this->checkingValidityUuidCard($uuid);
 
-        if ($cardRepository->findAllBy('uuid', (string)$uuid)->isEmpty()) {
+        $card = $cardRepository->findOneBy('uuid', (string)$uuid);
+
+        if (!$card) {
             abort(400, 'uuid not found in database');
         }
 
-        $photoService->removingPhotoFromServer($cardRepository->findOneBy('uuid', $uuid)->front_photo);
+        $photoService->removingPhotoFromServer($card->front_photo);
 
-        $photoService->removingPhotoFromServer($cardRepository->findOneBy('uuid', $uuid)->back_photo);
+        $photoService->removingPhotoFromServer($card->back_photo);
 
         $cardRepository->delete('uuid', $uuid);
     }
@@ -113,22 +119,23 @@ class CardsController extends Controller
     {
         $this->checkingValidityUuidCard($uuid);
 
-        if ($cardRepository->findAllBy('uuid', (string)$uuid)->isEmpty()) {
+        $this->validateCardFields($request);
+
+        $card = $cardRepository->findOneBy('uuid', (string)$uuid);
+        if (!$card) {
             abort(400, 'uuid not found in database');
         }
 
         $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
         $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
 
-        $frontPhoto = $cardRepository->findOneBy('uuid', $uuid)->front_photo;
-        $backPhoto = $cardRepository->findOneBy('uuid', $uuid)->back_photo;
 
-        if ($frontPhoto !== $request->input('front_photo')) {
-            $photoService->removingPhotoFromServer($frontPhoto);
+        if ($card->front_photo !== $request->input('front_photo')) {
+            $photoService->removingPhotoFromServer($card->front_photo);
         }
 
-        if ($backPhoto !== $request->input('back_photo')) {
-            $photoService->removingPhotoFromServer($backPhoto);
+        if ($card->back_photo !== $request->input('back_photo')) {
+            $photoService->removingPhotoFromServer($card->back_photo);
         }
 
         $cardRepository->update('uuid', $uuid,
@@ -146,12 +153,26 @@ class CardsController extends Controller
      * Проверка валидности uuid карты
      * @param $uuid
      */
-    public function checkingValidityUuidCard($uuid)
+    public
+    function checkingValidityUuidCard($uuid)
     {
         if (!preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
             $uuid)
         ) {
             abort(422, 'Invalid uuid');
+        }
+    }
+
+    /**
+     * @param $uuid
+     * @param CardInterface $cardRepository
+     */
+    public
+    function isExistUuidInDataBase($uuid, CardInterface $cardRepository)
+    {
+        $uuid = $cardRepository->findOneBy('uuid', $uuid);
+        if ($uuid) {
+            abort(400, 'uuid must be unique');
         }
     }
 }
