@@ -51,4 +51,13 @@ interface ModelInterface
      * @return mixed
      */
     public function delete(string $field, string $value);
+
+    /**
+     * Метод редактирования модели в базе данных, реализуется в дочерних классах
+     * @param string $field
+     * @param string $value
+     * @param array $values
+     * @return mixed
+     */
+    public function update(string $field, string $value, array $values);
 }
