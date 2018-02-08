@@ -21,6 +21,7 @@ class PhotoService
      */
     public function checkingSendPhotoOnServer($photo)
     {
+
 //        if (!preg_match('/(https?:\\/\\/localhost\\/backend\\/public\\/storage\\/.*\.(?:png|jpg|gif|bmp|svg|jpeg))/i', $photo)) {
 //            abort(422, 'Not valid url image');
 //        }
