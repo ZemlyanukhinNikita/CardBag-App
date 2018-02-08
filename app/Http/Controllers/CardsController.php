@@ -49,7 +49,7 @@ class CardsController extends Controller
             'front_photo' => 'required|url',
             'back_photo' => 'required|url',
             'discount' => 'integer:discount|min:0|max:100',
-            'uuid' => 'unique:cards'
+            'uuid' => 'required|unique:cards'
         ], $messages);
     }
 
@@ -67,7 +67,8 @@ class CardsController extends Controller
     {
         $this->validateCardFields($request);
 
-        $photoService->checkingSendPhotos($request->input('front_photo'), $request->input('back_photo'));
+        $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
+        $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
 
         $cardRepository->create([
             'user_id' => $request->user()->id,
@@ -94,9 +95,9 @@ class CardsController extends Controller
             abort(400, 'uuid not found in database');
         }
 
-        $photoService->removingPhotosFromServer(basename($cardRepository->findOneBy('uuid', $uuid)->front_photo));
+        $photoService->removingPhotoFromServer($cardRepository->findOneBy('uuid', $uuid)->front_photo);
 
-        $photoService->removingPhotosFromServer(basename($cardRepository->findOneBy('uuid', $uuid)->back_photo));
+        $photoService->removingPhotoFromServer($cardRepository->findOneBy('uuid', $uuid)->back_photo);
 
         $cardRepository->delete('uuid', $uuid);
     }
@@ -115,17 +116,19 @@ class CardsController extends Controller
         if ($cardRepository->findAllBy('uuid', (string)$uuid)->isEmpty()) {
             abort(400, 'uuid not found in database');
         }
-        $photoService->checkingSendPhotos($request->input('front_photo'), $request->input('back_photo'));
+
+        $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
+        $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
 
         $frontPhoto = $cardRepository->findOneBy('uuid', $uuid)->front_photo;
         $backPhoto = $cardRepository->findOneBy('uuid', $uuid)->back_photo;
 
         if ($frontPhoto !== $request->input('front_photo')) {
-            $photoService->removingPhotosFromServer(basename($frontPhoto));
+            $photoService->removingPhotoFromServer($frontPhoto);
         }
 
         if ($backPhoto !== $request->input('back_photo')) {
-            $photoService->removingPhotosFromServer(basename($backPhoto));
+            $photoService->removingPhotoFromServer($backPhoto);
         }
 
         $cardRepository->update('uuid', $uuid,

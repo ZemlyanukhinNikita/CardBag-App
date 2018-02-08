@@ -6,27 +6,30 @@ class PhotoService
 {
     /**
      * Удаление фото с сервера
-     * @param $Photo
+     * @param $photo
      */
-    public function removingPhotosFromServer($Photo)
+    public function removingPhotoFromServer($photo)
     {
-        if (!file_exists('storage/' . $Photo)) {
-            abort(400, 'photo not found');
-        }
-        unlink('storage/' . $Photo);
+        $this->checkingSendPhotoOnServer($photo);
+        unlink('storage/' . basename($photo));
     }
 
     /**
      * Проверка имеется ли присланное фото на сервере
-     * @param $front_photo
-     * @param $back_photo
+     * @param $photo
+     * @return bool
      */
-    public function checkingSendPhotos($front_photo, $back_photo)
+    public function checkingSendPhotoOnServer($photo)
     {
-        if (!(file_exists('storage/' . basename($front_photo)) &&
-            file_exists('storage/' . basename($back_photo))
-        )
-        ) {
+        if (!preg_match('/(https?:\\/\\/localhost\\/backend\\/public\\/storage\\/.*\.(?:png|jpg|gif|bmp|svg|jpeg))/i', $photo)) {
+            abort(422, 'Not valid url image');
+        }
+
+//        if (!preg_match('/(https?:\\/\\/cardbag.ru\\/storage\\/.*\.(?:png|jpg|gif|bmp|svg|jpeg))/i', $photo)) {
+//            abort(422, 'Not valid url image');
+//        }
+
+        if (!file_exists('storage/' . basename($photo))) {
             abort(400, 'photo not found on server');
         }
     }

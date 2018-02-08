@@ -8,7 +8,7 @@ class Card extends Model
         'discount' => 'int'
     ];
 
-    protected $fillable = ['user_id', 'title', 'front_photo', 'back_photo', 'discount', 'uuid'];
+    protected $fillable = ['user_id', 'title', 'category_id', 'front_photo', 'back_photo', 'discount', 'uuid'];
 
     public function category()
     {
