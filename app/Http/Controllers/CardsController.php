@@ -48,7 +48,7 @@ class CardsController extends Controller
             'category_id' => 'exists:categories,id',
             'front_photo' => 'required|url',
             'back_photo' => 'required|url',
-            'discount' => 'integer:discount|min:1|max:100',
+            'discount' => 'integer:discount|min:0|max:100',
             'uuid' => 'required',
         ], $messages);
     }
@@ -74,13 +74,23 @@ class CardsController extends Controller
         $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
         $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
 
+        $discount = $request->input('discount');
+        if ($discount === '') {
+            $discount = null;
+        }
+
+        $categoryId = $request->input('category_id');
+        if ($categoryId === '') {
+            $categoryId = null;
+        }
+
         $cardRepository->create([
             'user_id' => $request->user()->id,
             'title' => $request->input('title'),
-            'category_id' => $request->input('category_id'),
+            'category_id' => $categoryId,
             'front_photo' => $request->input('front_photo'),
             'back_photo' => $request->input('back_photo'),
-            'discount' => $request->input('discount'),
+            'discount' => $discount,
             'uuid' => $request->input('uuid')
         ]);
     }
