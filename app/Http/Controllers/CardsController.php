@@ -2,9 +2,11 @@
 
 use app\Repositories\CardInterface;
 use App\Service;
+use app\Service\BarCodeService;
 use App\Service\CardService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CardsController extends Controller
 {
@@ -56,10 +58,13 @@ class CardsController extends Controller
      * Метод добавления карты
      * @param Request $request
      * @param CardInterface $cardRepository
+     * @param BarCodeService $barCodeService
+     * @throws \Exception
      */
     public function addCard(
         Request $request,
-        CardInterface $cardRepository
+        CardInterface $cardRepository,
+        BarCodeService $barCodeService
     ) {
         $this->validateCardFields($request);
 
@@ -67,6 +72,16 @@ class CardsController extends Controller
             abort(422, 'Not valid url image');
         }
 
+        $format = explode('/', $request->input('back_photo'));
+        $fileName = end($format);
+
+        $barCode = $barCodeService->scanBarCode($fileName);
+
+        if ($barCode->code === 400) {
+            abort(422, 'No barcode detected');
+        }
+
+        $png = $barCodeService->generateBarCodeImage($barCode->text, 'C128');
         $cardRepository->create([
             'user_id' => $request->user()->id,
             'title' => $request->input('title'),
@@ -74,7 +89,8 @@ class CardsController extends Controller
             'front_photo' => $request->input('front_photo'),
             'back_photo' => $request->input('back_photo'),
             'discount' => $request->input('discount'),
-            'uuid' => $request->input('uuid')
+            'uuid' => $request->input('uuid'),
+            'bar_code' => Storage::url($png)
         ]);
     }
 

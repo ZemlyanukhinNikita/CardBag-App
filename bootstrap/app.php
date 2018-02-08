@@ -91,6 +91,7 @@ $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register('Wn\Generators\CommandsServiceProvider');
+$app->singleton('RobbieP\ZbarQrdecoder\ZbarQrdecoderServiceProvider');
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
