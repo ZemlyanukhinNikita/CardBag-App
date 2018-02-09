@@ -21,15 +21,6 @@ class PhotoService
      */
     public function checkingSendPhotoOnServer($photo)
     {
-
-//        if (!preg_match('/(https?:\\/\\/localhost\\/backend\\/public\\/storage\\/.*\.(?:png|jpg|gif|bmp|svg|jpeg))/i', $photo)) {
-//            abort(422, 'Not valid url image');
-//        }
-
-//        if (!preg_match('/(https?:\\/\\/cardbag.ru\\/storage\\/.*\.(?:png|jpg|gif|bmp|svg|jpeg))/i', $photo)) {
-//            abort(422, 'Not valid url image');
-//        }
-
         if (!file_exists('storage/' . basename($photo))) {
             abort(400, 'photo not found on server');
         }

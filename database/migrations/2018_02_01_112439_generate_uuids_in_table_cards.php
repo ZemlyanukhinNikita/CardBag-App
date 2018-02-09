@@ -15,7 +15,7 @@ class GenerateUuidsInTableCards extends Migration
      */
     public function up()
     {
-        Schema::table('cards', function (Blueprint $table) {
+        Schema::table('cards', function () {
             $results = DB::table('cards')->select('id', 'uuid')->get();
 
             foreach ($results as $result) {
