@@ -2,27 +2,53 @@
 
 namespace App\Service;
 
+use app\Repositories\PhotoInterface;
+use Illuminate\Http\Request;
+
 class PhotoService
 {
+    private $request;
+    private $photoRepository;
+
+    /**
+     * PhotoService constructor.
+     * @param $request
+     * @param $photoRepository
+     */
+    public function __construct(Request $request, PhotoInterface $photoRepository)
+    {
+        $this->request = $request;
+        $this->photoRepository = $photoRepository;
+    }
+
+
     /**
      * Удаление фото с сервера
      * @param $photo
      */
     public function removingPhotoFromServer($photo)
     {
-        $this->checkingSendPhotoOnServer($photo);
-        unlink('storage/' . basename($photo));
+        $photos = $this->checkingSendPhotoOnServer($photo);
+        unlink('storage/' . $photos);
+        $this->photoRepository->delete('filename', $photos);
     }
 
     /**
      * Проверка имеется ли присланное фото на сервере
      * @param $photo
-     * @return bool
      */
     public function checkingSendPhotoOnServer($photo)
     {
-        if (!file_exists('storage/' . basename($photo))) {
-            abort(400, 'photo not found on server');
+        $photos = $this->photoRepository->findOneBy('filename', basename($photo));
+
+        if (!$photos) {
+            abort(400, 'Photo not found on server');
         }
+
+        if ($photos->user_id !== $this->request->user()->id) {
+            abort(403, 'Permission denied');
+        }
+
+        return $photos->filename;
     }
 }

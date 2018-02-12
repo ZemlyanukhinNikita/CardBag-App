@@ -40,7 +40,7 @@ class CardsController extends Controller
             'discount.max' => 'Введите размер скидки от 0 до :max',
             'front_photo.required' => 'Загрузите лицевое фото карты',
             'back_photo.required' => 'Загрузите фото обратной стороны карты',
-            'category_id.exists' => 'Такой категории в базе данных нет'
+            'category_id.exists' => 'Такой категории в базе данных нет',
         ];
 
         $this->validate($request, [
@@ -50,6 +50,7 @@ class CardsController extends Controller
             'back_photo' => 'required|url',
             'discount' => 'integer:discount|min:0|max:100',
             'uuid' => 'required',
+            'updated_at' => 'date'
         ], $messages);
     }
 
@@ -70,6 +71,10 @@ class CardsController extends Controller
         $this->checkingValidityUuidCard($request->input('uuid'));
 
         $this->isExistUuidInDataBase($request->input('uuid'), $cardRepository);
+
+        if ($request->input('front_photo') === $request->input('back_photo')) {
+            abort(400, 'Url photos can not be the same');
+        }
 
         $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
         $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
@@ -108,7 +113,7 @@ class CardsController extends Controller
         $card = $cardRepository->findOneBy('uuid', (string)$uuid);
 
         if (!$card) {
-            abort(400, 'uuid not found in database');
+            abort(400, 'card`s UUID not found in database');
         }
 
         $photoService->removingPhotoFromServer($card->front_photo);
@@ -133,12 +138,15 @@ class CardsController extends Controller
 
         $card = $cardRepository->findOneBy('uuid', (string)$uuid);
         if (!$card) {
-            abort(400, 'uuid not found in database');
+            abort(400, 'card`s UUID not found in database');
+        }
+
+        if ($request->input('front_photo') === $request->input('back_photo')) {
+            abort(400, 'Url photos can not be the same');
         }
 
         $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
         $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
-
 
         if ($card->front_photo !== $request->input('front_photo')) {
             $photoService->removingPhotoFromServer($card->front_photo);
@@ -163,13 +171,13 @@ class CardsController extends Controller
      * Проверка валидности uuid карты
      * @param $uuid
      */
-    public
+    private
     function checkingValidityUuidCard($uuid)
     {
         if (!preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
             $uuid)
         ) {
-            abort(422, 'Invalid uuid');
+            abort(422, 'Invalid card`s UUID supplied');
         }
     }
 
@@ -177,12 +185,11 @@ class CardsController extends Controller
      * @param $uuid
      * @param CardInterface $cardRepository
      */
-    public
+    private
     function isExistUuidInDataBase($uuid, CardInterface $cardRepository)
     {
-        $uuid = $cardRepository->findOneBy('uuid', $uuid);
-        if ($uuid) {
-            abort(400, 'uuid must be unique');
+        if ($cardRepository->findOneBy('uuid', $uuid)) {
+            abort(400, 'Uuid must be unique');
         }
     }
 }

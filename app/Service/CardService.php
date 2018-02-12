@@ -7,9 +7,9 @@ use app\Repositories\UserInterface;
 
 class CardService
 {
-    public $userRepository;
-    public $cardRepository;
-    public $cardGenerateService;
+    private $userRepository;
+    private $cardRepository;
+    private $cardGenerateService;
 
     /**
      * CardService constructor.
