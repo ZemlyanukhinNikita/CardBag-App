@@ -14,8 +14,7 @@
         "ramsey/uuid": "^3.7",
         "laravelista/lumen-vendor-publish": "^2.1",
         "robbiep/zbar-qrdecoder": "^2.0",
-        "milon/barcode": "^5.3",
-        "picqer/php-barcode-generator": "^0.2.2"
+        "milon/barcode": "^5.3"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

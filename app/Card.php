@@ -16,7 +16,7 @@ class Card extends Model
         'back_photo',
         'discount',
         'uuid',
-        'bar_code'
+        'barcode'
     ];
 
     public function category()

@@ -2,7 +2,6 @@
 
 namespace app\Service;
 
-
 use Milon\Barcode\DNS1D;
 use RobbieP\ZbarQrdecoder\ZbarDecoder;
 
@@ -10,7 +9,7 @@ class BarCodeService
 {
     private $decoder;
     private $barCode;
-
+    private $format;
 
     /**
      * BarCodeService constructor.
@@ -41,5 +40,29 @@ class BarCodeService
     public function generateBarCodeImage($code, $type)
     {
         return $this->barCode->getBarcodePNGPath($code, $type);
+    }
+
+    public function setBarcode($format)
+    {
+        switch ($format) {
+            case 'CODE_39': {
+                return $this->format = 'C39';
+            }
+            case 'INTERLEAVED_2_5': {
+                return $this->format = 'I25';
+            }
+            case 'CODE_128': {
+                return $this->format = 'C128';
+            }
+            case 'EAN_13': {
+                return $this->format = 'EAN13';
+            }
+            case 'QR_CODE': {
+                return $this->format = 'QRCODE';
+            }
+            default: {
+                return $this->format = false;
+            }
+        }
     }
 }

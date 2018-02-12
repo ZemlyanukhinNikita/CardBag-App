@@ -72,16 +72,15 @@ class CardsController extends Controller
             abort(422, 'Not valid url image');
         }
 
-        $format = explode('/', $request->input('back_photo'));
-        $fileName = end($format);
-
+        $fileName = basename($request->input('back_photo'));
         $barCode = $barCodeService->scanBarCode($fileName);
 
-        if ($barCode->code === 400) {
-            abort(422, 'No barcode detected');
+        $png = null;
+        if ($barCode->code !== 400) {
+            $png = Storage::url($barCodeService->generateBarCodeImage($barCode->text,
+                $barCodeService->setBarcode($barCode->format)));
         }
 
-        $png = $barCodeService->generateBarCodeImage($barCode->text, 'C128');
         $cardRepository->create([
             'user_id' => $request->user()->id,
             'title' => $request->input('title'),
@@ -90,7 +89,7 @@ class CardsController extends Controller
             'back_photo' => $request->input('back_photo'),
             'discount' => $request->input('discount'),
             'uuid' => $request->input('uuid'),
-            'bar_code' => Storage::url($png)
+            'barcode' => $png
         ]);
     }
 
