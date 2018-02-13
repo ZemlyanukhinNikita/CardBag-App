@@ -39,29 +39,36 @@ class BarCodeService
      */
     public function generateBarCodeImage($code, $type)
     {
-        return $this->barCode->getBarcodePNGPath($code, $type);
+        return $this->barCode->getBarcodePNGPath($code, $this->setBarcode($type));
     }
 
-    public function setBarcode($format)
+    /**
+     * Для создания картинки штрихкода нужно передать тип штрихкода, считанный с фотографии карточки,
+     * считанный тип и тип штрихкода нужный для создания картинки отличаются, т.к используется два разных сервиса.
+     * Метод устанавливает нужный тип штрихкода для генерации картинок
+     * @param $format
+     * @return bool|string
+     */
+    private function setBarcode($format)
     {
         switch ($format) {
             case 'CODE_39': {
-                return $this->format = 'C39';
+                return 'C39';
             }
             case 'INTERLEAVED_2_5': {
-                return $this->format = 'I25';
+                return 'I25';
             }
             case 'CODE_128': {
-                return $this->format = 'C128';
+                return 'C128';
             }
             case 'EAN_13': {
-                return $this->format = 'EAN13';
+                return 'EAN13';
             }
             case 'QR_CODE': {
-                return $this->format = 'QRCODE';
+                return 'QRCODE';
             }
             default: {
-                return $this->format = false;
+                return false;
             }
         }
     }

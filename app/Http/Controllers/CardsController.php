@@ -78,7 +78,7 @@ class CardsController extends Controller
         $png = null;
         if ($barCode->code !== 400) {
             $png = Storage::url($barCodeService->generateBarCodeImage($barCode->text,
-                $barCodeService->setBarcode($barCode->format)));
+                $barCode->format));
         }
 
         $cardRepository->create([
