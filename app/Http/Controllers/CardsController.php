@@ -79,23 +79,13 @@ class CardsController extends Controller
         $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
         $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
 
-        $discount = $request->input('discount');
-        if ($discount === '') {
-            $discount = null;
-        }
-
-        $categoryId = $request->input('category_id');
-        if ($categoryId === '') {
-            $categoryId = null;
-        }
-
         $cardRepository->create([
             'user_id' => $request->user()->id,
             'title' => $request->input('title'),
-            'category_id' => $categoryId,
+            'category_id' => $this->replacingEmptyStringWithNull($request->input('category_id')),
             'front_photo' => $request->input('front_photo'),
             'back_photo' => $request->input('back_photo'),
-            'discount' => $discount,
+            'discount' => $this->replacingEmptyStringWithNull($request->input('discount')),
             'uuid' => $request->input('uuid')
         ]);
     }
@@ -162,7 +152,7 @@ class CardsController extends Controller
                 'front_photo' => $request->input('front_photo'),
                 'back_photo' => $request->input('back_photo'),
                 'category_id' => $request->input('category_id'),
-                'discount' => $request->input('discount'),
+                'discount' => $this->replacingEmptyStringWithNull($request->input('discount')),
                 'updated_at' => $request->input('updated_at'),
             ]);
     }
@@ -191,6 +181,14 @@ class CardsController extends Controller
         if ($cardRepository->findOneBy('uuid', $uuid)) {
             abort(400, 'Uuid must be unique');
         }
+    }
+
+    private function replacingEmptyStringWithNull($value)
+    {
+        if ($value === '') {
+            return null;
+        }
+        return $value;
     }
 }
 
