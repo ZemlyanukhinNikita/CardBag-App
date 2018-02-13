@@ -2,6 +2,8 @@
 
 namespace app\Service;
 
+use Exception;
+use Illuminate\Support\Facades\Log;
 use Milon\Barcode\DNS1D;
 use RobbieP\ZbarQrdecoder\ZbarDecoder;
 
@@ -9,7 +11,6 @@ class BarCodeService
 {
     private $decoder;
     private $barCode;
-    private $format;
 
     /**
      * BarCodeService constructor.
@@ -23,23 +24,34 @@ class BarCodeService
     }
 
     /**
+     * Метод сканирования фотографии, возвращает код изображения
      * @param $fileName
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function scanBarCode($fileName)
     {
-        return $this->decoder->make('storage/' . $fileName);
+        try {
+            return $this->decoder->make('storage/' . $fileName);
+        } catch (Exception $e) {
+            Log::error('Scanning image error: ' . $e->getMessage(), $e->getCode());
+        }
     }
 
     /**
+     * Метод генерации изображения штрихкода
      * @param $code
      * @param $type
      * @return \Milon\Barcode\path
+     * Может бросить исключение 
      */
     public function generateBarCodeImage($code, $type)
     {
-        return $this->barCode->getBarcodePNGPath($code, $this->setBarcode($type));
+        try {
+            return $this->barCode->getBarcodePNGPath($code, $this->setBarcode($type));
+        } catch (Exception $e) {
+            Log::error('Generating image error: ' . $e->getMessage(), $e->getCode());
+        }
     }
 
     /**
