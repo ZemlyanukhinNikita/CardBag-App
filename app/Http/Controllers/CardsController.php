@@ -91,7 +91,8 @@ class CardsController extends Controller
             'front_photo' => $request->input('front_photo'),
             'back_photo' => $request->input('back_photo'),
             'discount' => $discount,
-            'uuid' => $request->input('uuid')
+            'uuid' => $request->input('uuid'),
+            'updated_at' => $request->input('updated_at')
         ]);
     }
 
