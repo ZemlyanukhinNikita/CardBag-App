@@ -14,7 +14,7 @@ class AddBarCodeInTableCards extends Migration
     public function up()
     {
         Schema::table('cards', function (Blueprint $table) {
-            $table->string('barcode');
+            $table->string('barcode')->nullable();
         });
     }
 
