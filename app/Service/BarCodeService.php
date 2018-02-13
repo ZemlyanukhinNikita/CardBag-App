@@ -34,7 +34,7 @@ class BarCodeService
         try {
             return $this->decoder->make('storage/' . $fileName);
         } catch (Exception $e) {
-            Log::error('Scanning image error: ' . $e->getMessage(), $e->getCode());
+            Log::error('Scanning image error: ' . $e->getMessage() . ' ' . $e->getCode());
         }
     }
 
@@ -50,7 +50,7 @@ class BarCodeService
         try {
             return $this->barCode->getBarcodePNGPath($code, $this->setBarcode($type));
         } catch (Exception $e) {
-            Log::error('Generating image error: ' . $e->getMessage(), $e->getCode());
+            Log::error('Generating image error: ' . $e->getMessage() . ' ' . $e->getCode());
         }
     }
 
