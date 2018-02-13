@@ -10,8 +10,8 @@ class PhotoService
      */
     public function removingPhotoFromServer($photo)
     {
-//        $this->checkingSendPhotoOnServer($photo);
-//        unlink('storage/' . basename($photo));
+        $this->checkingSendPhotoOnServer($photo);
+        unlink('storage/' . basename($photo));
     }
 
     /**
