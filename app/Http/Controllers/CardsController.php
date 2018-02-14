@@ -26,10 +26,10 @@ class CardsController extends Controller
         if ($cards->isEmpty()) {
             return response()->json([], 204);
         }
-        
+
         foreach ($cards as $card) {
-            $card['front_photo'] = Storage::url($photoRepository->findOneBy('id', $card['front_photo'])->filename);
-            $card['back_photo'] = Storage::url($photoRepository->findOneBy('id', $card['back_photo'])->filename);
+            $card['front_photo'] = Storage::url('storage/' . $photoRepository->findOneBy('id', $card['front_photo'])->filename);
+            $card['back_photo'] = Storage::url('storage/' . $photoRepository->findOneBy('id', $card['back_photo'])->filename);
         }
         return response()->json($cards->load('category')->makeHidden([
             'user_id',
