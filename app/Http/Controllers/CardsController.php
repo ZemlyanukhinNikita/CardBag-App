@@ -74,15 +74,12 @@ class CardsController extends Controller
 
         $backPhoto = basename($request->input('back_photo'));
         $frontPhoto = basename($request->input('front_photo'));
-        $png = null;
-        if ($barCodeService->scanBarCode($backPhoto)->code !== 400) {
-            $png = Storage::url($barCodeService->generateBarCodeImage($barCodeService->scanBarCode($backPhoto)->text,
-                $barCodeService->scanBarCode($backPhoto)->format));
-        } elseif ($barCodeService->scanBarCode($frontPhoto)->code !== 400) {
-            $png = Storage::url($barCodeService->generateBarCodeImage($barCodeService->scanBarCode($frontPhoto)->text,
-                $barCodeService->scanBarCode($frontPhoto)->format));
+
+        $png = $this->getImageUrlOrNull($barCodeService, $backPhoto);
+        if ($png === null) {
+            $png = $this->getImageUrlOrNull($barCodeService, $frontPhoto);
         }
-        
+
         $cardRepository->create([
             'user_id' => $request->user()->id,
             'title' => $request->input('title'),
@@ -93,6 +90,15 @@ class CardsController extends Controller
             'uuid' => $request->input('uuid'),
             'barcode' => $png
         ]);
+    }
+
+    public function getImageUrlOrNull(BarCodeService $barCodeService, $photo)
+    {
+        if ($barCodeService->scanBarCode($photo)->code !== 400) {
+            return Storage::url($barCodeService->generateBarCodeImage($barCodeService->scanBarCode($photo)->text,
+                $barCodeService->scanBarCode($photo)->format));
+        }
+        return null;
     }
 
     /**
