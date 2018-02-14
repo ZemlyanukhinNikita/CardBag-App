@@ -46,10 +46,15 @@ class PhotoService
             abort(400, 'Photo not found on server');
         }
 
+        return $photos;
+    }
+
+    public function checkingUserPermission($photo)
+    {
+        $photos = $this->photoRepository->findOneBy('filename', basename($photo));
+
         if ($photos->user_id !== $this->request->user()->id) {
             abort(403, 'Permission denied');
         }
-
-        return $photos;
     }
 }

@@ -19,7 +19,9 @@ class CardsController extends Controller
     {
         /** @var Collection $cards */
         $cards = $cardService->getUserCards($request->header('uuid'));
-
+        if ($cards->isEmpty()) {
+            return response()->json([], 204);
+        }
         return response()->json($cards->load('category')->makeHidden([
             'user_id',
             'category_id'
@@ -77,6 +79,9 @@ class CardsController extends Controller
         $frontPhoto = $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
         $backPhoto = $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
 
+        $photoService->checkingUserPermission($request->input('front_photo'));
+        $photoService->checkingUserPermission($request->input('back_photo'));
+
         $cardRepository->create([
             'user_id' => $request->user()->id,
             'title' => $request->input('title'),
@@ -104,13 +109,11 @@ class CardsController extends Controller
         if (!$card) {
             abort(400, 'card`s UUID not found in database');
         }
+
+        $photoService->checkingUserPermission($photoRepository->findOneBy('id', $card->front_photo)->filename);
+        $photoService->checkingUserPermission($photoRepository->findOneBy('id', $card->back_photo)->filename);
+
         $cardRepository->delete('uuid', $uuid);
-
-        $photoService->removingPhotoFromServer($photoRepository->findOneBy('id', $card->front_photo)->filename);
-
-        $photoService->removingPhotoFromServer($photoRepository->findOneBy('id', $card->back_photo)->filename);
-
-
     }
 
     /**
@@ -137,6 +140,9 @@ class CardsController extends Controller
 
         $frontPhoto = $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
         $backPhoto = $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
+
+        $photoService->checkingUserPermission($request->input('front_photo'));
+        $photoService->checkingUserPermission($request->input('back_photo'));
 
         $cardRepository->update('uuid', $uuid,
             [
