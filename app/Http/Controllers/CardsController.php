@@ -2,35 +2,24 @@
 
 use app\Repositories\CardInterface;
 use app\Repositories\PhotoInterface;
-use App\Service;
 use App\Service\CardService;
 use App\Service\PhotoService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class CardsController extends Controller
 {
     /**
      * @param Request $request
      * @param CardService $cardService
-     * @param PhotoInterface $photoRepository
      * @param CardInterface $cardRepository
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getAllUserCards(Request $request, CardService $cardService, PhotoInterface $photoRepository)
+    public function getAllUserCards(Request $request, CardService $cardService)
     {
         /** @var Collection $cards */
         $cards = $cardService->getUserCards($request->header('uuid'));
 
-        if ($cards->isEmpty()) {
-            return response()->json([], 204);
-        }
-
-        foreach ($cards as $card) {
-            $card['front_photo'] = Storage::url('storage/' . $photoRepository->findOneBy('id', $card['front_photo'])->filename);
-            $card['back_photo'] = Storage::url('storage/' . $photoRepository->findOneBy('id', $card['back_photo'])->filename);
-        }
         return response()->json($cards->load('category')->makeHidden([
             'user_id',
             'category_id'
@@ -115,7 +104,6 @@ class CardsController extends Controller
         if (!$card) {
             abort(400, 'card`s UUID not found in database');
         }
-
         $cardRepository->delete('uuid', $uuid);
 
         $photoService->removingPhotoFromServer($photoRepository->findOneBy('id', $card->front_photo)->filename);

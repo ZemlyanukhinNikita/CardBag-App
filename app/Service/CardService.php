@@ -2,8 +2,10 @@
 
 namespace App\Service;
 
+use App\Card;
 use app\Repositories\CardInterface;
 use app\Repositories\UserInterface;
+use Illuminate\Support\Facades\Storage;
 
 class CardService
 {
@@ -22,12 +24,14 @@ class CardService
     public function __construct(
         UserInterface $userRepository,
         CardInterface $cardRepository,
-        CardGenerateService $cardGenerateService
+        CardGenerateService $cardGenerateService,
+        Card $card
     )
     {
         $this->userRepository = $userRepository;
         $this->cardRepository = $cardRepository;
         $this->cardGenerateService = $cardGenerateService;
+        $this->card = $card;
     }
 
     /**
@@ -41,6 +45,12 @@ class CardService
         if (!$user = $this->userRepository->findOneBy('uuid', $uuid)) {
             $user = $this->userRepository->create(['uuid' => $uuid]);
         }
-        return $this->cardRepository->findAllBy('user_id', $user->id);
+
+        foreach ($cards = $this->cardRepository->findAllWithEagerLoading('user_id', $user->id, ['frontPhoto', 'backPhoto'])
+                 as $card) {
+            $card->front_photo = Storage::url('storage/' . $card->frontPhoto->filename);
+            $card->back_photo = Storage::url('storage/' . $card->backPhoto->filename);
+        }
+        return $cards;
     }
 }
