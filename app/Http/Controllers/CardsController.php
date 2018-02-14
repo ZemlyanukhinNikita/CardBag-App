@@ -85,11 +85,12 @@ class CardsController extends Controller
         $cardRepository->create([
             'user_id' => $request->user()->id,
             'title' => $request->input('title'),
-            'category_id' => $this->replacingEmptyStringWithNull($request->input('category_id')),
-            'front_photo' => $frontPhoto->id,
-            'back_photo' => $backPhoto->id,
-            'discount' => $this->replacingEmptyStringWithNull($request->input('discount')),
-            'uuid' => $request->input('uuid')
+            'category_id' => $categoryId,
+            'front_photo' => $request->input('front_photo'),
+            'back_photo' => $request->input('back_photo'),
+            'discount' => $discount,
+            'uuid' => $request->input('uuid'),
+            'updated_at' => $request->input('updated_at')
         ]);
     }
 

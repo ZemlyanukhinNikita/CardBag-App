@@ -15,12 +15,20 @@ interface ModelInterface
     public function create(array $values): Model;
 
     /**
-     * Метод получения моеделей, где $field == $value, реализуется в дочерних классах
+     * Метод получения моделей, где $field == $value, реализуется в дочерних классах
      * @param string $field
      * @param $value
      * @return mixed
      */
     public function findAllBy(string $field, $value);
+
+    /**
+     * Метод получения всех моделей, вместе с удаленными, реализуется в дочерних классах
+     * @param string $field
+     * @param $value
+     * @return mixed
+     */
+    public function findAllWithTrashedBy(string $field, $value);
 
     /**
      * Метод получения модели, где $field == $value, реализуется в дочерних классах

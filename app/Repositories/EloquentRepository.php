@@ -39,6 +39,18 @@ abstract class EloquentRepository implements ModelInterface
 
     /**
      * {@inheritDoc}
+     * Метод получения всех моделей, вместе с удаленными, где $field == $value
+     * @param string $field
+     * @param $value
+     * @return mixed
+     */
+    public function findAllWithTrashedBy(string $field, $value)
+    {
+        return $this->getModel()->withTrashed()->where($field, $value)->get();
+    }
+
+    /**
+     * {@inheritDoc}
      * Метод получения модели, где $field == $value
      * @param string $field
      * @param $value
