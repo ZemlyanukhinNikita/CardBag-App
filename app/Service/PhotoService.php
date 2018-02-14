@@ -29,13 +29,14 @@ class PhotoService
     public function removingPhotoFromServer($photo)
     {
         $photos = $this->checkingSendPhotoOnServer($photo);
-        unlink('storage/' . $photos);
-        $this->photoRepository->delete('filename', $photos);
+        unlink('storage/' . $photos->filename);
+        $this->photoRepository->delete('filename', $photos->filename);
     }
 
     /**
      * Проверка имеется ли присланное фото на сервере
      * @param $photo
+     * @return mixed
      */
     public function checkingSendPhotoOnServer($photo)
     {
@@ -49,6 +50,6 @@ class PhotoService
             abort(403, 'Permission denied');
         }
 
-        return $photos->filename;
+        return $photos;
     }
 }

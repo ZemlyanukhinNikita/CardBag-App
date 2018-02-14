@@ -1,25 +1,36 @@
 <?php namespace App\Http\Controllers;
 
 use app\Repositories\CardInterface;
+use app\Repositories\PhotoInterface;
 use App\Service;
 use App\Service\CardService;
 use App\Service\PhotoService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CardsController extends Controller
 {
     /**
      * @param Request $request
      * @param CardService $cardService
+     * @param PhotoInterface $photoRepository
+     * @param CardInterface $cardRepository
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getAllUserCards(Request $request, CardService $cardService)
+    public function getAllUserCards(Request $request, CardService $cardService, PhotoInterface $photoRepository)
     {
         /** @var Collection $cards */
         $cards = $cardService->getUserCards($request->header('uuid'));
+
         if ($cards->isEmpty()) {
             return response()->json([], 204);
+        }
+        foreach ($cards as $card) {
+            $frontPhoto = $photoRepository->findOneBy('id', $card['front_photo'])->filename;
+            $backPhoto = $photoRepository->findOneBy('id', $card['back_photo'])->filename;
+            $card['front_photo'] = Storage::url($frontPhoto);
+            $card['back_photo'] = Storage::url($backPhoto);
         }
         return response()->json($cards->load('category')->makeHidden([
             'user_id',
@@ -45,7 +56,7 @@ class CardsController extends Controller
 
         $this->validate($request, [
             'title' => 'required|max:40',
-            'category_id' => 'exists:categories,id',
+            'category_id' => 'nullable|exists:categories,id',
             'front_photo' => 'required|url',
             'back_photo' => 'required|url',
             'discount' => 'integer:discount|min:0|max:100',
@@ -63,8 +74,7 @@ class CardsController extends Controller
     public function addCard(
         Request $request,
         CardInterface $cardRepository,
-        PhotoService $photoService
-    )
+        PhotoService $photoService)
     {
         $this->validateCardFields($request);
 
@@ -76,15 +86,15 @@ class CardsController extends Controller
             abort(400, 'Url photos can not be the same');
         }
 
-        $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
-        $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
+        $frontPhoto = $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
+        $backPhoto = $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
 
         $cardRepository->create([
             'user_id' => $request->user()->id,
             'title' => $request->input('title'),
             'category_id' => $this->replacingEmptyStringWithNull($request->input('category_id')),
-            'front_photo' => $request->input('front_photo'),
-            'back_photo' => $request->input('back_photo'),
+            'front_photo' => $frontPhoto->id,
+            'back_photo' => $backPhoto->id,
             'discount' => $this->replacingEmptyStringWithNull($request->input('discount')),
             'uuid' => $request->input('uuid')
         ]);
@@ -95,8 +105,9 @@ class CardsController extends Controller
      * @param $uuid
      * @param CardInterface $cardRepository
      * @param PhotoService $photoService
+     * @param PhotoInterface $photoRepository
      */
-    public function deleteCard($uuid, CardInterface $cardRepository, PhotoService $photoService)
+    public function deleteCard($uuid, CardInterface $cardRepository, PhotoService $photoService, PhotoInterface $photoRepository)
     {
         $this->checkingValidityUuidCard($uuid);
 
@@ -106,11 +117,13 @@ class CardsController extends Controller
             abort(400, 'card`s UUID not found in database');
         }
 
-        $photoService->removingPhotoFromServer($card->front_photo);
-
-        $photoService->removingPhotoFromServer($card->back_photo);
-
         $cardRepository->delete('uuid', $uuid);
+
+        $photoService->removingPhotoFromServer($photoRepository->findOneBy('id', $card->front_photo)->filename);
+
+        $photoService->removingPhotoFromServer($photoRepository->findOneBy('id', $card->back_photo)->filename);
+
+
     }
 
     /**
@@ -135,26 +148,26 @@ class CardsController extends Controller
             abort(400, 'Url photos can not be the same');
         }
 
-        $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
-        $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
-
-        if ($card->front_photo !== $request->input('front_photo')) {
-            $photoService->removingPhotoFromServer($card->front_photo);
-        }
-
-        if ($card->back_photo !== $request->input('back_photo')) {
-            $photoService->removingPhotoFromServer($card->back_photo);
-        }
+        $frontPhoto = $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
+        $backPhoto = $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
 
         $cardRepository->update('uuid', $uuid,
             [
                 'title' => $request->input('title'),
-                'front_photo' => $request->input('front_photo'),
-                'back_photo' => $request->input('back_photo'),
+                'front_photo' => $frontPhoto->id,
+                'back_photo' => $backPhoto->id,
                 'category_id' => $request->input('category_id'),
                 'discount' => $this->replacingEmptyStringWithNull($request->input('discount')),
                 'updated_at' => $request->input('updated_at'),
             ]);
+
+        if ($frontPhoto->filename !== basename($request->input('front_photo'))) {
+            $backPhoto->removingPhotoFromServer($frontPhoto->filename);
+        }
+
+        if ($backPhoto->filename !== basename($request->input('back_photo'))) {
+            $photoService->removingPhotoFromServer($backPhoto->filename);
+        }
     }
 
     /**
@@ -191,4 +204,3 @@ class CardsController extends Controller
         return $value;
     }
 }
-

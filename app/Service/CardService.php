@@ -40,7 +40,6 @@ class CardService
     {
         if (!$user = $this->userRepository->findOneBy('uuid', $uuid)) {
             $user = $this->userRepository->create(['uuid' => $uuid]);
-            $this->cardGenerateService->generateUserCards($user);
         }
         return $this->cardRepository->findAllBy('user_id', $user->id);
     }
