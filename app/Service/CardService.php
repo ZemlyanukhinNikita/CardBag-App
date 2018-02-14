@@ -42,6 +42,6 @@ class CardService
             $user = $this->userRepository->create(['uuid' => $uuid]);
             $this->cardGenerateService->generateUserCards($user);
         }
-        return $this->cardRepository->findAllBy('user_id', $user->id);
+        return $this->cardRepository->findAllWithTrashedBy('user_id', $user->id);
     }
 }

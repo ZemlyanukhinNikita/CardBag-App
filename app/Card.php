@@ -1,9 +1,14 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Card extends Model
 {
+    use SoftDeletes;
+    
+    protected $dates = ['deleted_at'];
+
     public $casts = [
         'discount' => 'int'
     ];
@@ -28,5 +33,6 @@ class Card extends Model
     {
         return $this->belongsTo(User::class);
     }
+
 }
 

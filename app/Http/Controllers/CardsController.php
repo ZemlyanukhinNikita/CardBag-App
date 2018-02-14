@@ -112,10 +112,6 @@ class CardsController extends Controller
             abort(400, 'uuid not found in database');
         }
 
-        $photoService->removingPhotoFromServer($card->front_photo);
-
-        $photoService->removingPhotoFromServer($card->back_photo);
-
         $cardRepository->delete('uuid', $uuid);
     }
 
