@@ -152,6 +152,10 @@ class CardsController extends Controller
                 'back_photo' => $request->input('back_photo'),
                 'category_id' => $request->input('category_id'),
                 'discount' => $request->input('discount'),
+            ]);
+
+        $cardRepository->update('uuid', $uuid,
+            [
                 'updated_at' => $request->input('updated_at'),
             ]);
     }
