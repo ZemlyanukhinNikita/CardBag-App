@@ -12,7 +12,6 @@ class CardsController extends Controller
     /**
      * @param Request $request
      * @param CardService $cardService
-     * @param CardInterface $cardRepository
      * @return \Illuminate\Http\JsonResponse
      */
     public function getAllUserCards(Request $request, CardService $cardService)
@@ -64,13 +63,14 @@ class CardsController extends Controller
     public function addCard(
         Request $request,
         CardInterface $cardRepository,
-        PhotoService $photoService)
+        PhotoService $photoService
+    )
     {
         $this->validateCardFields($request);
 
         $this->checkingValidityUuidCard($request->input('uuid'));
 
-        $this->isExistUuidInDataBase($request->input('uuid'), $cardRepository);
+        $this->isExistValueInDataBase('uuid', $request->input('uuid'), $cardRepository, 'Uuid must be unique');
 
         if ($request->input('front_photo') === $request->input('back_photo')) {
             abort(400, 'Url photos can not be the same');
@@ -79,20 +79,23 @@ class CardsController extends Controller
         $frontPhoto = $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
         $backPhoto = $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
 
+        $this->isExistValueInDataBase('front_photo', $frontPhoto->id, $cardRepository, 'Photo must be unique');
+        $this->isExistValueInDataBase('back_photo', $backPhoto->id, $cardRepository, 'Photo must be unique');
+
         $photoService->checkingUserPermission($request->input('front_photo'));
         $photoService->checkingUserPermission($request->input('back_photo'));
 
         $cardRepository->create([
             'user_id' => $request->user()->id,
             'title' => $request->input('title'),
-            'category_id' => $categoryId,
-            'front_photo' => $request->input('front_photo'),
-            'back_photo' => $request->input('back_photo'),
-            'discount' => $discount,
-            'uuid' => $request->input('uuid'),
-            'updated_at' => $request->input('updated_at')
+            'category_id' => $this->replacingEmptyStringWithNull($request->input('category_id')),
+            'front_photo' => $frontPhoto->id,
+            'back_photo' => $backPhoto->id,
+            'discount' => $this->replacingEmptyStringWithNull($request->input('discount')),
+            'uuid' => $request->input('uuid')
         ]);
     }
+
 
     /**
      * Метод удаления карты
@@ -101,7 +104,8 @@ class CardsController extends Controller
      * @param PhotoService $photoService
      * @param PhotoInterface $photoRepository
      */
-    public function deleteCard($uuid, CardInterface $cardRepository, PhotoService $photoService, PhotoInterface $photoRepository)
+    public
+    function deleteCard($uuid, CardInterface $cardRepository, PhotoService $photoService, PhotoInterface $photoRepository)
     {
         $this->checkingValidityUuidCard($uuid);
 
@@ -124,7 +128,8 @@ class CardsController extends Controller
      * @param CardInterface $cardRepository
      * @param PhotoService $photoService
      */
-    public function updateCard(Request $request, $uuid, CardInterface $cardRepository, PhotoService $photoService)
+    public
+    function updateCard(Request $request, $uuid, CardInterface $cardRepository, PhotoService $photoService)
     {
         $this->checkingValidityUuidCard($uuid);
 
@@ -179,18 +184,22 @@ class CardsController extends Controller
     }
 
     /**
-     * @param $uuid
+     * @param $field
+     * @param $value
      * @param CardInterface $cardRepository
+     * @param $message
+     * @internal param $uuid
      */
     private
-    function isExistUuidInDataBase($uuid, CardInterface $cardRepository)
+    function isExistValueInDataBase($field, $value, CardInterface $cardRepository, $message)
     {
-        if ($cardRepository->findOneBy('uuid', $uuid)) {
-            abort(400, 'Uuid must be unique');
+        if ($cardRepository->findOneBy($field, $value)) {
+            abort(400, $message);
         }
     }
 
-    private function replacingEmptyStringWithNull($value)
+    private
+    function replacingEmptyStringWithNull($value)
     {
         if ($value === '') {
             return null;
