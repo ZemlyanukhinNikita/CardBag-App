@@ -46,6 +46,10 @@ class PhotoService
             abort(400, 'Photo not found on server');
         }
 
+        if ($photos->deleted_at !== null) {
+            abort(400, 'The photo was deleted earlier');
+        }
+
         return $photos;
     }
 

@@ -115,10 +115,17 @@ class CardsController extends Controller
             abort(400, 'card`s UUID not found in database');
         }
 
-        $photoService->checkingUserPermission($photoRepository->findOneBy('id', $card->front_photo)->filename);
-        $photoService->checkingUserPermission($photoRepository->findOneBy('id', $card->back_photo)->filename);
+        $frontPhoto = $photoRepository->findOneBy('id', $card->front_photo);
+        $backPhoto = $photoRepository->findOneBy('id', $card->back_photo);
+
+        $photoService->checkingUserPermission($frontPhoto->filename);
+        $photoService->checkingUserPermission($backPhoto->filename);
 
         $cardRepository->delete('uuid', $uuid);
+
+        $photoRepository->update('filename', $frontPhoto->filename, ['deleted_at' => date(DATE_ATOM)]);
+        $photoRepository->update('filename', $backPhoto->filename, ['deleted_at' => date(DATE_ATOM)]);
+
     }
 
     /**

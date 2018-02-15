@@ -115,6 +115,6 @@ abstract class EloquentRepository implements ModelInterface
      */
     public function findAllWithEagerLoading(string $field, string $value, array $values)
     {
-        return $this->getModel()->where($field, $value)->with($values)->get();
+        return $this->getModel()->withTrashed()->where($field, $value)->with($values)->get();
     }
 }

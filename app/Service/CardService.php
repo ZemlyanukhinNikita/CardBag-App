@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Card;
 use app\Repositories\CardInterface;
 use app\Repositories\UserInterface;
 use Illuminate\Support\Facades\Storage;
@@ -24,14 +23,13 @@ class CardService
     public function __construct(
         UserInterface $userRepository,
         CardInterface $cardRepository,
-        CardGenerateService $cardGenerateService,
-        Card $card
+        CardGenerateService $cardGenerateService
     )
     {
         $this->userRepository = $userRepository;
         $this->cardRepository = $cardRepository;
         $this->cardGenerateService = $cardGenerateService;
-        $this->card = $card;
+
     }
 
     /**
