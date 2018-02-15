@@ -71,6 +71,10 @@ class CardsController extends Controller
 
         $this->isExistUuidInDataBase($request->input('uuid'), $cardRepository);
 
+        if ($request->input('front_photo') === $request->input('back_photo')) {
+            abort(400, 'Url photos can not be the same');
+        }
+
         $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
         $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
 
@@ -121,6 +125,10 @@ class CardsController extends Controller
         $card = $cardRepository->findOneBy('uuid', (string)$uuid);
         if (!$card) {
             abort(400, 'uuid not found in database');
+        }
+
+        if ($request->input('front_photo') === $request->input('back_photo')) {
+            abort(400, 'Url photos can not be the same');
         }
 
         $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
