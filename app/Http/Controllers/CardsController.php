@@ -63,7 +63,8 @@ class CardsController extends Controller
         Request $request,
         CardInterface $cardRepository,
         PhotoService $photoService
-    ) {
+    )
+    {
         $this->validateCardFields($request);
 
         $this->checkingValidityUuidCard($request->input('uuid'));
@@ -73,23 +74,13 @@ class CardsController extends Controller
         $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
         $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
 
-        $discount = $request->input('discount');
-        if ($discount === '') {
-            $discount = null;
-        }
-
-        $categoryId = $request->input('category_id');
-        if ($categoryId === '') {
-            $categoryId = null;
-        }
-
         $cardRepository->create([
             'user_id' => $request->user()->id,
             'title' => $request->input('title'),
-            'category_id' => $categoryId,
+            'category_id' => $this->replacingEmptyStringWithNull($request->input('category_id')),
             'front_photo' => $request->input('front_photo'),
             'back_photo' => $request->input('back_photo'),
-            'discount' => $discount,
+            'discount' => $this->replacingEmptyStringWithNull($request->input('discount')),
             'uuid' => $request->input('uuid'),
             'updated_at' => $request->input('updated_at')
         ]);
@@ -141,7 +132,7 @@ class CardsController extends Controller
                 'front_photo' => $request->input('front_photo'),
                 'back_photo' => $request->input('back_photo'),
                 'category_id' => $request->input('category_id'),
-                'discount' => $request->input('discount'),
+                'discount' => $this->replacingEmptyStringWithNull($request->input('discount')),
                 'updated_at' => $request->input('updated_at')
             ]);
 
@@ -162,7 +153,8 @@ class CardsController extends Controller
     public
     function checkingValidityUuidCard(
         $uuid
-    ) {
+    )
+    {
         if (!preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
             $uuid)
         ) {
@@ -178,11 +170,20 @@ class CardsController extends Controller
     function isExistUuidInDataBase(
         $uuid,
         CardInterface $cardRepository
-    ) {
+    )
+    {
         $uuid = $cardRepository->findOneBy('uuid', $uuid);
         if ($uuid) {
             abort(400, 'uuid must be unique');
         }
+    }
+
+    private function replacingEmptyStringWithNull($value)
+    {
+        if ($value === '') {
+            return null;
+        }
+        return $value;
     }
 }
 
