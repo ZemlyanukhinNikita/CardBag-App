@@ -94,16 +94,15 @@ class CardsController extends Controller
      * Метод удаления карты
      * @param $uuid
      * @param CardInterface $cardRepository
-     * @param PhotoService $photoService
      */
-    public function deleteCard($uuid, CardInterface $cardRepository, PhotoService $photoService)
+    public function deleteCard($uuid, CardInterface $cardRepository)
     {
         $this->checkingValidityUuidCard($uuid);
 
         $card = $cardRepository->findOneBy('uuid', (string)$uuid);
 
         if (!$card) {
-            abort(400, 'uuid not found in database');
+            abort(400, 'card`s UUID not found in database');
         }
 
         $cardRepository->delete('uuid', $uuid);
@@ -124,7 +123,7 @@ class CardsController extends Controller
 
         $card = $cardRepository->findOneBy('uuid', (string)$uuid);
         if (!$card) {
-            abort(400, 'uuid not found in database');
+            abort(400, 'card`s UUID not found in database');
         }
 
         if ($request->input('front_photo') === $request->input('back_photo')) {
@@ -166,7 +165,7 @@ class CardsController extends Controller
         if (!preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
             $uuid)
         ) {
-            abort(422, 'Invalid uuid');
+            abort(422, 'Invalid card`s UUID supplied');
         }
     }
 
@@ -182,7 +181,7 @@ class CardsController extends Controller
     {
         $uuid = $cardRepository->findOneBy('uuid', $uuid);
         if ($uuid) {
-            abort(400, 'uuid must be unique');
+            abort(400, 'Uuid must be unique');
         }
     }
 
