@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use app\Repositories\CardInterface;
-use App\Service;
+use app\Repositories\PhotoInterface;
 use App\Service\CardService;
 use App\Service\PhotoService;
 use Illuminate\Database\Eloquent\Collection;
@@ -40,16 +40,17 @@ class CardsController extends Controller
             'discount.max' => 'Введите размер скидки от 0 до :max',
             'front_photo.required' => 'Загрузите лицевое фото карты',
             'back_photo.required' => 'Загрузите фото обратной стороны карты',
-            'category_id.exists' => 'Такой категории в базе данных нет'
+            'category_id.exists' => 'Такой категории в базе данных нет',
         ];
 
         $this->validate($request, [
             'title' => 'required|max:40',
-            'category_id' => 'exists:categories,id',
+            'category_id' => 'nullable|exists:categories,id',
             'front_photo' => 'required|url',
             'back_photo' => 'required|url',
             'discount' => 'integer:discount|min:0|max:100',
             'uuid' => 'required',
+            'updated_at' => 'date'
         ], $messages);
     }
 
@@ -69,33 +70,42 @@ class CardsController extends Controller
 
         $this->checkingValidityUuidCard($request->input('uuid'));
 
-        $this->isExistUuidInDataBase($request->input('uuid'), $cardRepository);
+        $this->isExistValueInDataBase('uuid', $request->input('uuid'), $cardRepository, 'Uuid must be unique');
 
         if ($request->input('front_photo') === $request->input('back_photo')) {
             abort(400, 'Url photos can not be the same');
         }
 
-        $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
-        $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
+        $frontPhoto = $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
+        $backPhoto = $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
+
+        $this->isExistValueInDataBase('front_photo', $frontPhoto->id, $cardRepository, 'Photo must be unique');
+        $this->isExistValueInDataBase('back_photo', $backPhoto->id, $cardRepository, 'Photo must be unique');
+
+        $photoService->checkingUserPermission($request->input('front_photo'));
+        $photoService->checkingUserPermission($request->input('back_photo'));
 
         $cardRepository->create([
             'user_id' => $request->user()->id,
             'title' => $request->input('title'),
             'category_id' => $this->replacingEmptyStringWithNull($request->input('category_id')),
-            'front_photo' => $request->input('front_photo'),
-            'back_photo' => $request->input('back_photo'),
+            'front_photo' => $frontPhoto->id,
+            'back_photo' => $backPhoto->id,
             'discount' => $this->replacingEmptyStringWithNull($request->input('discount')),
-            'uuid' => $request->input('uuid'),
-            'updated_at' => $request->input('updated_at')
+            'uuid' => $request->input('uuid')
         ]);
     }
+
 
     /**
      * Метод удаления карты
      * @param $uuid
      * @param CardInterface $cardRepository
+     * @param PhotoService $photoService
+     * @param PhotoInterface $photoRepository
      */
-    public function deleteCard($uuid, CardInterface $cardRepository)
+    public
+    function deleteCard($uuid, CardInterface $cardRepository, PhotoService $photoService, PhotoInterface $photoRepository)
     {
         $this->checkingValidityUuidCard($uuid);
 
@@ -105,7 +115,17 @@ class CardsController extends Controller
             abort(400, 'card`s UUID not found in database');
         }
 
+        $frontPhoto = $photoRepository->findOneBy('id', $card->front_photo);
+        $backPhoto = $photoRepository->findOneBy('id', $card->back_photo);
+
+        $photoService->checkingUserPermission($frontPhoto->filename);
+        $photoService->checkingUserPermission($backPhoto->filename);
+
         $cardRepository->delete('uuid', $uuid);
+
+        $photoRepository->update('filename', $frontPhoto->filename, ['deleted_at' => date(DATE_ATOM)]);
+        $photoRepository->update('filename', $backPhoto->filename, ['deleted_at' => date(DATE_ATOM)]);
+
     }
 
     /**
@@ -115,7 +135,8 @@ class CardsController extends Controller
      * @param CardInterface $cardRepository
      * @param PhotoService $photoService
      */
-    public function updateCard(Request $request, $uuid, CardInterface $cardRepository, PhotoService $photoService)
+    public
+    function updateCard(Request $request, $uuid, CardInterface $cardRepository, PhotoService $photoService)
     {
         $this->checkingValidityUuidCard($uuid);
 
@@ -130,37 +151,37 @@ class CardsController extends Controller
             abort(400, 'Url photos can not be the same');
         }
 
-        $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
-        $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
+        $frontPhoto = $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
+        $backPhoto = $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
+
+        $photoService->checkingUserPermission($request->input('front_photo'));
+        $photoService->checkingUserPermission($request->input('back_photo'));
 
         $cardRepository->update('uuid', $uuid,
             [
                 'title' => $request->input('title'),
-                'front_photo' => $request->input('front_photo'),
-                'back_photo' => $request->input('back_photo'),
+                'front_photo' => $frontPhoto->id,
+                'back_photo' => $backPhoto->id,
                 'category_id' => $request->input('category_id'),
                 'discount' => $this->replacingEmptyStringWithNull($request->input('discount')),
-                'updated_at' => $request->input('updated_at')
+                'updated_at' => $request->input('updated_at'),
             ]);
 
-        if ($card->front_photo !== $request->input('front_photo')) {
-            $photoService->removingPhotoFromServer($card->front_photo);
+        if ($frontPhoto->filename !== basename($request->input('front_photo'))) {
+            $backPhoto->removingPhotoFromServer($frontPhoto->filename);
         }
 
-        if ($card->back_photo !== $request->input('back_photo')) {
-            $photoService->removingPhotoFromServer($card->back_photo);
+        if ($backPhoto->filename !== basename($request->input('back_photo'))) {
+            $photoService->removingPhotoFromServer($backPhoto->filename);
         }
-
     }
 
     /**
      * Проверка валидности uuid карты
      * @param $uuid
      */
-    public
-    function checkingValidityUuidCard(
-        $uuid
-    )
+    private
+    function checkingValidityUuidCard($uuid)
     {
         if (!preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
             $uuid)
@@ -170,22 +191,23 @@ class CardsController extends Controller
     }
 
     /**
-     * @param $uuid
+     * @param $field
+     * @param $value
      * @param CardInterface $cardRepository
+     * @param $message
+     * @internal param $uuid
      */
-    public
-    function isExistUuidInDataBase(
-        $uuid,
-        CardInterface $cardRepository
-    )
+    private
+    function isExistValueInDataBase($field, $value, CardInterface $cardRepository, $message)
     {
-        $uuid = $cardRepository->findOneByWithTrashedBy('uuid', $uuid);
-        if ($uuid) {
-            abort(400, 'Uuid must be unique');
+        if ($cardRepository->findOneByWithTrashedBy($field, $value)) {
+            abort(400, $message);
         }
+        return $value;
     }
 
-    private function replacingEmptyStringWithNull($value)
+    private
+    function replacingEmptyStringWithNull($value)
     {
         if ($value === '') {
             return null;
@@ -193,4 +215,3 @@ class CardsController extends Controller
         return $value;
     }
 }
-
