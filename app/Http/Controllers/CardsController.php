@@ -203,6 +203,7 @@ class CardsController extends Controller
         if ($cardRepository->findOneByWithTrashedBy($field, $value)) {
             abort(400, $message);
         }
+        return $value;
     }
 
     private
