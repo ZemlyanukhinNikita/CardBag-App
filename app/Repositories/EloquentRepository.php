@@ -39,6 +39,18 @@ abstract class EloquentRepository implements ModelInterface
 
     /**
      * {@inheritDoc}
+     * Метод получения всех моделей, вместе с удаленными, где $field == $value
+     * @param string $field
+     * @param $value
+     * @return mixed
+     */
+    public function findAllWithTrashedBy(string $field, $value)
+    {
+        return $this->getModel()->withTrashed()->where($field, $value)->get();
+    }
+
+    /**
+     * {@inheritDoc}
      * Метод получения модели, где $field == $value
      * @param string $field
      * @param $value
@@ -47,6 +59,11 @@ abstract class EloquentRepository implements ModelInterface
     public function findOneBy(string $field, $value)
     {
         return $this->getModel()->where($field, $value)->first();
+    }
+
+    public function findOneByWithTrashedBy(string $field, $value)
+    {
+        return $this->getModel()->withTrashed()->where($field, $value)->first();
     }
 
     /**
@@ -80,5 +97,10 @@ abstract class EloquentRepository implements ModelInterface
     public function delete(string $field, string $value)
     {
         return $this->getModel()->where($field, $value)->delete();
+    }
+
+    public function update(string $field, string $value, array $values)
+    {
+        return $this->getModel()->where($field, $value)->update($values);
     }
 }

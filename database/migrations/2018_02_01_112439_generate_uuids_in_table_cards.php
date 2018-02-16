@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Ramsey\Uuid\Uuid;
@@ -15,7 +14,7 @@ class GenerateUuidsInTableCards extends Migration
      */
     public function up()
     {
-        Schema::table('cards', function (Blueprint $table) {
+        Schema::table('cards', function () {
             $results = DB::table('cards')->select('id', 'uuid')->get();
 
             foreach ($results as $result) {
@@ -35,8 +34,5 @@ class GenerateUuidsInTableCards extends Migration
      */
     public function down()
     {
-        Schema::table('cards', function (Blueprint $table) {
-            //
-        });
     }
 }

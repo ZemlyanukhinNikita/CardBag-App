@@ -3,6 +3,7 @@
 use app\Repositories\CardInterface;
 use App\Service;
 use App\Service\CardService;
+use App\Service\PhotoService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
@@ -48,7 +49,7 @@ class CardsController extends Controller
             'front_photo' => 'required|url',
             'back_photo' => 'required|url',
             'discount' => 'integer:discount|min:0|max:100',
-            'uuid' => 'unique:cards'
+            'uuid' => 'required',
         ], $messages);
     }
 
@@ -56,106 +57,140 @@ class CardsController extends Controller
      * Метод добавления карты
      * @param Request $request
      * @param CardInterface $cardRepository
+     * @param PhotoService $photoService
      */
     public function addCard(
         Request $request,
-        CardInterface $cardRepository
+        CardInterface $cardRepository,
+        PhotoService $photoService
     )
     {
         $this->validateCardFields($request);
 
-        if (!(file_exists('storage/' . basename($request->input('front_photo'))) &&
-            file_exists('storage/' . basename($request->input('back_photo')))
-        )
-        ) {
-            abort(400, 'photo not found on server');
+        $this->checkingValidityUuidCard($request->input('uuid'));
+
+        $this->isExistUuidInDataBase($request->input('uuid'), $cardRepository);
+
+        if ($request->input('front_photo') === $request->input('back_photo')) {
+            abort(400, 'Url photos can not be the same');
         }
+
+        $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
+        $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
 
         $cardRepository->create([
             'user_id' => $request->user()->id,
             'title' => $request->input('title'),
-            'category_id' => $request->input('category_id'),
+            'category_id' => $this->replacingEmptyStringWithNull($request->input('category_id')),
             'front_photo' => $request->input('front_photo'),
             'back_photo' => $request->input('back_photo'),
-            'discount' => $request->input('discount'),
-            'uuid' => $request->input('uuid')
+            'discount' => $this->replacingEmptyStringWithNull($request->input('discount')),
+            'uuid' => $request->input('uuid'),
+            'updated_at' => $request->input('updated_at')
         ]);
     }
 
     /**
      * Метод удаления карты
      * @param $uuid
-     * @param Request $request
      * @param CardInterface $cardRepository
      */
-    public function deleteCard(Request $request, $uuid, CardInterface $cardRepository)
+    public function deleteCard($uuid, CardInterface $cardRepository)
     {
         $this->checkingValidityUuidCard($uuid);
 
-        if ($cardRepository->findAllBy('uuid', (string)$uuid)->isEmpty()) {
-            abort(400, 'uuid not found in database');
+        $card = $cardRepository->findOneBy('uuid', (string)$uuid);
+
+        if (!$card) {
+            abort(400, 'card`s UUID not found in database');
         }
-
-        //$this->checkPermissionUser($request, $cardRepository, $uuid);
-
-        $this->removingPhotosFromServer(basename($cardRepository->findOneBy('uuid', $uuid)->front_photo),
-            basename($cardRepository->findOneBy('uuid', $uuid)->back_photo));
 
         $cardRepository->delete('uuid', $uuid);
     }
 
     /**
-     * Удаление фото с сервера
-     * @param $frontPhoto
-     * @param $backPhoto
+     * Метод редактирования карты
+     * @param Request $request
+     * @param $uuid
+     * @param CardInterface $cardRepository
+     * @param PhotoService $photoService
      */
-    public function removingPhotosFromServer($frontPhoto, $backPhoto)
+    public function updateCard(Request $request, $uuid, CardInterface $cardRepository, PhotoService $photoService)
     {
-        if (!(file_exists('storage/' . $frontPhoto) && file_exists('storage/' . $backPhoto))) {
-            abort(400, 'photo not found');
+        $this->checkingValidityUuidCard($uuid);
+
+        $this->validateCardFields($request);
+
+        $card = $cardRepository->findOneBy('uuid', (string)$uuid);
+        if (!$card) {
+            abort(400, 'card`s UUID not found in database');
         }
-        unlink('storage/' . $frontPhoto);
-        unlink('storage/' . $backPhoto);
+
+        if ($request->input('front_photo') === $request->input('back_photo')) {
+            abort(400, 'Url photos can not be the same');
+        }
+
+        $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
+        $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
+
+        $cardRepository->update('uuid', $uuid,
+            [
+                'title' => $request->input('title'),
+                'front_photo' => $request->input('front_photo'),
+                'back_photo' => $request->input('back_photo'),
+                'category_id' => $request->input('category_id'),
+                'discount' => $this->replacingEmptyStringWithNull($request->input('discount')),
+                'updated_at' => $request->input('updated_at')
+            ]);
+
+        if ($card->front_photo !== $request->input('front_photo')) {
+            $photoService->removingPhotoFromServer($card->front_photo);
+        }
+
+        if ($card->back_photo !== $request->input('back_photo')) {
+            $photoService->removingPhotoFromServer($card->back_photo);
+        }
+
     }
 
     /**
      * Проверка валидности uuid карты
      * @param $uuid
      */
-    public function checkingValidityUuidCard($uuid)
+    public
+    function checkingValidityUuidCard(
+        $uuid
+    )
     {
         if (!preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
             $uuid)
         ) {
-            abort(422, 'Invalid uuid');
+            abort(422, 'Invalid card`s UUID supplied');
         }
     }
 
     /**
-     * Проверка имеются ли присланные с формы фотографии на сервере
-     * @param $frontPhoto
-     * @param $backPhoto
-     */
-    public function checkingSentPhotosOnServer($frontPhoto, $backPhoto)
-    {
-        if (!(file_exists('storage/' . basename($frontPhoto)) &&
-            file_exists('storage/' . basename($backPhoto))
-        )
-        ) {
-            abort(400, 'photo not found on server');
-        }
-    }
-
-    /**
-     * Проверка того, что карточка принадлежит пользователю
-     * @param Request $request
-     * @param CardInterface $cardRepository
      * @param $uuid
+     * @param CardInterface $cardRepository
      */
-    public function checkPermissionUser(Request $request, CardInterface $cardRepository, $uuid)
+    public
+    function isExistUuidInDataBase(
+        $uuid,
+        CardInterface $cardRepository
+    )
     {
-        if ($cardRepository->findOneBy('uuid', $uuid)->user_id !== $request->user()->id) {
-            abort(403, 'Permission denied');
+        $uuid = $cardRepository->findOneByWithTrashedBy('uuid', $uuid);
+        if ($uuid) {
+            abort(400, 'Uuid must be unique');
         }
+    }
+
+    private function replacingEmptyStringWithNull($value)
+    {
+        if ($value === '') {
+            return null;
+        }
+        return $value;
     }
 }
+

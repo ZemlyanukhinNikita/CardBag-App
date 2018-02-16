@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddIndexUniqueUuidInTableCards extends Migration
+class AddNullableIndex extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AddIndexUniqueUuidInTableCards extends Migration
     public function up()
     {
         Schema::table('cards', function (Blueprint $table) {
-            $table->string('uuid', 36)->unique()->change();
+            $table->integer('discount')->nullable()->change();
         });
     }
 
@@ -25,5 +25,8 @@ class AddIndexUniqueUuidInTableCards extends Migration
      */
     public function down()
     {
+        Schema::table('cards', function (Blueprint $table) {
+            $table->integer('discount')->change();
+        });
     }
 }
