@@ -200,7 +200,7 @@ class CardsController extends Controller
     private
     function isExistValueInDataBase($field, $value, CardInterface $cardRepository, $message)
     {
-        if ($cardRepository->findOneBy($field, $value)) {
+        if ($cardRepository->findOneByWithTrashedBy($field, $value)) {
             abort(400, $message);
         }
     }

@@ -61,6 +61,11 @@ abstract class EloquentRepository implements ModelInterface
         return $this->getModel()->where($field, $value)->first();
     }
 
+    public function findOneByWithTrashedBy(string $field, $value)
+    {
+        return $this->getModel()->withTrashed()->where($field, $value)->first();
+    }
+
     /**
      * {@inheritDoc}
      * Метод получения всех моделей

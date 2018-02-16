@@ -44,6 +44,8 @@ interface ModelInterface
      */
     public function findAll();
 
+    public function findOneByWithTrashedBy(string $field, $value);
+    
     /**
      * Метод получения всех моделей отсортированных по алфавиту, реализуется в дочерних классах
      * @param String $field
