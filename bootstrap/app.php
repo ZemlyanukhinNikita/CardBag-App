@@ -37,6 +37,7 @@ $app->withEloquent();
 |
 */
 $app->configure('filesystems');
+$app->configure('queue');
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
@@ -55,6 +56,15 @@ $app->singleton('filesystem', function ($app) {
         'filesystem'
     );
 });
+
+$app->singleton('queue', function ($app) {
+    return $app->loadComponent(
+        'queue',
+        VladimirYuldashev\LaravelQueueRabbitMQ\LaravelQueueRabbitMQServiceProvider::class,
+        'queue'
+    );
+});
+
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -92,6 +102,7 @@ $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register('Wn\Generators\CommandsServiceProvider');
 $app->singleton('RobbieP\ZbarQrdecoder\ZbarQrdecoderServiceProvider');
+$app->register('VladimirYuldashev\LaravelQueueRabbitMQ\LaravelQueueRabbitMQServiceProvider');
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "09fd1b02b5e8de0faddefd3a61501ac2",
+    "content-hash": "6682554770fd6a54b7ba48989f069694",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.52.3",
+            "version": "3.52.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "c6fa9217f1ff1cbfd8c498bb6deff5f342615717"
+                "reference": "0deaf5d0bdb6d50cba51e22838f2a99ad1195954"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c6fa9217f1ff1cbfd8c498bb6deff5f342615717",
-                "reference": "c6fa9217f1ff1cbfd8c498bb6deff5f342615717",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0deaf5d0bdb6d50cba51e22838f2a99ad1195954",
+                "reference": "0deaf5d0bdb6d50cba51e22838f2a99ad1195954",
                 "shasum": ""
             },
             "require": {
@@ -84,7 +84,70 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-02-05T21:14:16+00:00"
+            "time": "2018-02-14T23:26:04+00:00"
+        },
+        {
+            "name": "bunny/bunny",
+            "version": "v0.2.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jakubkulhan/bunny.git",
+                "reference": "f81da29e8a279af2b9af80fa041b84497a26ddf8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jakubkulhan/bunny/zipball/f81da29e8a279af2b9af80fa041b84497a26ddf8",
+                "reference": "f81da29e8a279af2b9af80fa041b84497a26ddf8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "psr/log": "~1.0",
+                "react/event-loop": "~0.4",
+                "react/promise": "~2.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Bunny\\": [
+                        "src/Bunny/",
+                        "test/Bunny/"
+                    ]
+                },
+                "classmap": [
+                    "src/Bunny/",
+                    "test/Bunny/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jakub Kulhan",
+                    "email": "jakub.kulhan@gmail.com"
+                }
+            ],
+            "description": "Performant pure-PHP AMQP (RabbitMQ) sync/async (ReactPHP) library",
+            "keywords": [
+                "AMQP",
+                "bunny",
+                "exchange",
+                "message",
+                "messaging",
+                "queue",
+                "queueing",
+                "rabbit",
+                "rabbitmq",
+                "react",
+                "react-php",
+                "reactphp"
+            ],
+            "time": "2016-09-13T18:57:54+00:00"
         },
         {
             "name": "doctrine/inflector",
@@ -152,6 +215,176 @@
                 "string"
             ],
             "time": "2017-07-22T12:18:28+00:00"
+        },
+        {
+            "name": "enqueue/amqp-bunny",
+            "version": "0.8.15",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-enqueue/amqp-bunny.git",
+                "reference": "dba2bd13b460060f517a301205075e29f3c7b143"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-enqueue/amqp-bunny/zipball/dba2bd13b460060f517a301205075e29f3c7b143",
+                "reference": "dba2bd13b460060f517a301205075e29f3c7b143",
+                "shasum": ""
+            },
+            "require": {
+                "bunny/bunny": "^0.2.4",
+                "enqueue/amqp-tools": "^0.8.4@dev",
+                "php": ">=5.6",
+                "queue-interop/amqp-interop": "^0.7@dev"
+            },
+            "require-dev": {
+                "enqueue/enqueue": "^0.8@dev",
+                "enqueue/null": "^0.8@dev",
+                "enqueue/test": "^0.8@dev",
+                "phpunit/phpunit": "~5.4.0",
+                "queue-interop/queue-spec": "^0.5.3@dev",
+                "symfony/config": "^2.8|^3|^4",
+                "symfony/dependency-injection": "^2.8|^3|^4"
+            },
+            "suggest": {
+                "enqueue/enqueue": "If you'd like to use advanced features like Client abstract layer or Symfony integration features"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.8.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Enqueue\\AmqpBunny\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Message Queue Amqp Transport",
+            "homepage": "https://enqueue.forma-pro.com/",
+            "keywords": [
+                "AMQP",
+                "bunny",
+                "messaging",
+                "queue"
+            ],
+            "time": "2018-01-12T14:43:59+00:00"
+        },
+        {
+            "name": "enqueue/amqp-lib",
+            "version": "0.8.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-enqueue/amqp-lib.git",
+                "reference": "f9907d368d06d72a45dd8a34e87ea20bbf528103"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-enqueue/amqp-lib/zipball/f9907d368d06d72a45dd8a34e87ea20bbf528103",
+                "reference": "f9907d368d06d72a45dd8a34e87ea20bbf528103",
+                "shasum": ""
+            },
+            "require": {
+                "enqueue/amqp-tools": "^0.8.5@dev",
+                "php": ">=5.6",
+                "php-amqplib/php-amqplib": "^2.7@dev",
+                "queue-interop/amqp-interop": "^0.7@dev",
+                "queue-interop/queue-interop": "^0.6@dev"
+            },
+            "require-dev": {
+                "enqueue/enqueue": "^0.8@dev",
+                "enqueue/null": "^0.8@dev",
+                "enqueue/test": "^0.8@dev",
+                "phpunit/phpunit": "~5.4.0",
+                "queue-interop/queue-spec": "^0.5.3@dev",
+                "symfony/config": "^2.8|^3",
+                "symfony/dependency-injection": "^2.8|^3"
+            },
+            "suggest": {
+                "enqueue/enqueue": "If you'd like to use advanced features like Client abstract layer or Symfony integration features"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.8.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Enqueue\\AmqpLib\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Message Queue Amqp Transport",
+            "keywords": [
+                "AMQP",
+                "messaging",
+                "queue"
+            ],
+            "time": "2017-11-02T12:49:05+00:00"
+        },
+        {
+            "name": "enqueue/amqp-tools",
+            "version": "0.8.14",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-enqueue/amqp-tools.git",
+                "reference": "f375dee4d8609fca565a80df1c0f238bf0fe774f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-enqueue/amqp-tools/zipball/f375dee4d8609fca565a80df1c0f238bf0fe774f",
+                "reference": "f375dee4d8609fca565a80df1c0f238bf0fe774f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6",
+                "queue-interop/amqp-interop": "^0.7@dev",
+                "queue-interop/queue-interop": "^0.6@dev"
+            },
+            "require-dev": {
+                "enqueue/null": "^0.8@dev",
+                "enqueue/test": "^0.8@dev",
+                "phpunit/phpunit": "~5.4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.8.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Enqueue\\AmqpTools\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Message Queue Amqp Tools",
+            "homepage": "https://enqueue.forma-pro.com/",
+            "keywords": [
+                "AMQP",
+                "messaging",
+                "queue"
+            ],
+            "time": "2018-01-10T12:00:35+00:00"
         },
         {
             "name": "fzaninotto/faker",
@@ -386,7 +619,7 @@
         },
         {
             "name": "illuminate/auth",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/auth.git",
@@ -437,7 +670,7 @@
         },
         {
             "name": "illuminate/broadcasting",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/broadcasting.git",
@@ -487,7 +720,7 @@
         },
         {
             "name": "illuminate/bus",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/bus.git",
@@ -532,7 +765,7 @@
         },
         {
             "name": "illuminate/cache",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/cache.git",
@@ -581,7 +814,7 @@
         },
         {
             "name": "illuminate/config",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/config.git",
@@ -625,7 +858,7 @@
         },
         {
             "name": "illuminate/console",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/console.git",
@@ -675,7 +908,7 @@
         },
         {
             "name": "illuminate/container",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/container.git",
@@ -719,7 +952,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -763,16 +996,16 @@
         },
         {
             "name": "illuminate/database",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/database.git",
-                "reference": "e25d8236f849d2166fdd13ab15e391aecb954a4a"
+                "reference": "4c608d7e46baa06f5250de1a4a459c1d0dbb08ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/database/zipball/e25d8236f849d2166fdd13ab15e391aecb954a4a",
-                "reference": "e25d8236f849d2166fdd13ab15e391aecb954a4a",
+                "url": "https://api.github.com/repos/illuminate/database/zipball/4c608d7e46baa06f5250de1a4a459c1d0dbb08ad",
+                "reference": "4c608d7e46baa06f5250de1a4a459c1d0dbb08ad",
                 "shasum": ""
             },
             "require": {
@@ -818,11 +1051,11 @@
                 "orm",
                 "sql"
             ],
-            "time": "2018-01-24T13:56:01+00:00"
+            "time": "2018-02-05T15:11:42+00:00"
         },
         {
             "name": "illuminate/encryption",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/encryption.git",
@@ -868,7 +1101,7 @@
         },
         {
             "name": "illuminate/events",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/events.git",
@@ -913,7 +1146,7 @@
         },
         {
             "name": "illuminate/filesystem",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/filesystem.git",
@@ -963,7 +1196,7 @@
         },
         {
             "name": "illuminate/hashing",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/hashing.git",
@@ -1007,7 +1240,7 @@
         },
         {
             "name": "illuminate/http",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/http.git",
@@ -1053,7 +1286,7 @@
         },
         {
             "name": "illuminate/pagination",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/pagination.git",
@@ -1097,7 +1330,7 @@
         },
         {
             "name": "illuminate/pipeline",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/pipeline.git",
@@ -1141,7 +1374,7 @@
         },
         {
             "name": "illuminate/queue",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/queue.git",
@@ -1198,7 +1431,7 @@
         },
         {
             "name": "illuminate/session",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/session.git",
@@ -1248,16 +1481,16 @@
         },
         {
             "name": "illuminate/support",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
-                "reference": "f6eb4fc687a1956cb44007604cd31dc50858eca9"
+                "reference": "139eb279bc18a1229c6c49a618d122c613edb2c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/support/zipball/f6eb4fc687a1956cb44007604cd31dc50858eca9",
-                "reference": "f6eb4fc687a1956cb44007604cd31dc50858eca9",
+                "url": "https://api.github.com/repos/illuminate/support/zipball/139eb279bc18a1229c6c49a618d122c613edb2c7",
+                "reference": "139eb279bc18a1229c6c49a618d122c613edb2c7",
                 "shasum": ""
             },
             "require": {
@@ -1301,11 +1534,11 @@
             ],
             "description": "The Illuminate Support package.",
             "homepage": "https://laravel.com",
-            "time": "2018-01-19T13:47:08+00:00"
+            "time": "2018-02-04T20:29:16+00:00"
         },
         {
             "name": "illuminate/translation",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/translation.git",
@@ -1350,7 +1583,7 @@
         },
         {
             "name": "illuminate/validation",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/validation.git",
@@ -1400,7 +1633,7 @@
         },
         {
             "name": "illuminate/view",
-            "version": "v5.5.33",
+            "version": "v5.5.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/view.git",
@@ -1987,20 +2220,23 @@
         },
         {
             "name": "nikic/fast-route",
-            "version": "v1.2.0",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/FastRoute.git",
-                "reference": "b5f95749071c82a8e0f58586987627054400cdf6"
+                "reference": "181d480e08d9476e61381e04a71b34dc0432e812"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/FastRoute/zipball/b5f95749071c82a8e0f58586987627054400cdf6",
-                "reference": "b5f95749071c82a8e0f58586987627054400cdf6",
+                "url": "https://api.github.com/repos/nikic/FastRoute/zipball/181d480e08d9476e61381e04a71b34dc0432e812",
+                "reference": "181d480e08d9476e61381e04a71b34dc0432e812",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35|~5.7"
             },
             "type": "library",
             "autoload": {
@@ -2026,7 +2262,7 @@
                 "router",
                 "routing"
             ],
-            "time": "2017-01-19T11:35:12+00:00"
+            "time": "2018-02-13T20:26:39+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -2077,73 +2313,75 @@
             "time": "2017-09-27T21:40:39+00:00"
         },
         {
-            "name": "picqer/php-barcode-generator",
-            "version": "v0.2.2",
+            "name": "php-amqplib/php-amqplib",
+            "version": "v2.7.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/picqer/php-barcode-generator.git",
-                "reference": "f754cbd592f3131af144dfcc6a3090fd0f6d1793"
+                "url": "https://github.com/php-amqplib/php-amqplib.git",
+                "reference": "dfd3694a86f1a7394d3693485259d4074a6ec79b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/picqer/php-barcode-generator/zipball/f754cbd592f3131af144dfcc6a3090fd0f6d1793",
-                "reference": "f754cbd592f3131af144dfcc6a3090fd0f6d1793",
+                "url": "https://api.github.com/repos/php-amqplib/php-amqplib/zipball/dfd3694a86f1a7394d3693485259d4074a6ec79b",
+                "reference": "dfd3694a86f1a7394d3693485259d4074a6ec79b",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0"
+                "ext-bcmath": "*",
+                "ext-mbstring": "*",
+                "php": ">=5.3.0"
+            },
+            "replace": {
+                "videlalvaro/php-amqplib": "self.version"
             },
             "require-dev": {
-                "phpunit/phpunit": "^5.3"
+                "phpdocumentor/phpdocumentor": "^2.9",
+                "phpunit/phpunit": "^4.8",
+                "scrutinizer/ocular": "^1.1",
+                "squizlabs/php_codesniffer": "^2.5"
+            },
+            "suggest": {
+                "ext-sockets": "Use AMQPSocketConnection"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
-                    "Picqer\\Barcode\\": "src"
+                    "PhpAmqpLib\\": "PhpAmqpLib/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "LGPLv3"
+                "LGPL-2.1-or-later"
             ],
             "authors": [
                 {
-                    "name": "Nicola Asuni",
-                    "email": "info@tecnick.com",
-                    "homepage": "http://nicolaasuni.tecnick.com"
+                    "name": "Alvaro Videla",
+                    "role": "Original Maintainer"
                 },
                 {
-                    "name": "Casper Bakker",
-                    "email": "info@picqer.com"
+                    "name": "John Kelly",
+                    "email": "johnmkelly86@gmail.com",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Raúl Araya",
+                    "email": "nubeiro@gmail.com",
+                    "role": "Maintainer"
                 }
             ],
-            "description": "An easy to use, non-bloated, barcode generator in PHP. Creates SVG, PNG, JPG and HTML images from the most used 1D barcode standards.",
-            "homepage": "http://github.com/picqer/php-barcode-generator",
+            "description": "Formerly videlalvaro/php-amqplib.  This library is a pure PHP implementation of the AMQP protocol. It's been tested against RabbitMQ.",
+            "homepage": "https://github.com/php-amqplib/php-amqplib/",
             "keywords": [
-                "CODABAR",
-                "Code11",
-                "Code93",
-                "EAN13",
-                "KIX",
-                "KIXCODE",
-                "MSI",
-                "POSTNET",
-                "Pharma",
-                "Standard 2 of 5",
-                "barcode",
-                "barcode generator",
-                "code128",
-                "code39",
-                "ean",
-                "html",
-                "jpeg",
-                "jpg",
-                "php",
-                "png",
-                "svg",
-                "upc"
+                "message",
+                "queue",
+                "rabbitmq"
             ],
-            "time": "2017-09-28T19:23:19+00:00"
+            "time": "2018-02-11T19:28:00+00:00"
         },
         {
             "name": "psr/container",
@@ -2340,6 +2578,87 @@
             "time": "2017-01-02T13:31:39+00:00"
         },
         {
+            "name": "queue-interop/amqp-interop",
+            "version": "0.7.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/queue-interop/amqp-interop.git",
+                "reference": "03cfac42483d07ab45d1896a6a2e1d873a216bba"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/queue-interop/amqp-interop/zipball/03cfac42483d07ab45d1896a6a2e1d873a216bba",
+                "reference": "03cfac42483d07ab45d1896a6a2e1d873a216bba",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5",
+                "queue-interop/queue-interop": "^0.6@dev"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~5.4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.7.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Interop\\Amqp\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "time": "2018-01-04T09:52:06+00:00"
+        },
+        {
+            "name": "queue-interop/queue-interop",
+            "version": "0.6.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/queue-interop/queue-interop.git",
+                "reference": "38579005c0492c0275bbae31170edf30a7e740fa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/queue-interop/queue-interop/zipball/38579005c0492c0275bbae31170edf30a7e740fa",
+                "reference": "38579005c0492c0275bbae31170edf30a7e740fa",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.6.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Interop\\Queue\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Promoting the interoperability of MQs objects. Based on Java JMS",
+            "homepage": "https://github.com/queue-interop/queue-interop",
+            "keywords": [
+                "MQ",
+                "jms",
+                "message queue",
+                "messaging",
+                "queue"
+            ],
+            "time": "2017-08-10T11:24:15+00:00"
+        },
+        {
             "name": "ramsey/uuid",
             "version": "3.7.3",
             "source": {
@@ -2418,6 +2737,94 @@
                 "uuid"
             ],
             "time": "2018-01-20T00:28:24+00:00"
+        },
+        {
+            "name": "react/event-loop",
+            "version": "v0.4.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/reactphp/event-loop.git",
+                "reference": "8bde03488ee897dc6bb3d91e4e17c353f9c5252f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/reactphp/event-loop/zipball/8bde03488ee897dc6bb3d91e4e17c353f9c5252f",
+                "reference": "8bde03488ee897dc6bb3d91e4e17c353f9c5252f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8"
+            },
+            "suggest": {
+                "ext-event": "~1.0",
+                "ext-libev": "*",
+                "ext-libevent": ">=0.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "React\\EventLoop\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Event loop abstraction layer that libraries can use for evented I/O.",
+            "keywords": [
+                "asynchronous",
+                "event-loop"
+            ],
+            "time": "2017-04-27T10:56:23+00:00"
+        },
+        {
+            "name": "react/promise",
+            "version": "v2.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/reactphp/promise.git",
+                "reference": "62785ae604c8d69725d693eb370e1d67e94c4053"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/reactphp/promise/zipball/62785ae604c8d69725d693eb370e1d67e94c4053",
+                "reference": "62785ae604c8d69725d693eb370e1d67e94c4053",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "React\\Promise\\": "src/"
+                },
+                "files": [
+                    "src/functions_include.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jan Sorgalla",
+                    "email": "jsorgalla@gmail.com"
+                }
+            ],
+            "description": "A lightweight implementation of CommonJS Promises/A for PHP",
+            "keywords": [
+                "promise",
+                "promises"
+            ],
+            "time": "2017-03-25T12:08:31+00:00"
         },
         {
             "name": "robbiep/zbar-qrdecoder",
@@ -3081,6 +3488,62 @@
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
             "time": "2018-01-18T22:16:57+00:00"
+        },
+        {
+            "name": "vladimir-yuldashev/laravel-queue-rabbitmq",
+            "version": "v6.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vyuldashev/laravel-queue-rabbitmq.git",
+                "reference": "f73637fc3d4e1b82ae5aa907566623debc344598"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vyuldashev/laravel-queue-rabbitmq/zipball/f73637fc3d4e1b82ae5aa907566623debc344598",
+                "reference": "f73637fc3d4e1b82ae5aa907566623debc344598",
+                "shasum": ""
+            },
+            "require": {
+                "enqueue/amqp-lib": "0.8.5",
+                "illuminate/database": "5.5.*",
+                "illuminate/queue": "5.5.*",
+                "illuminate/support": "5.5.*",
+                "php": ">=7.0",
+                "queue-interop/amqp-interop": "^0.7"
+            },
+            "require-dev": {
+                "illuminate/events": "5.5.*",
+                "mockery/mockery": "~1.0",
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "6.0-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "VladimirYuldashev\\LaravelQueueRabbitMQ\\LaravelQueueRabbitMQServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "VladimirYuldashev\\LaravelQueueRabbitMQ\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vladimir Yuldashev",
+                    "email": "misterio92@gmail.com"
+                }
+            ],
+            "description": "RabbitMQ driver for Laravel Queue",
+            "time": "2018-01-10T08:52:51+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -4048,16 +4511,16 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "1.7.3",
+            "version": "1.7.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "e4ed002c67da8eceb0eb8ddb8b3847bb53c5c2bf"
+                "reference": "9f901e29c93dae4aa77c0bb161df4276f9c9a1be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/e4ed002c67da8eceb0eb8ddb8b3847bb53c5c2bf",
-                "reference": "e4ed002c67da8eceb0eb8ddb8b3847bb53c5c2bf",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/9f901e29c93dae4aa77c0bb161df4276f9c9a1be",
+                "reference": "9f901e29c93dae4aa77c0bb161df4276f9c9a1be",
                 "shasum": ""
             },
             "require": {
@@ -4069,7 +4532,7 @@
             },
             "require-dev": {
                 "phpspec/phpspec": "^2.5|^3.2",
-                "phpunit/phpunit": "^4.8.35 || ^5.7"
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.5"
             },
             "type": "library",
             "extra": {
@@ -4107,7 +4570,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2017-11-24T13:59:53+00:00"
+            "time": "2018-02-11T18:49:29+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",

@@ -14,7 +14,10 @@
         "ramsey/uuid": "^3.7",
         "laravelista/lumen-vendor-publish": "^2.1",
         "robbiep/zbar-qrdecoder": "^2.0",
-        "milon/barcode": "^5.3"
+        "milon/barcode": "^5.3",
+        "vladimir-yuldashev/laravel-queue-rabbitmq": "6.0.3",
+        "php-amqplib/php-amqplib": "^2.7",
+        "enqueue/amqp-bunny": "^0.8"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
