@@ -99,8 +99,27 @@ abstract class EloquentRepository implements ModelInterface
         return $this->getModel()->where($field, $value)->delete();
     }
 
+    /**
+     * Метод изменения модели в базе данных, реализуется в дочерних классах
+     * @param string $field
+     * @param string $value
+     * @param array $values
+     * @return mixed
+     */
     public function update(string $field, string $value, array $values)
     {
         return $this->getModel()->where($field, $value)->update($values);
+    }
+
+    /**
+     * Метод получения модели с жадной загрузкой
+     * @param string $field
+     * @param string $value
+     * @param array $values
+     * @return mixed
+     */
+    public function findAllWithEagerLoading(string $field, string $value, array $values)
+    {
+        return $this->getModel()->withTrashed()->where($field, $value)->with($values)->get();
     }
 }

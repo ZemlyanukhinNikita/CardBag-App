@@ -16,4 +16,10 @@ class User extends Model
     {
         return $this->hasMany(Card::class);
     }
+
+    public function photos()
+    {
+        return $this->hasMany(Card::class);
+    }
+
 }

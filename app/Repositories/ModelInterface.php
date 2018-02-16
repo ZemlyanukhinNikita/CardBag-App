@@ -46,6 +46,8 @@ interface ModelInterface
      */
     public function findAll();
 
+    public function findOneByWithTrashedBy(string $field, $value);
+    
     /**
      * Метод получения всех моделей отсортированных по алфавиту, реализуется в дочерних классах
      * @param String $field
@@ -70,4 +72,13 @@ interface ModelInterface
      * @return mixed
      */
     public function update(string $field, string $value, array $values);
+
+    /**
+     * Метод получения модели с жадной загрузкой
+     * @param string $field
+     * @param string $value
+     * @param array $values
+     * @return mixed
+     */
+    public function findAllWithEagerLoading(string $field, string $value, array $values);
 }
