@@ -38,6 +38,8 @@ interface ModelInterface
      */
     public function findOneBy(string $field, $value);
 
+    public function findOneByWithTrashedBy(string $field, $value);
+
     /**
      * Метод получения всех моделей, реализуется в дочерних классах
      * @return mixed

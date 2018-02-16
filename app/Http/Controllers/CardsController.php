@@ -179,7 +179,7 @@ class CardsController extends Controller
         CardInterface $cardRepository
     )
     {
-        $uuid = $cardRepository->findOneBy('uuid', $uuid);
+        $uuid = $cardRepository->findOneByWithTrashedBy('uuid', $uuid);
         if ($uuid) {
             abort(400, 'Uuid must be unique');
         }
