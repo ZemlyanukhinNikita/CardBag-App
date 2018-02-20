@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class User extends Model
 {
-    protected $fillable = ['uuid'];
+    protected $fillable = ['uuid', 'full_name', 'network_id', 'uid'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
