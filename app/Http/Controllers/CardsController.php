@@ -92,7 +92,8 @@ class CardsController extends Controller
             'front_photo' => $frontPhoto->id,
             'back_photo' => $backPhoto->id,
             'discount' => $this->replacingEmptyStringWithNull($request->input('discount')),
-            'uuid' => $request->input('uuid')
+            'uuid' => $request->input('uuid'),
+            'updated_at' => $request->input('updated_at')
         ]);
     }
 
