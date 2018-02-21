@@ -22,7 +22,7 @@ class UsersController extends Controller
                                       FacebookAuthorizeService $facebookAuthorizeService)
     {
         $this->validateCardFields($request);
-//        return $vkAuthorizeService->authVk();
-        return $facebookAuthorizeService->authFacebook();
+        return $vkAuthorizeService->authVk();
+//        return $facebookAuthorizeService->authFacebook();
     }
 }
