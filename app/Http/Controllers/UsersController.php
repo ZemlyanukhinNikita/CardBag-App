@@ -9,7 +9,7 @@ class UsersController extends Controller
     private function validateCardFields(Request $request)
     {
         $messages = [
-            'network_id.exists' => 'Такой категории в базе данных нет',
+            'network_id.exists' => 'Такой соц.сети в базе данных нет',
         ];
 
         $this->validate($request, [

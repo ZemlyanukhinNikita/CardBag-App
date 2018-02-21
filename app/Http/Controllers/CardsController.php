@@ -17,7 +17,7 @@ class CardsController extends Controller
     public function getAllUserCards(Request $request, CardService $cardService)
     {
         /** @var Collection $cards */
-        $cards = $cardService->getUserCards($request->header('uuid'));
+        $cards = $cardService->getUserCards($request->header('token'));
         if ($cards->isEmpty()) {
             return response()->json([], 204);
         }

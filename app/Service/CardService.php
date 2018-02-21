@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use app\Repositories\CardInterface;
+use App\Repositories\TokenInterface;
 use app\Repositories\UserInterface;
 use Illuminate\Support\Facades\Storage;
 
@@ -10,39 +11,40 @@ class CardService
 {
     private $userRepository;
     private $cardRepository;
-    private $cardGenerateService;
+    private $tokenRepository;
 
     /**
      * CardService constructor.
      * @param UserInterface $userRepository
      * @param CardInterface $cardRepository
-     * @param CardGenerateService $cardGenerateService
+     * @param TokenInterface $tokenRepository
+     * @internal param CardGenerateService $cardGenerateService
      * @internal param CardInterface $cardInterface
      * @internal param CardRepository $cardRepository
      */
     public function __construct(
         UserInterface $userRepository,
         CardInterface $cardRepository,
-        CardGenerateService $cardGenerateService
+        TokenInterface $tokenRepository
     )
     {
         $this->userRepository = $userRepository;
         $this->cardRepository = $cardRepository;
-        $this->cardGenerateService = $cardGenerateService;
+        $this->tokenRepository = $tokenRepository;
 
     }
 
     /**
      * Вокврат карточек если UUID существует в базе данных
      * иначе добавить UUID в базу и сгененировать случайное число карт
-     * @param $uuid
+     * @param $token
      * @return mixed
      */
-    public function getUserCards($uuid)
+    public
+    function getUserCards($token)
     {
-        if (!$user = $this->userRepository->findOneBy('uuid', $uuid)) {
-            $user = $this->userRepository->create(['uuid' => $uuid]);
-        }
+
+        $user = $this->userRepository->findOneBy('token', $this->tokenRepository->findOneBy('token', $token)->id);
 
         foreach ($cards = $this->cardRepository->findAllWithEagerLoading('user_id', $user->id, ['frontPhoto', 'backPhoto'])
                  as $card) {

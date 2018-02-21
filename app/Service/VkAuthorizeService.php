@@ -36,7 +36,7 @@ class VkAuthorizeService implements SocialNetworkInterface
         if ($user) {
             $token = $this->tokenRepository->findOneBy('id', $user->token);
 
-            if ($token->token === $this->request->input('token')) {
+            if ($token->token === $this->request->header('token')) {
                 $user->token = $user->tokenName->token;
                 return response()->json($user);
             }
@@ -48,12 +48,12 @@ class VkAuthorizeService implements SocialNetworkInterface
 
     public function refreshUserToken($user, $token)
     {
-        if ($token->token !== $this->request->input('token')) {
+        if ($token->token !== $this->request->header('token')) {
 
-            $result = $this->checkUserToken($this->request->input('token'));
+            $result = $this->checkUserToken($this->request->header('token'));
 
             if ((string)$result['response'][0]['uid'] === $this->request->input('uid')) {
-                $this->tokenRepository->update('id', $user->token, ['token' => $this->request->input('token')]);
+                $this->tokenRepository->update('id', $user->token, ['token' => $this->request->header('token')]);
                 $user = $this->userRepository->findOneBy('uid', $this->request->input('uid'));
                 $user->token = $user->tokenName->token;
                 return $user;
@@ -65,23 +65,23 @@ class VkAuthorizeService implements SocialNetworkInterface
 
     public function registerNewUser()
     {
-        $result = $this->checkUserToken($this->request->input('token'));
+        $result = $this->checkUserToken($this->request->header('token'));
 
-        if ($this->tokenRepository->findOneBy('token', $this->request->input('token'))
+        if ($this->tokenRepository->findOneBy('token', $this->request->header('token'))
         ) {
             abort(400, 'Token must be unique');
         }
 
         if ((string)$result['response'][0]['uid'] === $this->request->input('uid')) {
             $this->tokenRepository->create([
-                'token' => $this->request->input('token'),
+                'token' => $this->request->header('token'),
                 'network_id' => $this->request->input('network_id'),
             ]);
 
             $this->userRepository->create([
                 'uid' => $this->request->input('uid'),
                 'full_name' => $result['response'][0]['first_name'] . ' ' . $result['response'][0]['last_name'],
-                'token' => $this->tokenRepository->findOneBy('token', $this->request->input('token'))->id
+                'token' => $this->tokenRepository->findOneBy('token', $this->request->header('token'))->id
             ]);
 
             $user = $this->userRepository->findOneBy('uid', $this->request->input('uid'));

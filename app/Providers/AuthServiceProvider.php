@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Token;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
@@ -31,11 +32,10 @@ class AuthServiceProvider extends ServiceProvider
         // the User instance via an API token or any other method necessary.
 
         $this->app['auth']->viaRequest('api', function (Request $request) {
-            if ($request->header('uuid')) {
-                return User::where('uuid', $request->header('uuid'))->first();
+            if ($request->header('token')) {
+                $token = Token::where('token', $request->header('token'))->first();
+                return User::where('token', $token->id)->first();
             }
         });
     }
-
-
 }

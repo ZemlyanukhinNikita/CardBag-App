@@ -2,11 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use App\Token;
 use Closure;
 use Illuminate\Http\Request;
 
-class AuthMiddleware
+class AuthSocialNetworkMiddleware
 {
     /**
      * Авторизация пользователя
@@ -20,9 +19,6 @@ class AuthMiddleware
             abort(401, 'Unauthorized');
         }
 
-        if (!$token = Token::where('token', $request->header('token'))->first()) {
-            abort(400, 'Token not found in database');
-        }
         return $next($request);
     }
 }
