@@ -4,9 +4,9 @@ namespace App\Service;
 
 interface SocialNetworkInterface
 {
-    public function refreshUserToken($user);
+    public function refreshUserToken($user, $token);
 
-    public function registerNewUser($user);
+    public function registerNewUser();
 
     public function checkUserToken($token);
 }

@@ -21,14 +21,14 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->post('photo/upload', 'UploadPhotosController@uploadPhoto');
         $router->delete('cards/{uuid}', 'CardsController@deleteCard');
         $router->put('cards/{uuid}', 'CardsController@updateCard');
-        $router->post('user/auth', 'UsersController@getAuthorizedUser');
+
     });
 
     $router->group(['middleware' => ['authorization', 'invalidUuid']], function () use ($router) {
         $router->get('cards', 'CardsController@getAllUserCards');
     });
 
+    $router->post('user/auth', 'UsersController@getAuthorizedUser');
     $router->get('categories', 'CategoriesController@getAllCategories');
-
 });
 
