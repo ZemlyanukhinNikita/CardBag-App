@@ -3,6 +3,8 @@
 namespace App\Service;
 
 
+use App\Repositories\NetworkInterface;
+use App\Repositories\TokenInterface;
 use app\Repositories\UserInterface;
 use Illuminate\Http\Request;
 
@@ -10,71 +12,83 @@ class FacebookAuthorizeService implements SocialNetworkInterface
 {
     private $request;
     private $userRepository;
+    private $tokenRepository;
+    private $networkRepository;
 
     /**
      * VkAuthorizeService constructor.
      * @param Request $request
      * @param UserInterface $userRepository
+     * @param TokenInterface $tokenRepository
+     * @param NetworkInterface $networkRepository
      */
-    public function __construct(Request $request, UserInterface $userRepository)
+    public function __construct(Request $request, UserInterface $userRepository, TokenInterface $tokenRepository, NetworkInterface $networkRepository)
     {
         $this->request = $request;
         $this->userRepository = $userRepository;
+        $this->tokenRepository = $tokenRepository;
+        $this->networkRepository = $networkRepository;
     }
 
     public function authFacebook()
     {
         $user = $this->userRepository->findOneBy('uid', $this->request->input('uid'));
-
         if ($user) {
-            if ($user->uuid === $this->request->input('token')) {
+            $token = $this->tokenRepository->findOneBy('id', $user->token);
+
+            if ($token->token === $this->request->input('token')) {
+                $user->token = $user->tokenName->token;
                 return response()->json($user);
             }
-            return $this->refreshUserToken($user);
-        }
 
-        if (!$user) {
-            return $this->registerNewUser($user);
+            return $this->refreshUserToken($user, $token);
         }
+        return $this->registerNewUser();
     }
 
-    public function refreshUserToken($user)
+    public function refreshUserToken($user, $token)
     {
-        if ($user->uuid !== $this->request->input('token')) {
+        if ($token->token !== $this->request->input('token')) {
 
             $result = $this->checkUserToken($this->request->input('token'));
 
             if ((string)$result['id'] === $this->request->input('uid')) {
-                $this->userRepository->update('uid', $this->request->input('uid'), ['uuid' => $this->request->input('token')]);
-                return $this->userRepository->findOneBy('uid', $this->request->input('uid'));
+                $this->tokenRepository->update('id', $user->token, ['token' => $this->request->input('token')]);
+                $user = $this->userRepository->findOneBy('uid', $this->request->input('uid'));
+                $user->token = $user->tokenName->token;
+                return $user;
             }
             abort(400, 'Uid do not match');
         }
     }
 
 
-    public function registerNewUser($user)
+    public function registerNewUser()
     {
-        if (!$user) {
+        $result = $this->checkUserToken($this->request->input('token'));
 
-            $result = $this->checkUserToken($this->request->input('token'));
-
-            if ($this->userRepository->findOneBy('uuid', $this->request->input('token'))
-            ) {
-                abort(400, 'Token must be unique');
-            }
-
-            if ((string)$result['id'] === $this->request->input('uid')) {
-                $this->userRepository->create([
-                    'uuid' => $this->request->input('token'),
-                    'uid' => $this->request->input('uid'),
-                    'full_name' => $result['name'],
-                    'network_id' => $this->request->input('network'),
-                ]);
-                return $this->userRepository->findOneBy('uid', $this->request->input('uid'));
-            }
-            abort(400, 'Uid do not match');
+        if ($this->tokenRepository->findOneBy('token', $this->request->input('token'))
+        ) {
+            abort(400, 'Token must be unique');
         }
+
+        if ((string)$result['id'] === $this->request->input('uid')) {
+            $this->tokenRepository->create([
+                'token' => $this->request->input('token'),
+                'network_id' => $this->request->input('network_id'),
+            ]);
+
+            $this->userRepository->create([
+                'uid' => $this->request->input('uid'),
+                'full_name' => $result['name'],
+                'token' => $this->tokenRepository->findOneBy('token', $this->request->input('token'))->id
+            ]);
+
+            $user = $this->userRepository->findOneBy('uid', $this->request->input('uid'));
+            $user->token = $user->tokenName->token;
+            return $user;
+        }
+        abort(400, 'Uid do not match');
     }
 
 
