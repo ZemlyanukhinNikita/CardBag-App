@@ -16,11 +16,8 @@ class AddNewColumnInTableUsers extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('uid')->nullable()->unique();
             $table->string('full_name')->nullable();
-            $table->integer('network_id')->unsigned()->nullable();
-        });
-
-        Schema::table('users', function ($table) {
-            $table->foreign('network_id')->references('id')->on('networks');
+            $table->integer('token')->unsigned();
+            $table->dropColumn('uuid');
         });
     }
 
@@ -34,6 +31,7 @@ class AddNewColumnInTableUsers extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('uid');
             $table->dropColumn('full_name');
+            $table->uuid('uuid')->unique();
         });
     }
 }
