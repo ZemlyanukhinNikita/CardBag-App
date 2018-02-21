@@ -15,17 +15,13 @@ class AddNewTableTokens extends Migration
     {
         Schema::create('tokens', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('token')->unique();
-            $table->integer('network_id')->unsigned();
+            $table->string('token')->unique()->nullable();
+            $table->integer('network_id')->unsigned()->nullable();
             $table->timestamps();
         });
 
         Schema::table('tokens', function ($table) {
             $table->foreign('network_id')->references('id')->on('networks');
-        });
-
-        Schema::table('users', function ($table) {
-            $table->foreign('token')->references('id')->on('tokens');
         });
     }
 }

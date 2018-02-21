@@ -19,6 +19,10 @@ class AddNewColumnInTableUsers extends Migration
             $table->integer('token')->unsigned()->nullable();
             $table->dropColumn('uuid');
         });
+
+        Schema::table('users', function ($table) {
+            $table->foreign('token')->references('id')->on('tokens');
+        });
     }
 
     /**
