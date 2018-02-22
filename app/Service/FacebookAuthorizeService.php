@@ -8,7 +8,7 @@ use App\Repositories\TokenInterface;
 use app\Repositories\UserInterface;
 use Illuminate\Http\Request;
 
-class FacebookAuthorizeService implements SocialNetworkInterface
+class FacebookAuthorizeService extends AbstractNetworkFactory implements SocialNetworkInterface
 {
     private $request;
     private $userRepository;
@@ -30,7 +30,7 @@ class FacebookAuthorizeService implements SocialNetworkInterface
         $this->networkRepository = $networkRepository;
     }
 
-    public function authFacebook()
+    public function auth()
     {
         $user = $this->userRepository->findOneBy('uid', $this->request->input('uid'));
         if ($user) {

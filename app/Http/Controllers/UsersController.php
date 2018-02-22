@@ -1,11 +1,15 @@
 <?php namespace App\Http\Controllers;
 
-use App\Service\FacebookAuthorizeService;
-use App\Service\VkAuthorizeService;
+use app\Repositories\NetworkInterface;
+use app\Repositories\TokenInterface;
+use app\Repositories\UserInterface;
+use App\Service\AbstractNetworkFactory;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
 {
+    public static $network = 2;
+
     private function validateCardFields(Request $request)
     {
         $messages = [
@@ -18,11 +22,11 @@ class UsersController extends Controller
         ], $messages);
     }
 
-    public function getAuthorizedUser(Request $request, VkAuthorizeService $vkAuthorizeService,
-                                      FacebookAuthorizeService $facebookAuthorizeService)
+    public function getAuthorizedUser(Request $request, UserInterface $userRepository, TokenInterface $tokenRepository, NetworkInterface $networkRepository)
     {
         $this->validateCardFields($request);
-        return $vkAuthorizeService->authVk();
-//        return $facebookAuthorizeService->authFacebook();
+        return AbstractNetworkFactory::getSocialNetwork($request, $userRepository, $tokenRepository,
+            $networkRepository, $request->input('network_id'))->auth();
+
     }
 }

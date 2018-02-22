@@ -8,7 +8,7 @@ use App\Repositories\TokenInterface;
 use app\Repositories\UserInterface;
 use Illuminate\Http\Request;
 
-class VkAuthorizeService implements SocialNetworkInterface
+class VkAuthorizeService extends AbstractNetworkFactory implements SocialNetworkInterface
 {
     private $request;
     private $userRepository;
@@ -30,7 +30,7 @@ class VkAuthorizeService implements SocialNetworkInterface
         $this->networkRepository = $networkRepository;
     }
 
-    public function authVk()
+    public function auth()
     {
         $user = $this->userRepository->findOneBy('uid', $this->request->input('uid'));
         if ($user) {
@@ -90,7 +90,6 @@ class VkAuthorizeService implements SocialNetworkInterface
         }
         abort(400, 'Uid do not match');
     }
-
 
     public function checkUserToken($token)
     {
