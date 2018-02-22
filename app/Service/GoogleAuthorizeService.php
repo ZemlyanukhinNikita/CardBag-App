@@ -111,6 +111,6 @@ class GoogleAuthorizeService implements SocialNetworkInterface
         ) {
             return $result;
         }
-        abort(400, 'Token not found');
+        abort(400, 'Token not found in social network Google');
     }
 }
