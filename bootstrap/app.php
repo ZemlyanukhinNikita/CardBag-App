@@ -74,7 +74,6 @@ $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
     'authorization' => App\Http\Middleware\AuthMiddleware::class,
     'invalidUuid' => App\Http\Middleware\InvalidUuidMiddleware::class,
-    'authSocialNetwork' => App\Http\Middleware\AuthSocialNetworkMiddleware::class,
 ]);
 
 /*

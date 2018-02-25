@@ -2,11 +2,29 @@
 
 namespace App\Service;
 
+use App\User;
+
 interface SocialNetworkInterface
 {
-    public function refreshUserToken($user, $token);
+    /**
+     * Метод обновления токена пользователя
+     * если у пользователя прошло действие токена
+     * @param User $result
+     * @return mixed
+     */
+    public function refreshUserToken(User $result);
 
-    public function registerNewUser();
+    /**
+     * Метод регистрации нового пользователя
+     * @param User $result
+     * @return mixed
+     */
+    public function registerNewUser(User $result);
 
-    public function checkUserToken($token);
+    /**
+     * Метод авторизация пользователя
+     * @param $token
+     * @return mixed
+     */
+    public function auth($token);
 }

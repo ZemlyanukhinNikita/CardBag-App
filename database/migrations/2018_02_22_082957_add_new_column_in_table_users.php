@@ -14,14 +14,8 @@ class AddNewColumnInTableUsers extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('uid')->nullable()->unique();
             $table->string('full_name')->nullable();
-            $table->integer('token')->unsigned()->nullable();
             $table->dropColumn('uuid');
-        });
-
-        Schema::table('users', function ($table) {
-            $table->foreign('token')->references('id')->on('tokens');
         });
     }
 

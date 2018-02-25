@@ -1,15 +1,11 @@
 <?php namespace App\Http\Controllers;
 
 use app\Repositories\NetworkInterface;
-use app\Repositories\TokenInterface;
-use app\Repositories\UserInterface;
-use App\Service\AbstractNetworkFactory;
+use App\Service\SocialNetworkServiceFactory;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
 {
-    public static $network = 2;
-
     private function validateCardFields(Request $request)
     {
         $messages = [
@@ -17,16 +13,18 @@ class UsersController extends Controller
         ];
 
         $this->validate($request, [
-            'network_id' => 'required|nullable|exists:networks,id',
+            'network_id' => 'integer|required|exists:networks,id',
+            'token' => 'required',
             'uid' => 'required',
         ], $messages);
     }
 
-    public function getAuthorizedUser(Request $request, UserInterface $userRepository, TokenInterface $tokenRepository, NetworkInterface $networkRepository)
+    public function getAuthorizedUser(Request $request, SocialNetworkServiceFactory $factory,
+                                      NetworkInterface $networkRepository)
     {
         $this->validateCardFields($request);
-        return AbstractNetworkFactory::getSocialNetwork($request, $userRepository, $tokenRepository,
-            $networkRepository, $request->input('network_id'))->auth();
 
+        return $factory->getSocialNetwork($request, $networkRepository->
+        findOneBy('id', $request->input('network_id'))->name)->auth($request->input('token'));
     }
 }

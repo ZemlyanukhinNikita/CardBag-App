@@ -10,14 +10,13 @@ use Illuminate\Http\Request;
 class CardsController extends Controller
 {
     /**
-     * @param Request $request
      * @param CardService $cardService
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getAllUserCards(Request $request, CardService $cardService)
+    public function getAllUserCards(CardService $cardService)
     {
         /** @var Collection $cards */
-        $cards = $cardService->getUserCards($request->header('token'));
+        $cards = $cardService->getUserCards();
         if ($cards->isEmpty()) {
             return response()->json([], 204);
         }
@@ -96,7 +95,6 @@ class CardsController extends Controller
         ]);
     }
 
-
     /**
      * Метод удаления карты
      * @param $uuid
@@ -104,8 +102,7 @@ class CardsController extends Controller
      * @param PhotoService $photoService
      * @param PhotoInterface $photoRepository
      */
-    public
-    function deleteCard($uuid, CardInterface $cardRepository, PhotoService $photoService, PhotoInterface $photoRepository)
+    public function deleteCard($uuid, CardInterface $cardRepository, PhotoService $photoService, PhotoInterface $photoRepository)
     {
         $this->checkingValidityUuidCard($uuid);
 
@@ -135,8 +132,7 @@ class CardsController extends Controller
      * @param CardInterface $cardRepository
      * @param PhotoService $photoService
      */
-    public
-    function updateCard(Request $request, $uuid, CardInterface $cardRepository, PhotoService $photoService)
+    public function updateCard(Request $request, $uuid, CardInterface $cardRepository, PhotoService $photoService)
     {
         $this->checkingValidityUuidCard($uuid);
 
@@ -180,8 +176,7 @@ class CardsController extends Controller
      * Проверка валидности uuid карты
      * @param $uuid
      */
-    private
-    function checkingValidityUuidCard($uuid)
+    private function checkingValidityUuidCard($uuid)
     {
         if (!preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
             $uuid)
@@ -197,8 +192,7 @@ class CardsController extends Controller
      * @param $message
      * @internal param $uuid
      */
-    private
-    function isExistValueInDataBase($field, $value, CardInterface $cardRepository, $message)
+    private function isExistValueInDataBase($field, $value, CardInterface $cardRepository, $message)
     {
         if ($cardRepository->findOneByWithTrashedBy($field, $value)) {
             abort(400, $message);
@@ -206,8 +200,7 @@ class CardsController extends Controller
         return $value;
     }
 
-    private
-    function replacingEmptyStringWithNull($value)
+    private function replacingEmptyStringWithNull($value)
     {
         if ($value === '') {
             return null;
