@@ -6,7 +6,6 @@ use app\Service\BarCodeService;
 use App\Service\CardService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class CardsController extends Controller
 {
@@ -75,9 +74,9 @@ class CardsController extends Controller
         $backPhoto = basename($request->input('back_photo'));
         $frontPhoto = basename($request->input('front_photo'));
 
-        $png = $this->getImageUrlOrNull($barCodeService, $backPhoto);
+        $png = $barCodeService->getImageUrlOrNull($backPhoto);
         if ($png === null) {
-            $png = $this->getImageUrlOrNull($barCodeService, $frontPhoto);
+            $png = $barCodeService->getImageUrlOrNull($frontPhoto);
         }
 
         $cardRepository->create([
@@ -90,15 +89,6 @@ class CardsController extends Controller
             'uuid' => $request->input('uuid'),
             'barcode' => $png
         ]);
-    }
-
-    public function getImageUrlOrNull(BarCodeService $barCodeService, $photo)
-    {
-        if ($barCodeService->scanBarCode($photo)->code !== 400) {
-            return Storage::url($barCodeService->generateBarCodeImage($barCodeService->scanBarCode($photo)->text,
-                $barCodeService->scanBarCode($photo)->format));
-        }
-        return null;
     }
 
     /**

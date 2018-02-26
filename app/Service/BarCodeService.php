@@ -4,6 +4,7 @@ namespace app\Service;
 
 use Exception;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Milon\Barcode\DNS1D;
 use RobbieP\ZbarQrdecoder\ZbarDecoder;
 
@@ -27,7 +28,6 @@ class BarCodeService
      * Метод сканирования фотографии, возвращает код изображения
      * @param $fileName
      * @return mixed
-     * @throws Exception
      */
     public function scanBarCode($fileName)
     {
@@ -42,8 +42,7 @@ class BarCodeService
      * Метод генерации изображения штрихкода
      * @param $code
      * @param $type
-     * @return \Milon\Barcode\path
-     * Может бросить исключение 
+     * @return mixed
      */
     public function generateBarCodeImage($code, $type)
     {
@@ -52,6 +51,21 @@ class BarCodeService
         } catch (Exception $e) {
             Log::error('Generating image error: ' . $e->getMessage() . ' ' . $e->getCode());
         }
+    }
+
+    /**
+     * Метод возвращает url картинки если она распозанана,
+     * иначе null
+     * @param $photo
+     * @return url image or null
+     */
+    public function getImageUrlOrNull($photo)
+    {
+        if ($this->scanBarCode($photo)->code !== 400) {
+            return Storage::url($this->generateBarCodeImage($this->scanBarCode($photo)->text,
+                $this->scanBarCode($photo)->format));
+        }
+        return null;
     }
 
     /**
