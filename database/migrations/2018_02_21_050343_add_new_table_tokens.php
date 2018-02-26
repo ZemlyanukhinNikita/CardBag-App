@@ -15,11 +15,14 @@ class AddNewTableTokens extends Migration
     {
         Schema::create('tokens', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned()->unique();
+            $table->integer('user_id')->unsigned();
             $table->integer('network_id')->unsigned();
-            $table->string('token')->unique();
-            $table->string('uid')->unique();
+            $table->string('token');
+            $table->string('uid');
             $table->timestamps();
+
+            $table->unique(['user_id', 'network_id']);
+            $table->unique(['token', 'uid']);
         });
 
         Schema::table('tokens', function ($table) {
