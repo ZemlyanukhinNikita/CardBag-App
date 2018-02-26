@@ -29,7 +29,7 @@ class SocialNetworkServiceFactory
 
     public function getSocialNetwork($request, $network)
     {
-        $service = "App\Service\\" . $network . "AuthorizeService";
+        $service = "App\\Service\\" . $network . "AuthorizeService";
 
         if (class_exists($service)) {
             return new $service($request, $this->userRepository,
