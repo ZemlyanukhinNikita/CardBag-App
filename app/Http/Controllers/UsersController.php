@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use app\Repositories\NetworkInterface;
-use App\Service\SocialNetworkServiceFactory;
+use App\Service\AuthorizeService;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
@@ -19,12 +19,13 @@ class UsersController extends Controller
         ], $messages);
     }
 
-    public function getAuthorizedUser(Request $request, SocialNetworkServiceFactory $factory,
-                                      NetworkInterface $networkRepository)
+    public function getAuthorizedUser(Request $request,
+                                      NetworkInterface $networkRepository, AuthorizeService $authorizeService)
     {
         $this->validateCardFields($request);
 
-        return $factory->getSocialNetwork($request, $networkRepository->
-        findOneBy('id', $request->input('network_id'))->name)->auth($request->input('token'));
+        $network = $networkRepository->findOneBy('id', $request->input('network_id'))->name;
+
+        return $authorizeService->auth($request->input('uid'), $request->input('token'), $network);
     }
 }

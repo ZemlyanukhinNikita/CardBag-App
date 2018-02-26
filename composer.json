@@ -30,7 +30,10 @@
             "tests/",
             "database/",
             "app/Service/",
-            "app/Repositories/"
+            "app/Repositories/",
+            "app/Dto/",
+            "app/Service/SocialNetworkCheckers",
+            "app/Service/UserAuthorize"
         ]
     },
     "scripts": {

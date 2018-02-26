@@ -4,31 +4,30 @@ namespace App\Service;
 
 use App\Repositories\TokenInterface;
 use app\Repositories\UserInterface;
-use App\User;
 use Illuminate\Http\Request;
+use UserProfile;
 
-class FacebookAuthorizeService implements SocialNetworkInterface
+class AuthorizeService implements SocialNetworkInterface
 {
     private $request;
     private $userRepository;
     private $tokenRepository;
-    private $checkTokenService;
+    private $factory;
 
     /**
      * VkAuthorizeService constructor.
      * @param Request $request
      * @param UserInterface $userRepository
      * @param TokenInterface $tokenRepository
-     * @param CheckTokenService $checkTokenService
+     * @param SocialNetworkServiceFactory $factory
      */
-    public function __construct($request, $userRepository,
-                                $tokenRepository,
-                                $checkTokenService)
+    public function __construct(Request $request, UserInterface $userRepository,
+                                TokenInterface $tokenRepository, SocialNetworkServiceFactory $factory)
     {
         $this->request = $request;
         $this->userRepository = $userRepository;
         $this->tokenRepository = $tokenRepository;
-        $this->checkTokenService = $checkTokenService;
+        $this->factory = $factory;
     }
 
     /**
@@ -36,19 +35,20 @@ class FacebookAuthorizeService implements SocialNetworkInterface
      * Иначе проверяется существование токена в соц сети
      * Если пользователя нет, добавляется новый
      * Если пользователь есть, но прошло дейтвие токена , токен обновляется
+     * @param $uid
      * @param $token
+     * @param $factory
+     * @param $network
      * @return \Illuminate\Http\JsonResponse|mixed
      */
-    public function auth($token)
+    public function auth($uid, $token, $network)
     {
-        $user = $this->tokenRepository->findOneBy('uid', $this->request->input('uid'));
-        $userModel = new User;
+        $user = $this->tokenRepository->findOneBy('uid', $uid);
         if ($user) {
             if ($user->token === $token && $user->network_id === (int)$this->request->input('network_id')) {
 
-                $userModel->setFullName($this->userRepository->findOneBy('id', $user->user_id)->full_name);
-                $userModel->setToken($user->token);
-                $userModel->setUid($user->uid);
+                $userModel = new UserProfile($this->userRepository->findOneBy('id', $user->user_id)->full_name,
+                    $user->token, $user->uid);
 
                 return response()->json([
                         'full_name' => $userModel->getFullName(),
@@ -58,8 +58,8 @@ class FacebookAuthorizeService implements SocialNetworkInterface
                 );
             }
         }
-
-        $result = $this->checkTokenService->checkUserTokenInFacebook($token, $userModel);
+        
+        $result = $this->factory->getUserSocialToken($network)->checkUserTokenInSocialNetwork($token, $uid);
 
         if (!$user) {
             return $this->registerNewUser($result);
@@ -70,10 +70,10 @@ class FacebookAuthorizeService implements SocialNetworkInterface
 
     /**
      * Метод обновления токена пользователя
-     * @param User $result
+     * @param UserProfile $result
      * @return \Illuminate\Http\JsonResponse
      */
-    public function refreshUserToken(User $result)
+    public function refreshUserToken(UserProfile $result)
     {
         $this->tokenRepository->update('uid', $result->getUid(),
             ['token' => $result->getToken()]);
@@ -88,10 +88,10 @@ class FacebookAuthorizeService implements SocialNetworkInterface
 
     /**
      * Метод регистрации нового пользователя
-     * @param User $result
+     * @param UserProfile $result
      * @return \Illuminate\Http\JsonResponse
      */
-    public function registerNewUser(User $result)
+    public function registerNewUser(UserProfile $result)
     {
         $user = $this->userRepository->create([
             'full_name' => $result->getFullName(),

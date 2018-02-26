@@ -3,38 +3,28 @@
 namespace App\Service;
 
 use app\Repositories\CardInterface;
-use App\Repositories\TokenInterface;
-use app\Repositories\UserInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class CardService
 {
-    private $userRepository;
     private $cardRepository;
-    private $tokenRepository;
     private $request;
 
     /**
      * CardService constructor.
-     * @param UserInterface $userRepository
      * @param CardInterface $cardRepository
-     * @param TokenInterface $tokenRepository
      * @param Request $request
      * @internal param CardGenerateService $cardGenerateService
      * @internal param CardInterface $cardInterface
      * @internal param CardRepository $cardRepository
      */
     public function __construct(
-        UserInterface $userRepository,
         CardInterface $cardRepository,
-        TokenInterface $tokenRepository,
         Request $request
     )
     {
-        $this->userRepository = $userRepository;
         $this->cardRepository = $cardRepository;
-        $this->tokenRepository = $tokenRepository;
         $this->request = $request;
     }
 

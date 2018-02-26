@@ -9,7 +9,7 @@ class Network extends Model
 {
     protected $fillable = ['name'];
 
-    public function token()
+    public function tokens()
     {
         return $this->hasMany(Token::class);
     }

@@ -27,7 +27,6 @@ class AddNewColumnInTableUsers extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('uid');
             $table->dropColumn('full_name');
             $table->uuid('uuid')->unique();
         });
