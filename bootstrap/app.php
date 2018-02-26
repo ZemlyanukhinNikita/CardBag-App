@@ -73,7 +73,6 @@ $app->singleton('filesystem', function ($app) {
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
     'authorization' => App\Http\Middleware\AuthMiddleware::class,
-    'invalidUuid' => App\Http\Middleware\InvalidUuidMiddleware::class,
 ]);
 
 /*

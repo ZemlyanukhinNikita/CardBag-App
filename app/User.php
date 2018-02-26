@@ -7,30 +7,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class User extends Model
 {
-    private $id;
     private $fullname;
     private $token;
     private $uid;
 
     protected $fillable = ['full_name'];
-
-    protected $hidden = ['tokenName'];
-
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
 
     /**
      * @return mixed
@@ -91,10 +72,5 @@ class User extends Model
     public function photos()
     {
         return $this->hasMany(Card::class);
-    }
-
-    public function tokenName()
-    {
-        return $this->belongsTo(Token::class, 'token', 'id');
     }
 }

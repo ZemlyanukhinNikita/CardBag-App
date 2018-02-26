@@ -4,7 +4,6 @@ namespace App\Service;
 
 use app\Repositories\TokenInterface;
 use app\Repositories\UserRepository;
-use Exception;
 
 class SocialNetworkServiceFactory
 {
@@ -35,6 +34,6 @@ class SocialNetworkServiceFactory
             return new $service($request, $this->userRepository,
                 $this->tokenRepository, $this->checkTokenService);
         }
-        throw new Exception('Bad request');
+        abort(400, 'Bad request');
     }
 }

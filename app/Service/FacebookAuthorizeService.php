@@ -75,8 +75,8 @@ class FacebookAuthorizeService implements SocialNetworkInterface
      */
     public function refreshUserToken(User $result)
     {
-        $this->tokenRepository->update('uid', $this->request->input('uid'),
-            ['token' => $this->request->input('token')]);
+        $this->tokenRepository->update('uid', $result->getUid(),
+            ['token' => $result->getToken()]);
 
         return response()->json([
                 'full_name' => $result->getFullName(),
@@ -93,16 +93,12 @@ class FacebookAuthorizeService implements SocialNetworkInterface
      */
     public function registerNewUser(User $result)
     {
-        if ($this->tokenRepository->findOneBy('token', $this->request->input('token'))
-        ) {
-            abort(400, 'Token must be unique');
-        }
         $user = $this->userRepository->create([
             'full_name' => $result->getFullName(),
         ]);
 
         $this->tokenRepository->create([
-            'token' => $this->request->input('token'),
+            'token' => $result->getToken(),
             'network_id' => $this->request->input('network_id'),
             'uid' => $result->getUid(),
             'user_id' => $user->id,
