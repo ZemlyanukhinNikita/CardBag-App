@@ -56,7 +56,8 @@ class Handler extends ExceptionHandler
         }
 
         if ($e instanceof HttpException) {
-            return response()->json(['status' => $e->getStatusCode(), 'message' => $e->getMessage()],
+            $message = $e->getStatusCode() === 405 ? 'Method not allowed' : $e->getMessage();
+            return response()->json(['status' => $e->getStatusCode(), 'message' => $message],
                 $e->getStatusCode());
         }
 
