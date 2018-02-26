@@ -96,16 +96,19 @@ class CheckTokenService
         $firebaseAuth = $firebase->getAuth();
         try {
             $idToken = $firebaseAuth->verifyIdToken($token);
-            if ($idToken->getClaim('user_id') !== $this->request->input('uid')) {
-                abort(400, 'Uid do not match');
-            }
-            $user->setFullName($idToken->getClaim('phone_number'));
-            $user->setToken($token);
-            $user->setUid($idToken->getClaim('user_id'));
-            return $user;
 
         } catch (Exception $e) {
+            echo $e;
             abort(400, 'Token not found in Firebase');
         }
+
+        if ($idToken->getClaim('user_id') !== $this->request->input('uid')) {
+            abort(400, 'Uid do not match');
+        }
+        $user->setFullName($idToken->getClaim('phone_number'));
+        $user->setToken($token);
+        $user->setUid($idToken->getClaim('user_id'));
+        return $user;
+
     }
 }
