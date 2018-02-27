@@ -25,6 +25,6 @@ class ConfigureFirebase
 
     public function getFirebaseConfigure()
     {
-        return $this->firebase->withServiceAccount($this->serviceAccount->fromJsonFile('../CARDbag-f7e88a3c37f3.json'))->create();
+        return $this->firebase->withServiceAccount($this->serviceAccount->fromJsonFile('../CARDbag-d01707728926.json'))->create();
     }
 }
