@@ -2,10 +2,22 @@
 
 namespace App\Service;
 
+use GuzzleHttp\Client;
 use UserProfile;
 
 class CheckUserTokenVkService implements CheckTokenInterface
 {
+    private $client;
+
+    /**
+     * CheckUserTokenVkService constructor.
+     * @param $client
+     */
+    public function __construct(Client $client)
+    {
+        $this->client = $client;
+    }
+
     /**
      * CheckTokenService constructor.
      * @param $token
@@ -14,17 +26,18 @@ class CheckUserTokenVkService implements CheckTokenInterface
      */
     public function checkUserTokenInSocialNetwork($token, $uid)
     {
-        $result = json_decode(file_get_contents('https://api.vk.com/method/users.get?&access_token=' . $token), true);
-
-        if (!isset($result['response'])) {
-            abort(400, 'Token not found');
+        $res = $this->client->request('GET',
+            'https://api.vk.com/method/users.get?&access_token=' . $token);
+        $result = json_decode($res->getBody());
+        if (!isset($result->response)) {
+            abort(400, 'Token not found in Vk');
         }
 
-        if ((string)$result['response'][0]['uid'] !== $uid) {
+        if ((string)$result->response[0]->uid !== $uid) {
             abort(400, 'Uid do not match');
         }
 
-        return new UserProfile($result['response'][0]['first_name'] . ' ' .
-            $result['response'][0]['last_name'], $token, (string)$result['response'][0]['uid']);
+        return new UserProfile($result->response[0]->first_name . ' ' .
+            $result->response[0]->last_name, $token, (string)$result->response[0]->uid);
     }
 }

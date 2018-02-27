@@ -23,14 +23,13 @@ class SocialNetworkServiceFactory
         $this->configureFirebase = $configureFirebase;
     }
 
-
     public function getUserSocialToken($network)
     {
         switch ($network) {
             case 'Vk':
-                return new CheckUserTokenVkService();
+                return new CheckUserTokenVkService($this->client);
             case 'Facebook':
-                return new CheckUserTokenFacebookService();
+                return new CheckUserTokenFacebookService($this->client);
             case 'Google':
                 return new CheckUserTokenGoogleService($this->client);
             case 'Firebase':
