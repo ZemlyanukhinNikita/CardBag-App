@@ -24,8 +24,7 @@ class UsersController extends Controller
     {
         $this->validateCardFields($request);
 
-        $network = $networkRepository->findOneBy('id', $request->input('network_id'))->name;
-
-        return $authorizeService->auth($request->input('uid'), $request->input('token'), $network);
+        return $authorizeService->auth($request->input('uid'), $request->input('token'),
+            $networkRepository->findOneBy('id', $request->input('network_id'))->name);
     }
 }

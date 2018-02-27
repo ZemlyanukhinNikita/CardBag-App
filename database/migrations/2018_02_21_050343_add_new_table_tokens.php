@@ -20,6 +20,7 @@ class AddNewTableTokens extends Migration
             $table->string('token');
             $table->string('uid');
             $table->timestamps();
+
             $table->unique(['user_id', 'network_id']);
             $table->unique(['token', 'uid']);
         });
