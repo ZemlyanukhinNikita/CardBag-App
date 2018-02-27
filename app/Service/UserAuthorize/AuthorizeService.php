@@ -58,7 +58,7 @@ class AuthorizeService implements SocialNetworkInterface
                 );
             }
         }
-        
+
         $result = $this->factory->getUserSocialToken($network)->checkUserTokenInSocialNetwork($token, $uid);
 
         if (!$user) {
@@ -75,7 +75,7 @@ class AuthorizeService implements SocialNetworkInterface
      */
     public function refreshUserToken(UserProfile $result)
     {
-        $this->tokenRepository->update('uid', $result->getUid(),
+        $this->tokenRepository->update('uid', (string)$result->getUid(),
             ['token' => $result->getToken()]);
 
         return response()->json([
