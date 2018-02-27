@@ -3,21 +3,27 @@
 namespace App\Service;
 
 
+use app\Service\SocialNetworkCheckers\ConfigureFirebase;
 use Exception;
-use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
 use UserProfile;
 
 class CheckUserTokenFirebaseService implements CheckTokenInterface
 {
+    private $firebase;
+
+    /**
+     * CheckUserTokenFirebaseService constructor.
+     * @param $firebase
+     */
+    public function __construct(ConfigureFirebase $firebase)
+    {
+        $this->firebase = $firebase;
+    }
 
     public function checkUserTokenInSocialNetwork($token, $uid)
     {
-        $serviceAccount = ServiceAccount::fromJsonFile('../CARDbag-f7e88a3c37f3.json');
-        $firebase = (new Factory)
-            ->withServiceAccount($serviceAccount)
-            ->create();
-        $firebaseAuth = $firebase->getAuth();
+        $firebaseAuth = $this->firebase->getFirebaseConfigure()->getAuth();
         try {
             $idToken = $firebaseAuth->verifyIdToken($token);
 

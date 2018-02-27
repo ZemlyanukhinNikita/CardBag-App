@@ -9,12 +9,21 @@ use UserProfile;
 
 class CheckUserTokenGoogleService implements CheckTokenInterface
 {
+    private $client;
+
+    /**
+     * CheckUserTokenGoogleService constructor.
+     * @param Client $client
+     */
+    public function __construct(Client $client)
+    {
+        $this->client = $client;
+    }
 
     public function checkUserTokenInSocialNetwork($token, $uid)
     {
-        $client = new Client();
         try {
-            $res = $client->request('GET', 'https://www.googleapis.com/plus/v1/people/me?access_token=' . $token);
+            $res = $this->client->request('GET', 'https://www.googleapis.com/plus/v1/people/me?access_token=' . $token);
             $result = json_decode($res->getBody());
 
             if ($result->id !== $uid) {
