@@ -2,7 +2,6 @@
 
 use App\Card;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -40,8 +39,8 @@ class DataTransferInTablePhotosForDeleteCards extends Migration
      */
     public function down()
     {
-        Schema::table('photos', function (Blueprint $table) {
-            //
+        Schema::table('photos', function () {
+            
         });
     }
 }
