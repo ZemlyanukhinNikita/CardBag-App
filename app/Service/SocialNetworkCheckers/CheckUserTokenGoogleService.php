@@ -23,13 +23,13 @@ class CheckUserTokenGoogleService implements CheckTokenInterface
     public function checkUserTokenInSocialNetwork($token, $uid)
     {
         try {
-            $res = $this->client->request('GET', 'https://www.googleapis.com/plus/v1/people/me?access_token=' . $token);
+            $res = $this->client->request('GET', 'https://www.googleapis.com/oauth2/v3/userinfo?access_token=' . $token);
             $result = json_decode($res->getBody());
 
             if ($result->id !== $uid) {
                 abort(400, 'Uid do not match');
             }
-            return new UserProfile($result->displayName, $token, $result->id);
+            return new UserProfile($result->name, $token, $result->sub);
 
         } catch (RequestException $e) {
             if ($e->getCode() === 403) {
