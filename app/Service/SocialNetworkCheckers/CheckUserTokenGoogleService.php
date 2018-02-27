@@ -26,7 +26,7 @@ class CheckUserTokenGoogleService implements CheckTokenInterface
             $res = $this->client->request('GET', 'https://www.googleapis.com/oauth2/v3/userinfo?access_token=' . $token);
             $result = json_decode($res->getBody());
 
-            if ($result->id !== $uid) {
+            if ($result->sub !== $uid) {
                 abort(400, 'Uid do not match');
             }
             return new UserProfile($result->name, $token, $result->sub);
