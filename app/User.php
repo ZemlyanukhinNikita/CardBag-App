@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class User extends Model
 {
-    protected $fillable = ['uuid'];
+    protected $fillable = ['full_name'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -22,4 +22,8 @@ class User extends Model
         return $this->hasMany(Card::class);
     }
 
+    public function token()
+    {
+        return $this->hasMany(Token::class);
+    }
 }
