@@ -19,22 +19,22 @@ class CheckUserTokenVkService implements CheckTokenInterface
     }
 
     /**
-     * CheckTokenService constructor.
      * @param $token
      * @param $uid
-     * @return UserProfile
+     * @return bool|UserProfile
      */
     public function checkUserTokenInSocialNetwork($token, $uid)
     {
         $res = $this->client->request('GET',
             'https://api.vk.com/method/users.get?&access_token=' . $token);
         $result = json_decode($res->getBody());
+        
         if (!isset($result->response)) {
-            abort(400, 'Token not found in Vk');
+            return false;
         }
 
         if ((string)$result->response[0]->uid !== $uid) {
-            abort(400, 'Uid do not match');
+            return false;
         }
 
         return new UserProfile($result->response[0]->first_name . ' ' .

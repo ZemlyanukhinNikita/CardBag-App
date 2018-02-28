@@ -23,26 +23,22 @@ class CheckUserTokenFacebookService implements CheckTokenInterface
     /**
      * @param $token
      * @param $uid
-     * @return UserProfile
+     * @return bool|UserProfile
      */
     public function checkUserTokenInSocialNetwork($token, $uid)
     {
         try {
             $res = $this->client->request('GET', 'https://graph.facebook.com/v2.10/me?access_token=' . $token);
             $result = json_decode($res->getBody());
+
             if ($result->id !== $uid) {
-                abort(400, 'Uid do not match');
+                return false;
             }
             return new UserProfile($result->name, $token, $result->id);
 
         } catch (RequestException $e) {
-            if ($e->getCode() === 400) {
-                abort(400, 'Token not found in Facebook');
-            }
-            if ($e->getCode() === 401) {
-                abort(400, 'Uid do not match');
-            }
             Log::error('Exception' . $e->getMessage() . ' ' . $e->getCode());
+            return false;
         }
     }
 }
