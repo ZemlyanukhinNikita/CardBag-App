@@ -75,12 +75,12 @@ class AuthorizeService implements SocialNetworkInterface
      */
     public function refreshUserToken(UserProfile $result)
     {
-//        $this->tokenRepository->update('uid', (string)$result->getUid(),
-//            ['token' => $result->getToken()]);
+        $this->tokenRepository->update('uid', (string)$result->getUid(),
+            ['token' => $result->getToken()]);
 
         return response()->json([
                 'full_name' => $result->getFullName(),
-                'token' => $this->tokenRepository->findOneBy('uid', $this->request->input('uid'))->token,
+                'token' => $result->getToken(),
                 'uid' => $result->getUid(),
             ]
         );
