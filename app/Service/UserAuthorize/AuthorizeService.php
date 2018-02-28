@@ -7,7 +7,7 @@ use app\Repositories\UserInterface;
 use Illuminate\Http\Request;
 use UserProfile;
 
-class AuthorizeService implements SocialNetworkInterface
+class AuthorizeService
 {
     private $request;
     private $userRepository;
@@ -21,14 +21,18 @@ class AuthorizeService implements SocialNetworkInterface
      * @param TokenInterface $tokenRepository
      * @param SocialNetworkServiceFactory $factory
      */
-    public function __construct(Request $request, UserInterface $userRepository,
-                                TokenInterface $tokenRepository, SocialNetworkServiceFactory $factory)
-    {
+    public function __construct(
+        Request $request,
+        UserInterface $userRepository,
+        TokenInterface $tokenRepository,
+        SocialNetworkServiceFactory $factory
+    ) {
         $this->request = $request;
         $this->userRepository = $userRepository;
         $this->tokenRepository = $tokenRepository;
         $this->factory = $factory;
     }
+
 
     /**
      * Если пользователь существует в базе данных, возвращается модель пользователя
@@ -37,35 +41,38 @@ class AuthorizeService implements SocialNetworkInterface
      * Если пользователь есть, но прошло дейтвие токена , токен обновляется
      * @param $uid
      * @param $token
-     * @param $factory
      * @param $network
-     * @return \Illuminate\Http\JsonResponse|mixed
+     * @return UserProfile
      */
     public function auth($uid, $token, $network)
     {
-        $user = $this->tokenRepository->findOneBy('uid', $uid);
-        if ($user) {
-            if ($user->token === $token && $user->network_id === (int)$this->request->input('network_id')) {
+        $socialNetwork = $this->tokenRepository->findOneByAndBy('uid', $uid, 'network_id',
+            $this->request->input('network_id'));
 
-                $userModel = new UserProfile($this->userRepository->findOneBy('id', $user->user_id)->full_name,
-                    $user->token, $user->uid);
+        if (!$socialNetwork) {
 
-                return response()->json([
-                        'full_name' => $userModel->getFullName(),
-                        'token' => $userModel->getToken(),
-                        'uid' => $userModel->getUid(),
-                    ]
-                );
+            if (!$userModel = $this->factory->getUserSocialToken($network)->checkUserTokenInSocialNetwork($token,
+                $uid)
+            ) {
+                abort(400, 'Invalid data');
             }
-        }
-        
-        $result = $this->factory->getUserSocialToken($network)->checkUserTokenInSocialNetwork($token, $uid);
+            $this->registerNewUser($userModel);
 
-        if (!$user) {
-            return $this->registerNewUser($result);
-        }
+        } elseif ($socialNetwork->token === $token) {
+            $userModel = new UserProfile($socialNetwork->user->full_name,
+                $socialNetwork->token, $socialNetwork->uid);
 
-        return $this->refreshUserToken($result);
+        } elseif ($socialNetwork->token !== $token) {
+
+            if (!$userModel = $this->factory->getUserSocialToken($network)->checkUserTokenInSocialNetwork($token,
+                $uid)
+            ) {
+                abort(400, 'Invalid data');
+            }
+            $this->refreshUserToken($userModel);
+        }
+        /** @var UserProfile $userModel */
+        return $userModel;
     }
 
     /**
@@ -77,13 +84,6 @@ class AuthorizeService implements SocialNetworkInterface
     {
         $this->tokenRepository->update('uid', $result->getUid(),
             ['token' => $result->getToken()]);
-
-        return response()->json([
-                'full_name' => $result->getFullName(),
-                'token' => $result->getToken(),
-                'uid' => $result->getUid(),
-            ]
-        );
     }
 
     /**
@@ -103,12 +103,5 @@ class AuthorizeService implements SocialNetworkInterface
             'uid' => $result->getUid(),
             'user_id' => $user->id,
         ]);
-
-        return response()->json([
-                'full_name' => $result->getFullName(),
-                'token' => $result->getToken(),
-                'uid' => $result->getUid(),
-            ]
-        );
     }
 }
