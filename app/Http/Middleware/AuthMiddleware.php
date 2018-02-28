@@ -21,7 +21,7 @@ class AuthMiddleware
         }
 
         if (!$token = Token::where('token', $request->header('token'))->first()) {
-            abort(400, 'Token not found in database');
+            abort(401, 'Token not found in database');
         }
         return $next($request);
     }
