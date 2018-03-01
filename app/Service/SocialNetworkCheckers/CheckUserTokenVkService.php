@@ -17,7 +17,7 @@ class CheckUserTokenVkService implements CheckTokenInterface
         $result = json_decode(file_get_contents('https://api.vk.com/method/users.get?&access_token=' . $token . '&v=5.52'), true);
 
         if (!isset($result['response'])) {
-            abort(400, 'Token not found');
+            abort(400, 'Token not found in VK');
         }
 
         if ((string)$result['response'][0]['id'] !== $uid) {
