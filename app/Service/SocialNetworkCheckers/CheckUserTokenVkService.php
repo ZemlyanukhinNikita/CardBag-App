@@ -14,17 +14,17 @@ class CheckUserTokenVkService implements CheckTokenInterface
      */
     public function checkUserTokenInSocialNetwork($token, $uid)
     {
-        $result = json_decode(file_get_contents('https://api.vk.com/method/users.get?&access_token=' . $token), true);
+        $result = json_decode(file_get_contents('https://api.vk.com/method/users.get?&access_token=' . $token . '&v=5.52'), true);
 
         if (!isset($result['response'])) {
             abort(400, 'Token not found');
         }
 
-        if ((string)$result['response'][0]['uid'] !== $uid) {
+        if ((string)$result['response'][0]['id'] !== $uid) {
             abort(400, 'Uid do not match');
         }
 
         return new UserProfile($result['response'][0]['first_name'] . ' ' .
-            $result['response'][0]['last_name'], $token, (string)$result['response'][0]['uid']);
+            $result['response'][0]['last_name'], $token, (string)$result['response'][0]['id']);
     }
 }
