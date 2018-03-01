@@ -9,7 +9,7 @@ use Kreait\Firebase;
 use Kreait\Firebase\ServiceAccount;
 use UserProfile;
 
-class CheckUserTokenFirebaseService implements CheckTokenInterface
+class FirebaseService implements SocialNetworkInterface
 {
     private $firebase;
 

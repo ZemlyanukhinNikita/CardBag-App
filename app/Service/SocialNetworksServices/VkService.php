@@ -5,7 +5,7 @@ namespace App\Service;
 use GuzzleHttp\Client;
 use UserProfile;
 
-class CheckUserTokenVkService implements CheckTokenInterface
+class VkService implements SocialNetworkInterface
 {
     private $client;
 

@@ -3,7 +3,7 @@
 namespace App\Service;
 
 
-interface CheckTokenInterface
+interface SocialNetworkInterface
 {
     /**
      * Метод проверки токена пользователя в социальной сети

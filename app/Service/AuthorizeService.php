@@ -19,13 +19,13 @@ class AuthorizeService
      * @param Request $request
      * @param UserInterface $userRepository
      * @param TokenInterface $tokenRepository
-     * @param SocialNetworkServiceFactory $factory
+     * @param SocialNetworkFactory $factory
      */
     public function __construct(
         Request $request,
         UserInterface $userRepository,
         TokenInterface $tokenRepository,
-        SocialNetworkServiceFactory $factory
+        SocialNetworkFactory $factory
     ) {
         $this->request = $request;
         $this->userRepository = $userRepository;
@@ -44,14 +44,14 @@ class AuthorizeService
      * @param $network
      * @return UserProfile
      */
-    public function auth($uid, $token, $network)
+    public function authorizeWithSocialNetwork($uid, $token, $network)
     {
         $socialNetwork = $this->tokenRepository->findOneByAndBy('uid', $uid, 'network_id',
             $this->request->input('network_id'));
 
         if (!$socialNetwork) {
 
-            if (!$userModel = $this->factory->getUserSocialToken($network)->checkUserTokenInSocialNetwork($token,
+            if (!$userModel = $this->factory->getSocialNetwork($network)->checkUserTokenInSocialNetwork($token,
                 $uid)
             ) {
                 abort(400, 'Invalid data');
@@ -64,7 +64,7 @@ class AuthorizeService
 
         } elseif ($socialNetwork->token !== $token) {
 
-            if (!$userModel = $this->factory->getUserSocialToken($network)->checkUserTokenInSocialNetwork($token,
+            if (!$userModel = $this->factory->getSocialNetwork($network)->checkUserTokenInSocialNetwork($token,
                 $uid)
             ) {
                 abort(400, 'Invalid data');

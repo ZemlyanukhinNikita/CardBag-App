@@ -7,7 +7,7 @@ use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Log;
 use UserProfile;
 
-class CheckUserTokenGoogleService implements CheckTokenInterface
+class GoogleService implements SocialNetworkInterface
 {
     private $client;
 

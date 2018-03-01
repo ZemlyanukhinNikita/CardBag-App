@@ -34,8 +34,7 @@
             "app/Service/",
             "app/Repositories/",
             "app/Dto/",
-            "app/Service/SocialNetworkCheckers",
-            "app/Service/UserAuthorize"
+            "app/Service/SocialNetworksServices"
         ]
     },
     "scripts": {

@@ -7,7 +7,7 @@ use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Log;
 use UserProfile;
 
-class CheckUserTokenFacebookService implements CheckTokenInterface
+class FacebookService implements SocialNetworkInterface
 {
     private $client;
 

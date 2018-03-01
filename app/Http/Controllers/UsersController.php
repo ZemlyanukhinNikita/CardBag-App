@@ -25,7 +25,7 @@ class UsersController extends Controller
         AuthorizeService $authorizeService
     ) {
         $this->validateCardFields($request);
-        $userModel = $authorizeService->auth($request->input('uid'), $request->input('token'),
+        $userModel = $authorizeService->authorizeWithSocialNetwork($request->input('uid'), $request->input('token'),
             $networkRepository->findOneBy('id', $request->input('network_id'))->name);
 
         return response()->json([
