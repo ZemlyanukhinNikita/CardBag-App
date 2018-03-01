@@ -32,10 +32,10 @@ class CheckUserTokenGoogleService implements CheckTokenInterface
             return new UserProfile($result->name, $token, $result->sub);
 
         } catch (RequestException $e) {
-            if ($e->getCode() === 403) {
+            if ($e->getCode() === 401) {
                 abort(400, 'Token not found in Google');
             }
-            if ($e->getCode() === 401) {
+            if ($e->getCode() === 403) {
                 abort(400, 'Uid do not match');
             }
             Log::error('Exception' . $e->getMessage() . ' ' . $e->getCode());
