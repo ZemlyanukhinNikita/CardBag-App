@@ -42,19 +42,24 @@ class AuthorizeService
      * @param $uid
      * @param $token
      * @param $network
-     * @return UserProfile
+     * @return false | UserProfile
      */
     public function authorizeWithSocialNetwork($uid, $token, $network)
     {
-        $socialNetwork = $this->tokenRepository->findOneByAndBy('uid', $uid, 'network_id',
-            $this->request->input('network_id'));
+        $socialNetwork = $this->tokenRepository->findOneBy([
+            ['uid', $uid],
+            [
+                'network_id',
+                $this->request->input('network_id')
+            ]
+        ]);
 
         if (!$socialNetwork) {
 
             if (!$userModel = $this->factory->getSocialNetwork($network)->checkUserTokenInSocialNetwork($token,
                 $uid)
             ) {
-                abort(400, 'Invalid data');
+                return false;
             }
             $this->registerNewUser($userModel);
 
@@ -67,7 +72,7 @@ class AuthorizeService
             if (!$userModel = $this->factory->getSocialNetwork($network)->checkUserTokenInSocialNetwork($token,
                 $uid)
             ) {
-                abort(400, 'Invalid data');
+                return false;
             }
             $this->refreshUserToken($userModel);
         }
@@ -78,7 +83,6 @@ class AuthorizeService
     /**
      * Метод обновления токена пользователя
      * @param UserProfile $result
-     * @return \Illuminate\Http\JsonResponse
      */
     public function refreshUserToken(UserProfile $result)
     {
@@ -89,7 +93,6 @@ class AuthorizeService
     /**
      * Метод регистрации нового пользователя
      * @param UserProfile $result
-     * @return \Illuminate\Http\JsonResponse
      */
     public function registerNewUser(UserProfile $result)
     {
