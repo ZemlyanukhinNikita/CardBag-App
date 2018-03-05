@@ -8,7 +8,7 @@ use GuzzleHttp\Psr7\Response;
 
 class GoogleServiceTest extends TestCase
 {
-    public function testGoogleService()
+    public function testSuccessfulResponse()
     {
         $token = "ya29.GltxBXq1wUjk8_sxLPQ6s20Ruks7xs1nBpWKjIx84BxDeiSXmJ84_7dzHuJq4UzsUFTOUOojiJwtoIKKa8umnseYuFXU2ODMCyi8kf3TZWVrxy9dQAzltKQZW6Lv";
 

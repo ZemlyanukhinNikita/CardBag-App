@@ -14,7 +14,7 @@ class FacebookServiceTest extends TestCase
         parent::setUp();
     }
 
-    public function testFacebookService()
+    public function testSuccessfulResponse()
     {
         $token = "token";
 

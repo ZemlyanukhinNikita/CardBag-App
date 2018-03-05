@@ -8,7 +8,7 @@ use GuzzleHttp\Psr7\Response;
 
 class VkServiceTest extends TestCase
 {
-    public function testVkService()
+    public function testSuccessfulResponse()
     {
         $token = "_7dzHuJq4UzsUFTOUOojiJwtoIKKa8umnseYuFXU2ODMCyi8kf3TZWVrxy9dQAzltKQZW6Lv";
 
