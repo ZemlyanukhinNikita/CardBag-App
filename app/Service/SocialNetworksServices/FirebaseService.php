@@ -3,36 +3,37 @@
 namespace App\Service;
 
 
-use app\Service\SocialNetworkCheckers\ConfigureFirebase;
 use Exception;
+use Illuminate\Support\Facades\Log;
+use Kreait\Firebase;
 use Kreait\Firebase\ServiceAccount;
 use UserProfile;
 
-class CheckUserTokenFirebaseService implements CheckTokenInterface
+class FirebaseService implements SocialNetworkInterface
 {
     private $firebase;
 
     /**
      * CheckUserTokenFirebaseService constructor.
-     * @param $firebase
+     * @param Firebase $firebase
      */
-    public function __construct(ConfigureFirebase $firebase)
+    public function __construct(Firebase $firebase)
     {
         $this->firebase = $firebase;
     }
 
     public function checkUserTokenInSocialNetwork($token, $uid)
     {
-        $firebaseAuth = $this->firebase->getFirebaseConfigure()->getAuth();
+        $firebaseAuth = $this->firebase->getAuth();
         try {
             $idToken = $firebaseAuth->verifyIdToken($token);
-
         } catch (Exception $e) {
-            abort(400, 'Token not found in Firebase');
+            Log::error('Exception' . $e->getMessage() . ' ' . $e->getCode());
+            return false;
         }
 
         if ($idToken->getClaim('user_id') !== $uid) {
-            abort(400, 'Uid do not match');
+            return false;
         }
         return new UserProfile($idToken->getClaim('phone_number'), $token, $idToken->getClaim('user_id'));
     }

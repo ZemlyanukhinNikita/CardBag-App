@@ -15,6 +15,9 @@ use app\Repositories\TokenRepository;
 use app\Repositories\UserInterface;
 use app\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;
+use Kreait\Firebase;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\ServiceAccount;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -35,5 +38,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PhotoInterface::class, PhotoRepository::class);
         $this->app->bind(TokenInterface::class, TokenRepository::class);
         $this->app->bind(NetworkInterface::class, NetworkRepository::class);
+        $this->app->bind(Firebase::class, function () {
+            $serviceAccount = new ServiceAccount();
+            $firebase = new Factory();
+            return $firebase->withServiceAccount($serviceAccount->fromJsonFile('../CARDbag-d01707728926.json'))->create();
+        });
     }
 }

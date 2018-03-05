@@ -61,6 +61,27 @@ abstract class EloquentRepository implements ModelInterface
         return $this->getModel()->where($field, $value)->first();
     }
 
+    /**
+     * {@inheritDoc}
+     * Метод получения модели, где $firstField == $firstValue and $secondField == $secondValue
+     * @param string $firstField
+     * @param $firstValue
+     * @param $secondField
+     * @param $secondValue
+     * @return mixed
+     */
+    public function findOneByAndBy(string $firstField, $firstValue, $secondField, $secondValue)
+    {
+        return $this->getModel()->where($firstField, $firstValue)->where($secondField, $secondValue)->first();
+    }
+
+    /**
+     * {@inheritDoc}
+     * Метод получения одной модели, возможно удаленной
+     * @param string $field
+     * @param $value
+     * @return mixed
+     */
     public function findOneByWithTrashedBy(string $field, $value)
     {
         return $this->getModel()->withTrashed()->where($field, $value)->first();

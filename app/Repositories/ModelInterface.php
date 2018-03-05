@@ -38,6 +38,24 @@ interface ModelInterface
      */
     public function findOneBy(string $field, $value);
 
+
+    /**
+     * Метод получения модели, где $firstField == $firstValue and $secondField == $secondValue,
+     * реализуется в дочерних классах
+     * @param string $firstField
+     * @param $firstValue
+     * @param $secondField
+     * @param $secondValue
+     * @return mixed
+     */
+    public function findOneByAndBy(string $firstField, $firstValue, $secondField, $secondValue);
+
+    /**
+     * Метод получения одной модели, возможно удаленной, реализуется в дочерних классах
+     * @param string $field
+     * @param $value
+     * @return mixed
+     */
     public function findOneByWithTrashedBy(string $field, $value);
 
     /**
@@ -45,7 +63,7 @@ interface ModelInterface
      * @return mixed
      */
     public function findAll();
-    
+
     /**
      * Метод получения всех моделей отсортированных по алфавиту, реализуется в дочерних классах
      * @param String $field
