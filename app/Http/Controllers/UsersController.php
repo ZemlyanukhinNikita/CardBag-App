@@ -25,8 +25,13 @@ class UsersController extends Controller
         AuthorizeService $authorizeService
     ) {
         $this->validateCardFields($request);
-        $userModel = $authorizeService->authorizeWithSocialNetwork($request->input('uid'), $request->input('token'),
-            $networkRepository->findOneBy('id', $request->input('network_id'))->name);
+
+        if (!$userModel = $authorizeService->authorizeWithSocialNetwork($request->input('uid'),
+            $request->input('token'),
+            $networkRepository->findOneBy([['id', $request->input('network_id')]])->name)
+        ) {
+            abort(400, 'Invalid data');
+        }
 
         return response()->json([
             'full_name' => $userModel->getFullName(),
