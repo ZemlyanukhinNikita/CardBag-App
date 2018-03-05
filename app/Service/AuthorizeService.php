@@ -85,7 +85,7 @@ class AuthorizeService
      * Метод обновления токена пользователя
      * @param UserProfile $result
      */
-    public function refreshUserToken(UserProfile $result)
+    private function refreshUserToken(UserProfile $result)
     {
         $this->tokenRepository->update('uid', $result->getUid(),
             ['token' => $result->getToken()]);
@@ -95,7 +95,7 @@ class AuthorizeService
      * Метод регистрации нового пользователя
      * @param UserProfile $result
      */
-    public function registerNewUser(UserProfile $result)
+    private function registerNewUser(UserProfile $result)
     {
         $user = $this->userRepository->create([
             'full_name' => $result->getFullName(),
