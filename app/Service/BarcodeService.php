@@ -34,12 +34,14 @@ class BarcodeService
         $this->request = $request;
     }
 
-    private function saveBarcodeImageInDB($photo)
+    /**
+     * @param string $photo url фотографии
+     */
+    private function saveBarcodeImageInDB(string $filename)
     {
         $this->photoRepository->create([
             'user_id' => $this->request->user()->id,
-            'filename' => $this->generateBarCodeImage($this->scanBarCode($photo)->text,
-                $this->scanBarCode($photo)->format)
+            'filename' => $filename
         ]);
     }
 
@@ -48,7 +50,7 @@ class BarcodeService
      * @param $fileName
      * @return mixed
      */
-    public function scanBarCode($fileName)
+    public function scanBarCode(string $fileName)
     {
         try {
             return $this->decoder->make('storage/' . $fileName);
@@ -81,9 +83,10 @@ class BarcodeService
     public function getImageUrlOrNull($photo)
     {
         if ($this->scanBarCode($photo)->code !== 400) {
-            $this->saveBarcodeImageInDB($photo);
-            return $this->generateBarCodeImage($this->scanBarCode($photo)->text,
+            $filename = $this->generateBarCodeImage($this->scanBarCode($photo)->text,
                 $this->scanBarCode($photo)->format);
+            $this->saveBarcodeImageInDB($filename);
+            return $filename;
         }
         return null;
     }
