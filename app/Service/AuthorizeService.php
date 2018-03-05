@@ -26,7 +26,8 @@ class AuthorizeService
         UserInterface $userRepository,
         TokenInterface $tokenRepository,
         SocialNetworkFactory $factory
-    ) {
+    )
+    {
         $this->request = $request;
         $this->userRepository = $userRepository;
         $this->tokenRepository = $tokenRepository;

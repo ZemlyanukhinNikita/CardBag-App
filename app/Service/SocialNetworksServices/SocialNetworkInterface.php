@@ -9,7 +9,7 @@ interface SocialNetworkInterface
      * Метод проверки токена пользователя в социальной сети
      * @param $token
      * @param $uid
-     * @return bool|\UserProfile
+     * @return false|\UserProfile
      */
     public function checkUserTokenInSocialNetwork($token, $uid);
 }

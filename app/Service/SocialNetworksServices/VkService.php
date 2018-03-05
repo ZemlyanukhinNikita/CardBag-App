@@ -28,7 +28,7 @@ class VkService implements SocialNetworkInterface
         $res = $this->client->request('GET',
             'https://api.vk.com/method/users.get?&access_token=' . $token);
         $result = json_decode($res->getBody());
-        
+
         if (!isset($result->response)) {
             return false;
         }

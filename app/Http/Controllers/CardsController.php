@@ -107,14 +107,14 @@ class CardsController extends Controller
     {
         $this->checkingValidityUuidCard($uuid);
 
-        $card = $cardRepository->findOneBy('uuid', (string)$uuid);
+        $card = $cardRepository->findOneBy([['uuid', (string)$uuid]]);
 
         if (!$card) {
             abort(400, 'card`s UUID not found in database');
         }
 
-        $frontPhoto = $photoRepository->findOneBy('id', $card->front_photo);
-        $backPhoto = $photoRepository->findOneBy('id', $card->back_photo);
+        $frontPhoto = $photoRepository->findOneBy([['id', $card->front_photo]]);
+        $backPhoto = $photoRepository->findOneBy([['id', $card->back_photo]]);
 
         $photoService->checkingUserPermission($frontPhoto->filename);
         $photoService->checkingUserPermission($backPhoto->filename);
@@ -139,7 +139,7 @@ class CardsController extends Controller
 
         $this->validateCardFields($request);
 
-        $card = $cardRepository->findOneBy('uuid', (string)$uuid);
+        $card = $cardRepository->findOneBy([['uuid', (string)$uuid]]);
         if (!$card) {
             abort(400, 'card`s UUID not found in database');
         }

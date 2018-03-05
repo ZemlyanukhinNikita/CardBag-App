@@ -40,7 +40,7 @@ class PhotoService
      */
     public function checkingSendPhotoOnServer($photo)
     {
-        $photos = $this->photoRepository->findOneBy('filename', basename($photo));
+        $photos = $this->photoRepository->findOneBy([['filename', basename($photo)]]);
 
         if (!$photos) {
             abort(400, 'Photo not found on server');
@@ -55,7 +55,7 @@ class PhotoService
 
     public function checkingUserPermission($photo)
     {
-        $photos = $this->photoRepository->findOneBy('filename', basename($photo));
+        $photos = $this->photoRepository->findOneBy([['filename', basename($photo)]]);
 
         if ($photos->user_id !== $this->request->user()->id) {
             abort(403, 'Permission denied');
