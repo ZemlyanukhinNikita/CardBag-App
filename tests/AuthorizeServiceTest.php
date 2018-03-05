@@ -8,7 +8,6 @@ use app\Repositories\UserRepository;
 use App\Service\AuthorizeService;
 use App\Service\SocialNetworkFactory;
 use App\Token;
-use App\User;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Testing\DatabaseTransactions;
 use Mockery;
@@ -46,15 +45,15 @@ class AuthorizeServiceTest extends TestCase
         $this->seeInDatabase('tokens', ['token' => $tokenModel->token]);
     }
 
-    public function testRegisterNewUser()
-    {
-        $user = factory(User::class)->create();
-        $tokenModel = factory(Token::class)->create();
-        $this->userProfile = new UserProfile($user->full_name, $tokenModel->token, $tokenModel->uid);
-        $this->authorizeService->registerNewUser($this->userProfile);
-        $this->seeInDatabase('users', ['full_name' => $user->full_name]);
-        $this->seeInDatabase('tokens', ['token' => $tokenModel->token]);
-    }
+//    public function testRegisterNewUser()
+//    {
+//        $user = factory(User::class)->create();
+//        $tokenModel = factory(Token::class)->create();
+//        $this->userProfile = new UserProfile($user->full_name, $tokenModel->token, $tokenModel->uid);
+//        $this->authorizeService->registerNewUser($this->userProfile);
+//        $this->seeInDatabase('users', ['full_name' => $user->full_name]);
+//        $this->seeInDatabase('tokens', ['token' => $tokenModel->token]);
+//    }
 
     public function tearDown()
     {
