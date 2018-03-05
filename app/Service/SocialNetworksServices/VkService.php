@@ -26,18 +26,18 @@ class VkService implements SocialNetworkInterface
     public function checkUserTokenInSocialNetwork($token, $uid)
     {
         $res = $this->client->request('GET',
-            'https://api.vk.com/method/users.get?&access_token=' . $token);
+            'https://api.vk.com/method/users.get?v=5.52&access_token=' . $token);
         $result = json_decode($res->getBody());
 
         if (!isset($result->response)) {
             return false;
         }
 
-        if ((string)$result->response[0]->uid !== $uid) {
+        if ((string)$result->response[0]->id !== $uid) {
             return false;
         }
 
         return new UserProfile($result->response[0]->first_name . ' ' .
-            $result->response[0]->last_name, $token, (string)$result->response[0]->uid);
+            $result->response[0]->last_name, $token, (string)$result->response[0]->id);
     }
 }
