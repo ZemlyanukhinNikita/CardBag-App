@@ -2,6 +2,7 @@
 
 use app\Repositories\CardInterface;
 use app\Repositories\PhotoInterface;
+use app\Service\BarcodeService;
 use App\Service\CardService;
 use App\Service\PhotoService;
 use Illuminate\Database\Eloquent\Collection;
@@ -58,11 +59,13 @@ class CardsController extends Controller
      * @param Request $request
      * @param CardInterface $cardRepository
      * @param PhotoService $photoService
+     * @param BarcodeService $barcodeService
      */
     public function addCard(
         Request $request,
         CardInterface $cardRepository,
-        PhotoService $photoService
+        PhotoService $photoService,
+        BarcodeService $barcodeService
     )
     {
         $this->validateCardFields($request);
@@ -77,12 +80,24 @@ class CardsController extends Controller
 
         $frontPhoto = $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
         $backPhoto = $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
-
         $this->isExistValueInDataBase('front_photo', $frontPhoto->id, $cardRepository, 'Photo must be unique');
         $this->isExistValueInDataBase('back_photo', $backPhoto->id, $cardRepository, 'Photo must be unique');
 
         $photoService->checkingUserPermission($request->input('front_photo'));
         $photoService->checkingUserPermission($request->input('back_photo'));
+
+        $barcodeImageName = $barcodeService->getImageUrlOrNull($backPhoto->filename);
+        if ($barcodeImageName === null) {
+            $barcodeImageName = $barcodeService->getImageUrlOrNull($frontPhoto->filename);
+        }
+
+        $barcodePhoto = $photoService->checkingSendPhotoOnServer($barcodeImageName);
+
+        $barcode = $barcodeService->scanBarCode($backPhoto->filename);
+        if ($barcode === null) {
+            $barcode = $barcodeService->scanBarCode($frontPhoto->filename);
+        }
+
 
         $cardRepository->create([
             'user_id' => $request->user()->id,
@@ -92,7 +107,9 @@ class CardsController extends Controller
             'back_photo' => $backPhoto->id,
             'discount' => $this->replacingEmptyStringWithNull($request->input('discount')),
             'uuid' => $request->input('uuid'),
-            'updated_at' => $request->input('updated_at')
+            'updated_at' => $request->input('updated_at'),
+            'barcode_photo' => $barcodePhoto->id,
+            'barcode' => $barcode
         ]);
     }
 
