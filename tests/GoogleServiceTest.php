@@ -26,4 +26,21 @@ class GoogleServiceTest extends TestCase
         $this->assertEquals($token, $userProfile->getToken());
         $this->assertEquals('407408718192', $userProfile->getUid());
     }
+
+    public function testInvalidData()
+    {
+        $token = "token";
+
+        $mock = new MockHandler([
+            new Response(200, ["content-type" => 'application/json'], json_encode(['name' => 'Роман Максимов', 'sub' => '407408718192'])),
+        ]);
+
+        $handler = HandlerStack::create($mock);
+        $client = new Client(['handler' => $handler]);
+        $service = new GoogleService($client);
+
+        $userProfile = $service->checkUserTokenInSocialNetwork($token, '1234');
+
+        $this->assertEquals($userProfile, false);
+    }
 }

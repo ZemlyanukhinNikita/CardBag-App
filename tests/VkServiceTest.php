@@ -26,4 +26,21 @@ class VkServiceTest extends TestCase
         $this->assertEquals($token, $userProfile->getToken());
         $this->assertEquals('210700286', $userProfile->getUid());
     }
+
+    public function testInvalidData()
+    {
+        $token = "token";
+
+        $mock = new MockHandler([
+            new Response(200, ["content-type" => 'application/json'], json_encode(["response" => [['uid' => '210700286', 'first_name' => 'Роман', 'last_name' => 'Максимов']]])),
+        ]);
+
+        $handler = HandlerStack::create($mock);
+        $client = new Client(['handler' => $handler]);
+        $service = new VkService($client);
+
+        $userProfile = $service->checkUserTokenInSocialNetwork($token, '1234');
+
+        $this->assertEquals($userProfile, false);
+    }
 }
