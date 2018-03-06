@@ -22,8 +22,7 @@ class CardService
     public function __construct(
         CardInterface $cardRepository,
         Request $request
-    )
-    {
+    ) {
         $this->cardRepository = $cardRepository;
         $this->request = $request;
     }
@@ -40,7 +39,10 @@ class CardService
                  as $card) {
             $card->front_photo = Storage::url('storage/' . $card->frontPhoto->filename);
             $card->back_photo = Storage::url('storage/' . $card->backPhoto->filename);
-            $card->barcode_photo = Storage::url('/' . $card->barcodePhoto->filename);
+            if ($card->barcodePhoto) {
+                $card->barcode_photo = Storage::url('/' . $card->barcodePhoto->filename);
+            }
+            $card->barcode_photo = null;
         }
         return $cards;
     }
