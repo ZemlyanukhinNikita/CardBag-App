@@ -12,8 +12,19 @@ class Card extends Model
     public $casts = [
         'discount' => 'int'
     ];
-    protected $hidden = ['frontPhoto', 'backPhoto'];
-    protected $fillable = ['user_id', 'title', 'category_id', 'front_photo', 'back_photo', 'discount', 'uuid', 'updated_at'];
+    protected $hidden = ['frontPhoto', 'backPhoto', 'barcodePhoto'];
+    protected $fillable = [
+        'user_id',
+        'title',
+        'category_id',
+        'front_photo',
+        'back_photo',
+        'discount',
+        'uuid',
+        'updated_at',
+        'barcode_photo',
+        'barcode'
+    ];
 
     public function category()
     {
@@ -33,6 +44,11 @@ class Card extends Model
     public function backPhoto()
     {
         return $this->belongsTo(Photo::class, 'back_photo', 'id');
+    }
+
+    public function barcodePhoto()
+    {
+        return $this->belongsTo(Photo::class, 'barcode_photo', 'id');
     }
 }
 

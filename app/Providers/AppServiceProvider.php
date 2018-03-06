@@ -30,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
     {
         if ($this->app->environment() == 'local') {
             $this->app->register('Wn\Generators\CommandsServiceProvider');
+            $this->app->singleton('RobbieP\ZbarQrdecoder\ZbarQrdecoderServiceProvider');
         }
 
         $this->app->bind(UserInterface::class, UserRepository::class);
