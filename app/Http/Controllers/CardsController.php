@@ -97,7 +97,7 @@ class CardsController extends Controller
         $barcodePhotoId = null;
         if ($barcodeImageName) {
             $barcode = substr($barcodeImageName, 0, -4);
-            $barcodePhoto = $photoRepository->findOneBy('filename', $barcodeImageName);
+            $barcodePhoto = $photoRepository->findOneBy([['filename', $barcodeImageName]]);
             $barcodePhotoId = $barcodePhoto->id;
         }
 
