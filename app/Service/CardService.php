@@ -39,11 +39,7 @@ class CardService
                  as $card) {
             $card->front_photo = Storage::url('storage/' . $card->frontPhoto->filename);
             $card->back_photo = Storage::url('storage/' . $card->backPhoto->filename);
-            if ($card->barcodePhoto) {
-                $card->barcode_photo = Storage::url('/' . $card->barcodePhoto->filename);
-            } else {
-                $card->barcode_photo = null;
-            }
+            $card->barcodePhoto === null ? $card->barcode_photo = null : $card->barcode_photo = Storage::url('/' . $card->barcodePhoto->filename);
         }
         return $cards;
     }
