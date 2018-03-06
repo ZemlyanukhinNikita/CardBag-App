@@ -31,13 +31,19 @@ interface ModelInterface
     public function findAllWithTrashedBy(string $field, $value);
 
     /**
-     * Метод получения модели, где $field == $value, реализуется в дочерних классах
+     * Метод получения модели, где [[поле == значению],...], реализуется в дочерних классах
+     * @param array $values
+     * @return mixed
+     */
+    public function findOneBy(array $values);
+
+
+    /**
+     * Метод получения одной модели, возможно удаленной, реализуется в дочерних классах
      * @param string $field
      * @param $value
      * @return mixed
      */
-    public function findOneBy(string $field, $value);
-
     public function findOneByWithTrashedBy(string $field, $value);
 
     /**
@@ -45,7 +51,7 @@ interface ModelInterface
      * @return mixed
      */
     public function findAll();
-    
+
     /**
      * Метод получения всех моделей отсортированных по алфавиту, реализуется в дочерних классах
      * @param String $field
