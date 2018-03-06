@@ -60,14 +60,15 @@ class CardsController extends Controller
      * @param CardInterface $cardRepository
      * @param PhotoService $photoService
      * @param BarcodeService $barcodeService
+     * @param PhotoInterface $photoRepository
      */
     public function addCard(
         Request $request,
         CardInterface $cardRepository,
         PhotoService $photoService,
-        BarcodeService $barcodeService
-    )
-    {
+        BarcodeService $barcodeService,
+        PhotoInterface $photoRepository
+    ) {
         $this->validateCardFields($request);
 
         $this->checkingValidityUuidCard($request->input('uuid'));
@@ -86,18 +87,19 @@ class CardsController extends Controller
         $photoService->checkingUserPermission($request->input('front_photo'));
         $photoService->checkingUserPermission($request->input('back_photo'));
 
-        $barcodeImageName = $barcodeService->getImageUrlOrNull($backPhoto->filename);
+        $barcodeImageName = $barcodeService->getImageUrl($backPhoto->filename);
+
         if ($barcodeImageName === null) {
-            $barcodeImageName = $barcodeService->getImageUrlOrNull($frontPhoto->filename);
+            $barcodeImageName = $barcodeService->getImageUrl($frontPhoto->filename);
         }
 
-        $barcodePhoto = $photoService->checkingSendPhotoOnServer($barcodeImageName);
-
-        $barcode = $barcodeService->scanBarCode($backPhoto->filename);
-        if ($barcode === null) {
-            $barcode = $barcodeService->scanBarCode($frontPhoto->filename);
+        $barcode = null;
+        $barcodePhotoId = null;
+        if ($barcodeImageName) {
+            $barcode = substr($barcodeImageName, 0, -4);
+            $barcodePhoto = $photoRepository->findOneBy('filename', $barcodeImageName);
+            $barcodePhotoId = $barcodePhoto->id;
         }
-
 
         $cardRepository->create([
             'user_id' => $request->user()->id,
@@ -108,7 +110,7 @@ class CardsController extends Controller
             'discount' => $this->replacingEmptyStringWithNull($request->input('discount')),
             'uuid' => $request->input('uuid'),
             'updated_at' => $request->input('updated_at'),
-            'barcode_photo' => $barcodePhoto->id,
+            'barcode_photo' => $barcodePhotoId,
             'barcode' => $barcode
         ]);
     }
@@ -120,8 +122,12 @@ class CardsController extends Controller
      * @param PhotoService $photoService
      * @param PhotoInterface $photoRepository
      */
-    public function deleteCard($uuid, CardInterface $cardRepository, PhotoService $photoService, PhotoInterface $photoRepository)
-    {
+    public function deleteCard(
+        $uuid,
+        CardInterface $cardRepository,
+        PhotoService $photoService,
+        PhotoInterface $photoRepository
+    ) {
         $this->checkingValidityUuidCard($uuid);
 
         $card = $cardRepository->findOneBy('uuid', (string)$uuid);

@@ -35,6 +35,7 @@ class BarcodeService
     }
 
     /**
+     * Метод сохраняет штрихкод фото в базу данных
      * @param string $photo url фотографии
      */
     private function saveBarcodeImageInDB(string $filename)
@@ -46,11 +47,11 @@ class BarcodeService
     }
 
     /**
-     * Метод сканирования фотографии, возвращает код изображения
+     * Метод сканирования фотографии
      * @param $fileName
-     * @return mixed
+     * @return \RobbieP\ZbarQrdecoder\Result\Result
      */
-    public function scanBarCode(string $fileName)
+    private function scanBarCode(string $fileName)
     {
         try {
             return $this->decoder->make('storage/' . $fileName);
@@ -78,13 +79,13 @@ class BarcodeService
      * Метод возвращает url картинки если она распозанана,
      * иначе null
      * @param $photo
-     * @return url image or null
+     * @return $filename|null
      */
-    public function getImageUrlOrNull($photo)
+    public function getImageUrl($photo)
     {
-        if ($this->scanBarCode($photo)->code !== 400) {
-            $filename = $this->generateBarCodeImage($this->scanBarCode($photo)->text,
-                $this->scanBarCode($photo)->format);
+        $scanImage = $this->scanBarCode($photo);
+        if ($scanImage->code !== 400) {
+            $filename = $this->generateBarCodeImage($scanImage->text, $scanImage->format);
             $this->saveBarcodeImageInDB($filename);
             return $filename;
         }
@@ -96,7 +97,7 @@ class BarcodeService
      * считанный тип и тип штрихкода нужный для создания картинки отличаются, т.к используется два разных сервиса.
      * Метод устанавливает нужный тип штрихкода для генерации картинок
      * @param $format
-     * @return bool|string
+     * @return false|string
      */
     private function setBarcode($format)
     {
