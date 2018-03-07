@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers;
 
-use app\Repositories\NetworkInterface;
-use App\Service\AuthorizeService;
+use app\Repositories\TokenInterface;
+use app\Repositories\UserInterface;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
@@ -21,23 +21,20 @@ class UsersController extends Controller
 
     public function getAuthorizedUser(
         Request $request,
-        NetworkInterface $networkRepository,
-        AuthorizeService $authorizeService
-    )
-    {
+        TokenInterface $tokenRepository,
+        UserInterface $userRepository,
+        AccessTokenInterface $accessTokenRepository
+    ) {
         $this->validateCardFields($request);
 
-        if (!$userModel = $authorizeService->authorizeWithSocialNetwork($request->input('uid'),
-            $request->input('token'),
-            $networkRepository->findOneBy([['id', $request->input('network_id')]])->name)
-        ) {
-            abort(400, 'Invalid data');
-        }
-
+        $token = $tokenRepository->findOneBy([['uid', $request->input('uid')]]);
+        $userModel = $userRepository->findOneBy([['id', $token->user_id]]);
+        $tokenModel = $accessTokenRepository->findOneBy([['uid_id', $token->id]]);
+        
         return response()->json([
-            'full_name' => $userModel->getFullName(),
-            'token' => $userModel->getToken(),
-            'uid' => $userModel->getUid()
+            'full_name' => $userModel->full_name,
+            'token' => $token->name,
+            'uid' => $tokenModel->uid
         ]);
     }
 }
