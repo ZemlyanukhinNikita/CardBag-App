@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use app\Repositories\AccessTokenInterface;
+use app\Repositories\AccessTokenRepository;
 use app\Repositories\CardInterface;
 use app\Repositories\CardRepository;
 use app\Repositories\CategoryInterface;
@@ -34,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->app->bind(UserInterface::class, UserRepository::class);
+        $this->app->bind(AccessTokenInterface::class, AccessTokenRepository::class);
         $this->app->bind(CardInterface::class, CardRepository::class);
         $this->app->bind(CategoryInterface::class, CategoryRepository::class);
         $this->app->bind(PhotoInterface::class, PhotoRepository::class);

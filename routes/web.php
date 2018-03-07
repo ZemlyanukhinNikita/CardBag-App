@@ -21,5 +21,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->post('user/auth', 'UsersController@getAuthorizedUser');
 
     $router->get('categories', 'CategoriesController@getAllCategories');
+
+    $router->post('user/token', 'TokensController@getTokens');
 });
 

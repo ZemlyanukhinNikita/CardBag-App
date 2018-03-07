@@ -12,4 +12,9 @@ class Token extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function network()
+    {
+        return $this->belongsTo(Network::class, 'network_id', 'id');
+    }
 }
