@@ -16,7 +16,8 @@
         "guzzlehttp/guzzle": "^6.3",
         "laravelista/lumen-vendor-publish": "^2.1",
         "robbiep/zbar-qrdecoder": "^2.0",
-        "milon/barcode": "^5.3"
+        "milon/barcode": "^5.3",
+        "dusterio/lumen-passport": "^0.2.6"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

@@ -91,7 +91,8 @@ $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register('Wn\Generators\CommandsServiceProvider');
 $app->singleton('RobbieP\ZbarQrdecoder\ZbarQrdecoderServiceProvider');
-
+$app->register(Laravel\Passport\PassportServiceProvider::class);
+$app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
