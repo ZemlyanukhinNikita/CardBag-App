@@ -23,7 +23,7 @@ class TokensController extends Controller
     }
 
     public function getTokens(Request $request, AccessTokenInterface $accessTokenRepository,
-                              RefreshTokenInterface $refreshTokenRepository,
+//                              RefreshTokenInterface $refreshTokenRepository,
                               TokenInterface $tokenRepository, SocialNetworkFactory $factory,
                               UserRepository $userRepository, NetworkInterface $networkRepository)
     {
@@ -32,39 +32,41 @@ class TokensController extends Controller
         $networkId = $request->input('network_id');
         $uid = $request->input('uid');
 
-        if (!$accessTokenRepository->findOneBy([['uid', $uid], ['network_id', $networkId]])) {
-            if ($userProfile = $factory->getSocialNetwork(
-                $networkRepository->findOneBy([['id', $request->input('network_id')]])->name)
-            ) {
-
-                //Генерим 2 токена и
-
-                $accessToken = '123';
-                $refreshToken = '321';
-
-                $user = $userRepository->create(['full_name' => $userProfile->getFullName()]);
-
-                $socialNetwork = $tokenRepository->create(['user_id' => $user->id, 'uid' => $uid, 'network_id' => $networkId]);
-
-                $tokenModel = $accessTokenRepository->create([
-                    'uid_id' => $socialNetwork->id,
-                    'name' => $accessToken
-                ]);
-
-                $refreshTokenRepository->create([
-                    'access_token_id' => $tokenModel->id,
-                    'name' => $refreshToken
-                ]);
-
-                return response()->json([
-                    'full_name' => $userProfile->getFullName(),
-                    'access_token' => $accessToken,
-                    'refresh_token' => $refreshToken,
-                    'uid' => $userProfile->getUid()
-                ]);
-            }
-            abort(400, 'invalid data');
+        if ($tokenRepository->findOneBy([['uid', $uid], ['network_id', $networkId]])) {
+            abort(400, 'есть uid');
         }
-        abort(400, 'You are already registered');
+
+        if ($userProfile = $factory->getSocialNetwork(
+            $networkRepository->findOneBy([['id', $request->input('network_id')]])->name)
+            ->checkUserTokenInSocialNetwork($request->input('token'), $uid)) {
+
+            //Генерим 2 токена и
+
+            $accessToken = '123';
+            $refreshToken = '321';
+
+            $user = $userRepository->create(['full_name' => $userProfile->getFullName()]);
+
+            $socialNetwork = $tokenRepository->create(['user_id' => $user->id, 'uid' => $uid, 'network_id' => $networkId]);
+
+            $tokenModel = $accessTokenRepository->create([
+                'uid_id' => $socialNetwork->id,
+                'name' => $accessToken
+            ]);
+
+//                $refreshTokenRepository->create([
+//                    'access_token_id' => $tokenModel->id,
+//                    'name' => $refreshToken
+//                ]);
+
+            return response()->json([
+                'full_name' => $userProfile->getFullName(),
+                'access_token' => $accessToken,
+                'refresh_token' => $refreshToken,
+                'uid' => $userProfile->getUid()
+            ]);
+        }
+        abort(400, 'invalid data');
     }
 }
+
