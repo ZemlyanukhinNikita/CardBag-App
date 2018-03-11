@@ -17,4 +17,9 @@ class Token extends Model
     {
         return $this->belongsTo(Network::class, 'network_id', 'id');
     }
+
+    public function access_token()
+    {
+        return $this->belongsTo(AccessToken::class, 'id', 'uid_id');
+    }
 }

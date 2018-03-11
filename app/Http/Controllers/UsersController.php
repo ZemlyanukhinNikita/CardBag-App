@@ -1,7 +1,6 @@
 <?php namespace App\Http\Controllers;
 
-use app\Repositories\NetworkInterface;
-use App\Service\AuthorizeService;
+use app\Repositories\TokenInterface;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
@@ -14,30 +13,28 @@ class UsersController extends Controller
 
         $this->validate($request, [
             'network_id' => 'integer|required|exists:networks,id',
-            'token' => 'required',
+            'access_token' => 'required',
             'uid' => 'required',
         ], $messages);
     }
 
     public function getAuthorizedUser(
         Request $request,
-        NetworkInterface $networkRepository,
-        AuthorizeService $authorizeService
+        TokenInterface $tokenRepository
     )
     {
         $this->validateCardFields($request);
 
-        if (!$userModel = $authorizeService->authorizeWithSocialNetwork($request->input('uid'),
-            $request->input('token'),
-            $networkRepository->findOneBy([['id', $request->input('network_id')]])->name)
-        ) {
-            abort(400, 'Invalid data');
+        if (!$tokenModel = $tokenRepository->findOneBy([['uid', $request->input('uid')],
+            ['network_id', $request->input('network_id')]])) {
+            abort(401, 'Invalid data');
         }
 
         return response()->json([
-            'full_name' => $userModel->getFullName(),
-            'token' => $userModel->getToken(),
-            'uid' => $userModel->getUid()
+            'full_name' => $tokenModel->user->full_name,
+            'access_token' => $tokenModel->access_token->name,
+            'uid' => $tokenModel->uid
         ]);
     }
+
 }

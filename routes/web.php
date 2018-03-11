@@ -11,6 +11,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->delete('cards/{uuid}', 'CardsController@deleteCard');
         $router->put('cards/{uuid}', 'CardsController@updateCard');
 
+        $router->post('user/auth', 'UsersController@getAuthorizedUser');
     });
 
     $router->group(['middleware' => ['authorization']], function () use ($router) {
@@ -18,10 +19,11 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
     });
 
-    $router->post('user/auth', 'UsersController@getAuthorizedUser');
 
     $router->get('categories', 'CategoriesController@getAllCategories');
 
     $router->post('user/token', 'TokensController@getTokens');
+
+    $router->post('token/refresh', 'TokenRefreshesController@refreshTokens');
 });
 

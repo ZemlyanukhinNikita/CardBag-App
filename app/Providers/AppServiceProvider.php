@@ -12,6 +12,8 @@ use app\Repositories\NetworkInterface;
 use app\Repositories\NetworkRepository;
 use app\Repositories\PhotoInterface;
 use app\Repositories\PhotoRepository;
+use app\Repositories\RefreshTokenInterface;
+use app\Repositories\RefreshTokenRepository;
 use app\Repositories\TokenInterface;
 use app\Repositories\TokenRepository;
 use app\Repositories\UserInterface;
@@ -37,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(UserInterface::class, UserRepository::class);
         $this->app->bind(AccessTokenInterface::class, AccessTokenRepository::class);
+        $this->app->bind(RefreshTokenInterface::class, RefreshTokenRepository::class);
         $this->app->bind(CardInterface::class, CardRepository::class);
         $this->app->bind(CategoryInterface::class, CategoryRepository::class);
         $this->app->bind(PhotoInterface::class, PhotoRepository::class);
