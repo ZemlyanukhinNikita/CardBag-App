@@ -15,16 +15,20 @@ class AddNewTableAccessTokens extends Migration
     {
         Schema::create('access_tokens', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('uid_id')->unsigned()->nullable();
+            $table->string('uid');
+            $table->integer('network_id')->unsigned();
             $table->integer('user_id')->unsigned()->nullable();
             $table->string('name')->nullable();
             $table->timestamps();
             $table->dateTime('expires_at')->nullable();
+
+            $table->unique(['user_id', 'network_id']);
+            $table->unique(['name', 'uid']);
         });
 
         Schema::table('access_tokens', function ($table) {
-            $table->foreign('uid_id')->references('id')->on('tokens');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('network_id')->references('id')->on('networks');
         });
     }
 

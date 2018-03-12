@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\AccessToken;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
 
@@ -32,12 +33,9 @@ class AuthServiceProvider extends ServiceProvider
 
         $this->app['auth']->viaRequest('api', function (Request $request) {
 
-            if ($request->input('access_token')) {
-                return AccessToken::where('name', $request->header('token'))->where('expires_at', '!=', null)->first()->user;
-            }
-
             if ($request->header('token')) {
-                return AccessToken::where('name', $request->header('token'))->where('expires_at', '!=', null)->first()->user;
+                return AccessToken::where('name', $request->header('token'))->where('expires_at', '!=', null)
+                    ->where('expires_at', '>', Carbon::now())->first()->user;
             }
         });
     }

@@ -1,11 +1,11 @@
 <?php namespace App\Http\Controllers;
 
-use app\Repositories\TokenInterface;
+use app\Repositories\AccessTokenInterface;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
 {
-    private function validateCardFields(Request $request)
+    private function validateFields(Request $request)
     {
         $messages = [
             'network_id.exists' => 'Такой соц.сети в базе данных нет',
@@ -13,27 +13,26 @@ class UsersController extends Controller
 
         $this->validate($request, [
             'network_id' => 'integer|required|exists:networks,id',
-            'access_token' => 'required',
+            'token' => 'required',
             'uid' => 'required',
         ], $messages);
     }
 
     public function getAuthorizedUser(
         Request $request,
-        TokenInterface $tokenRepository
-    )
+        AccessTokenInterface $accessTokenRepository)
     {
-        $this->validateCardFields($request);
+        $this->validateFields($request);
 
-        if (!$tokenModel = $tokenRepository->findOneBy([['uid', $request->input('uid')],
+        if (!$accessTokenModel = $accessTokenRepository->findOneBy([['uid', $request->input('uid')],
             ['network_id', $request->input('network_id')]])) {
             abort(401, 'Invalid data');
         }
 
         return response()->json([
-            'full_name' => $tokenModel->user->full_name,
-            'access_token' => $tokenModel->access_token->name,
-            'uid' => $tokenModel->uid
+            'full_name' => $accessTokenModel->user->full_name,
+            'access_token' => $accessTokenModel->name,
+            'uid' => $accessTokenModel->uid
         ]);
     }
 

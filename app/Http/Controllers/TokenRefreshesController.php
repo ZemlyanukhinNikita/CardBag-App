@@ -8,36 +8,20 @@ use Illuminate\Http\Request;
 
 class TokenRefreshesController extends Controller
 {
-    private function validateTokenFields(Request $request)
-    {
-        $messages = [
-            'network_id.exists' => 'Такой соц.сети в базе данных нет',
-        ];
-
-        $this->validate($request, [
-            'network_id' => 'integer|required|exists:networks,id',
-            'refresh_token' => 'required',
-            'uid' => 'required',
-        ], $messages);
-    }
-
     public function refreshTokens(
         Request $request,
         RefreshTokenInterface $refreshTokenRepository,
-        AccessTokenInterface $accessTokenRepository,
-        TokenInterface $tokenRepository
+        AccessTokenInterface $accessTokenRepository
     )
     {
-        $this->validateTokenFields($request);
+        $refreshTokenFromRequest = $request->input('token');
 
-        $refreshTokenFromRequest = $request->input('refresh_token');
-
-        if (!$tokenRepository->findOneBy([['uid', $request->input('uid')],
+        if (!$accessTokenModel = $accessTokenRepository->findOneBy([['uid', $request->input('uid')],
             ['network_id', $request->input('network_id')]])) {
             abort(401, 'Invalid data');
         }
 
-        if (!$refreshToken = $refreshTokenRepository->findOneBy([['name', $refreshTokenFromRequest]])) {
+        if ($accessTokenModel->refreshToken->name !== $refreshTokenFromRequest) {
             abort(400, 'Invalid data');
         }
 
@@ -51,7 +35,7 @@ class TokenRefreshesController extends Controller
                 'expires_at' => Carbon::now()->addMonth(6),
             ]);
 
-        $accessTokenRepository->update('id', $refreshToken->access_token_id,
+        $accessTokenRepository->update('id', $accessTokenModel->id,
             [
                 'name' => $newAccessToken,
                 'expires_at' => Carbon::now()->addMinute(1440),

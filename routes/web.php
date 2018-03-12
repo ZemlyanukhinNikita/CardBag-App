@@ -16,14 +16,14 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
     $router->group(['middleware' => ['authorization']], function () use ($router) {
         $router->get('cards', 'CardsController@getAllUserCards');
-
     });
 
 
     $router->get('categories', 'CategoriesController@getAllCategories');
 
-    $router->post('user/token', 'TokensController@getTokens');
-
-    $router->post('token/refresh', 'TokenRefreshesController@refreshTokens');
+    $router->group(['middleware' => ['validateField']], function () use ($router) {
+        $router->post('user/token', 'TokensController@getTokens');
+        $router->post('token/refresh', 'TokenRefreshesController@refreshTokens');
+    });
 });
 

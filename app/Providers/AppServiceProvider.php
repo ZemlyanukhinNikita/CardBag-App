@@ -43,7 +43,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CardInterface::class, CardRepository::class);
         $this->app->bind(CategoryInterface::class, CategoryRepository::class);
         $this->app->bind(PhotoInterface::class, PhotoRepository::class);
-        $this->app->bind(TokenInterface::class, TokenRepository::class);
         $this->app->bind(NetworkInterface::class, NetworkRepository::class);
         $this->app->bind(Firebase::class, function () {
             $serviceAccount = new ServiceAccount();

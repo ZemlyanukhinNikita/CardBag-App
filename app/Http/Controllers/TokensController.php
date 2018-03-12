@@ -26,7 +26,7 @@ class TokensController extends Controller
 
     public function getTokens(Request $request, AccessTokenInterface $accessTokenRepository,
                               RefreshTokenInterface $refreshTokenRepository,
-                              TokenInterface $tokenRepository, SocialNetworkFactory $factory,
+                              SocialNetworkFactory $factory,
                               UserRepository $userRepository, NetworkInterface $networkRepository)
     {
         $this->validateTokenFields($request);
@@ -34,7 +34,7 @@ class TokensController extends Controller
         $networkId = $request->input('network_id');
         $uid = $request->input('uid');
 
-        if ($tokenRepository->findOneBy([['uid', $uid], ['network_id', $networkId]])) {
+        if ($accessTokenRepository->findOneBy([['uid', $uid], ['network_id', $networkId]])) {
             abort(400, 'You have already registered this user');
         }
 
@@ -44,10 +44,9 @@ class TokensController extends Controller
 
             $userModel = $userRepository->create(['full_name' => $userProfile->getFullName()]);
 
-            $tokenModel = $tokenRepository->create(['user_id' => $userModel->id, 'uid' => $uid, 'network_id' => $networkId]);
-
             $accessTokenModel = $accessTokenRepository->create([
-                'uid_id' => $tokenModel->id,
+                'uid' => $uid,
+                'network_id' => $networkId,
                 'name' => bin2hex(openssl_random_pseudo_bytes(64)),
                 'user_id' => $userModel->id,
                 'expires_at' => Carbon::now()->addMinute(1440)
