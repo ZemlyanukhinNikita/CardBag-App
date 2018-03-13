@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class User extends Model
 {
-    protected $fillable = ['full_name'];
+    protected $fillable = ['full_name', 'uid', 'network_id'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -22,8 +22,18 @@ class User extends Model
         return $this->hasMany(Card::class);
     }
 
-    public function token()
+    public function accessTokens()
     {
-        return $this->hasMany(Token::class);
+        return $this->hasMany(AccessToken::class, 'id', 'user_id');
+    }
+
+    public function refreshTokens()
+    {
+        return $this->hasMany(RefreshToken::class,'id', 'user_id');
+    }
+
+    public function networks()
+    {
+        return $this->hasMany(Network::class,'network_id', 'id');
     }
 }

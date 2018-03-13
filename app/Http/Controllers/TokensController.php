@@ -34,28 +34,25 @@ class TokensController extends Controller
         $networkId = $request->input('network_id');
         $uid = $request->input('uid');
 
-        if ($accessTokenRepository->findOneBy([['uid', $uid], ['network_id', $networkId]])) {
-            abort(400, 'You have already registered this user');
-        }
-
         if ($userProfile = $factory->getSocialNetwork(
             $networkRepository->findOneBy([['id', $request->input('network_id')]])->name)
             ->checkUserTokenInSocialNetwork($request->input('token'), $uid)) {
 
-            $userModel = $userRepository->create(['full_name' => $userProfile->getFullName()]);
+            $userModel = $userRepository->create([
+                'full_name' => $userProfile->getFullName(),
+                'uid' => $uid,
+                'network_id' => $networkId
+                ]);
 
             $accessTokenModel = $accessTokenRepository->create([
-                'uid' => $uid,
-                'network_id' => $networkId,
                 'name' => bin2hex(openssl_random_pseudo_bytes(64)),
                 'user_id' => $userModel->id,
                 'expires_at' => Carbon::now()->addMinute(1440)
             ]);
 
             $refreshTokenModel = $refreshTokenRepository->create([
-                'access_token_id' => $accessTokenModel->id,
                 'name' => bin2hex(openssl_random_pseudo_bytes(32)),
-                'expires_at' => Carbon::now()->addMonth(6)
+                'user_id' => $userModel->id
             ]);
 
             return response()->json([
