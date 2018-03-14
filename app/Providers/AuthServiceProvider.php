@@ -33,10 +33,11 @@ class AuthServiceProvider extends ServiceProvider
 
         $this->app['auth']->viaRequest('api', function (Request $request) {
 
-            if ($request->header('token')) {
-                return AccessToken::where('name', $request->header('token'))->where('expires_at', '!=', null)
-                    ->where('expires_at', '>', Carbon::now())->first()->user;
+            if ($accessTokenModel = AccessToken::where('name', $request->header('token'))->where('expires_at', '!=', null)
+                ->where('expires_at', '>', Carbon::now())->first()) {
+                return $accessTokenModel->user;
             }
+            return null;
         });
     }
 }
