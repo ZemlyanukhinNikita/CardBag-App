@@ -56,7 +56,7 @@ class TokenRefreshesController extends Controller
             [
                 'user_id' => $refreshTokenModel->user_id,
                 'name' => $newAccessToken,
-                'expires_at' => Carbon::now()->addMinute(1440),
+                'expires_at' => Carbon::now()->addDay(1),
             ]);
 
         return response()->json([

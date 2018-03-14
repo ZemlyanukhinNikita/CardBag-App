@@ -34,11 +34,7 @@ class Authenticate
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if (!$request->header('token')) {
-            abort(401, 'Unauthorized');
-        }
-
-        if ($this->auth->guard($guard)->guest()) {
+        if (!$request->header('token') || $this->auth->guard($guard)->guest()) {
             abort(401, 'Unauthorized');
         }
         return $next($request);
