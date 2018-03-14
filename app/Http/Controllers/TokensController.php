@@ -38,22 +38,36 @@ class TokensController extends Controller
             $networkRepository->findOneBy([['id', $request->input('network_id')]])->name)
             ->checkUserTokenInSocialNetwork($request->input('token'), $uid)) {
 
-            $userModel = $userRepository->create([
-                'full_name' => $userProfile->getFullName(),
-                'uid' => $uid,
-                'network_id' => $networkId
+
+        if($userModel = $userRepository->findOneBy([['network_id', $networkId],['uid', $uid]])) {
+                $accessTokenModel = $accessTokenRepository->create([
+                    'name' => bin2hex(openssl_random_pseudo_bytes(64)),
+                    'user_id' => $userModel->id,
+                    'expires_at' => Carbon::now()->addMinute(1440)
                 ]);
 
-            $accessTokenModel = $accessTokenRepository->create([
-                'name' => bin2hex(openssl_random_pseudo_bytes(64)),
-                'user_id' => $userModel->id,
-                'expires_at' => Carbon::now()->addMinute(1440)
-            ]);
+                $refreshTokenModel = $refreshTokenRepository->create([
+                    'name' => bin2hex(openssl_random_pseudo_bytes(32)),
+                    'user_id' => $userModel->id
+                ]);
+        } else {
+                $userModel = $userRepository->create([
+                    'full_name' => $userProfile->getFullName(),
+                    'uid' => $uid,
+                    'network_id' => $networkId
+                ]);
 
-            $refreshTokenModel = $refreshTokenRepository->create([
-                'name' => bin2hex(openssl_random_pseudo_bytes(32)),
-                'user_id' => $userModel->id
-            ]);
+                $accessTokenModel = $accessTokenRepository->create([
+                    'name' => bin2hex(openssl_random_pseudo_bytes(64)),
+                    'user_id' => $userModel->id,
+                    'expires_at' => Carbon::now()->addMinute(1440)
+                ]);
+
+                $refreshTokenModel = $refreshTokenRepository->create([
+                    'name' => bin2hex(openssl_random_pseudo_bytes(32)),
+                    'user_id' => $userModel->id
+                ]);
+            }
 
             return response()->json([
                 'full_name' => $userProfile->getFullName(),
