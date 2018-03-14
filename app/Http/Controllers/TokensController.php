@@ -3,6 +3,7 @@
 use app\Repositories\AccessTokenInterface;
 use app\Repositories\NetworkInterface;
 use app\Repositories\RefreshTokenInterface;
+use App\Repositories\UserDataInterface;
 use app\Repositories\UserRepository;
 use App\Service\SocialNetworkFactory;
 use Carbon\Carbon;
@@ -26,7 +27,8 @@ class TokensController extends Controller
     public function getTokens(Request $request, AccessTokenInterface $accessTokenRepository,
                               RefreshTokenInterface $refreshTokenRepository,
                               SocialNetworkFactory $factory,
-                              UserRepository $userRepository, NetworkInterface $networkRepository)
+                              UserRepository $userRepository, NetworkInterface $networkRepository,
+                                UserDataInterface $userDataRepository)
     {
         $this->validateTokenFields($request);
 
@@ -37,40 +39,48 @@ class TokensController extends Controller
             $networkRepository->findOneBy([['id', $request->input('network_id')]])->name)
             ->checkUserTokenInSocialNetwork($request->input('token'), $uid)) {
 
-        if($userModel = $userRepository->findOneBy([['network_id', $networkId],['uid', $uid]])) {
+        if($userModel = $userDataRepository->findOneBy([['network_id', $networkId],['uid', $uid]])) {
                 $accessTokenModel = $accessTokenRepository->create([
-                    'name' => bin2hex(openssl_random_pseudo_bytes(64)),
+                    'access_token' => bin2hex(openssl_random_pseudo_bytes(64)),
                     'user_id' => $userModel->id,
                     'expires_at' => Carbon::now()->addMinute(1440)
                 ]);
 
                 $refreshTokenModel = $refreshTokenRepository->create([
-                    'name' => bin2hex(openssl_random_pseudo_bytes(32)),
-                    'user_id' => $userModel->id
+                    'refresh_token' => bin2hex(openssl_random_pseudo_bytes(32)),
+                    'access_token_id' => $accessTokenModel->id,
+                    'expires_at' => Carbon::now()->addMonths(6)
                 ]);
         } else {
                 $userModel = $userRepository->create([
                     'full_name' => $userProfile->getFullName(),
-                    'uid' => $uid,
+                    'uid'  => $uid,
                     'network_id' => $networkId
                 ]);
 
+                $userDataRepository->create([
+                    'uid'  => $uid,
+                    'network_id' => $networkId,
+                    'user_id' => $userModel->id
+                ]);
+
                 $accessTokenModel = $accessTokenRepository->create([
-                    'name' => bin2hex(openssl_random_pseudo_bytes(64)),
+                    'access_token' => bin2hex(openssl_random_pseudo_bytes(64)),
                     'user_id' => $userModel->id,
                     'expires_at' => Carbon::now()->addDay(1)
                 ]);
 
                 $refreshTokenModel = $refreshTokenRepository->create([
-                    'name' => bin2hex(openssl_random_pseudo_bytes(32)),
-                    'user_id' => $userModel->id
+                    'refresh_token' => bin2hex(openssl_random_pseudo_bytes(32)),
+                    'access_token_id' => $accessTokenModel->id,
+                    'expires_at' => Carbon::now()->addMonths(6)
                 ]);
             }
 
             return response()->json([
                 'full_name' => $userProfile->getFullName(),
-                'access_token' => $accessTokenModel->name,
-                'refresh_token' => $refreshTokenModel->name,
+                'access_token' => $accessTokenModel->access_token,
+                'refresh_token' => $refreshTokenModel->refresh_token,
                 'uid' => $userProfile->getUid()
             ]);
         }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class AccessToken extends Model
 {
     protected $fillable = [
-        'name',
+        'access_token',
         'user_id',
         'expires_at'
     ];

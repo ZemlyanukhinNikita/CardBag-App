@@ -2,7 +2,7 @@
 
 use app\Repositories\AccessTokenInterface;
 use app\Repositories\RefreshTokenInterface;
-use app\Repositories\UserRepository;
+use App\Repositories\UserDataInterface;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -25,19 +25,19 @@ class TokenRefreshesController extends Controller
         Request $request,
         RefreshTokenInterface $refreshTokenRepository,
         AccessTokenInterface $accessTokenRepository,
-        UserRepository $userRepository
+        UserDataInterface $userDataRepository
     )
     {
         $this->validateTokenFields($request);
 
         $refreshTokenFromRequest = $request->input('token');
 
-        if (!$userRepository->findOneBy([['uid', $request->input('uid')],
+        if (!$userDataRepository->findOneBy([['uid', $request->input('uid')],
             ['network_id', $request->input('network_id')]])) {
             abort(401, 'Invalid data');
         }
 
-        if (!$refreshTokenModel = $refreshTokenRepository->findOneBy([['name', $refreshTokenFromRequest]])) {
+        if (!$refreshTokenModel = $refreshTokenRepository->findOneBy([['refresh_token', $refreshTokenFromRequest]])) {
             abort(400, 'Invalid data');
         }
 
@@ -47,15 +47,14 @@ class TokenRefreshesController extends Controller
 
         $refreshTokenRepository->create(
             [
-                'user_id' => $refreshTokenModel->user_id,
-                'name' => $newRefreshToken,
-                'expires_at' => Carbon::now()->addMonth(6),
+                'refresh_token' => $newRefreshToken,
+                'expires_at' => Carbon::now()
             ]);
 
         $accessTokenRepository->create(
             [
                 'user_id' => $refreshTokenModel->user_id,
-                'name' => $newAccessToken,
+                'access_token' => $newAccessToken,
                 'expires_at' => Carbon::now()->addDay(1),
             ]);
 

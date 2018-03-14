@@ -16,7 +16,7 @@ class AddNewTableAccessTokens extends Migration
         Schema::create('access_tokens', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned()->nullable();
-            $table->string('name')->nullable();
+            $table->string('access_token')->nullable();
             $table->dateTime('expires_at')->nullable();
             $table->timestamps();
         });

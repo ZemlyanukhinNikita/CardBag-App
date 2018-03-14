@@ -15,13 +15,14 @@ class AddNewTableRefreshTokens extends Migration
     {
         Schema::create('refresh_tokens', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned()->nullable();
-            $table->string('name')->nullable();
+            $table->integer('access_token_id')->unsigned()->nullable();
+            $table->string('refresh_token')->nullable();
+            $table->dateTime('expires_at')->nullable();
             $table->timestamps();
         });
 
         Schema::table('refresh_tokens', function (Blueprint $table) {
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('access_token_id')->references('id')->on('access_tokens');
         });
     }
 

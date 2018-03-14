@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class RefreshToken extends Model
 {
     protected $fillable = [
-        'user_id',
-        'name'
+        'expires_at',
+        'refresh_token'
     ];
 
-    public function user()
+    public function accessToken()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(AccessToken::class, 'access_token_id', 'id');
     }
 }

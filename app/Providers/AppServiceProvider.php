@@ -16,6 +16,8 @@ use app\Repositories\RefreshTokenInterface;
 use app\Repositories\RefreshTokenRepository;
 use app\Repositories\TokenInterface;
 use app\Repositories\TokenRepository;
+use App\Repositories\UserDataInterface;
+use App\Repositories\UserDataRepository;
 use app\Repositories\UserInterface;
 use app\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;
@@ -44,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CategoryInterface::class, CategoryRepository::class);
         $this->app->bind(PhotoInterface::class, PhotoRepository::class);
         $this->app->bind(NetworkInterface::class, NetworkRepository::class);
+        $this->app->bind(UserDataInterface::class, UserDataRepository::class);
         $this->app->bind(Firebase::class, function () {
             $serviceAccount = new ServiceAccount();
             $firebase = new Factory();
