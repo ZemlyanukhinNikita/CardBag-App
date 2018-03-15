@@ -26,14 +26,16 @@ class TokenRefreshesController extends Controller
         RefreshTokenInterface $refreshTokenRepository,
         AccessTokenInterface $accessTokenRepository,
         UserDataInterface $userDataRepository
-    )
-    {
+    ) {
         $this->validateTokenFields($request);
 
         $refreshTokenFromRequest = $request->input('token');
 
-        if (!$userDataRepository->findOneBy([['uid', $request->input('uid')],
-            ['network_id', $request->input('network_id')]])) {
+        if (!$userDataRepository->findOneBy([
+            ['uid', $request->input('uid')],
+            ['network_id', $request->input('network_id')]
+        ])
+        ) {
             abort(401, 'Invalid data');
         }
 
@@ -51,6 +53,9 @@ class TokenRefreshesController extends Controller
                 'expires_at' => Carbon::now(),
                 'access_token_id' => $refreshTokenModel->id
             ]);
+        $refreshTokenRepository->update('refresh_token', $refreshTokenFromRequest, [
+            'expires_at' => Carbon::now()
+        ]);
 
         $accessTokenRepository->create(
             [
