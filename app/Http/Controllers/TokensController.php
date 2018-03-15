@@ -42,8 +42,8 @@ class TokensController extends Controller
         if($userModel = $userDataRepository->findOneBy([['network_id', $networkId],['uid', $uid]])) {
                 $accessTokenModel = $accessTokenRepository->create([
                     'access_token' => bin2hex(openssl_random_pseudo_bytes(64)),
-                    'user_id' => $userModel->id,
-                    'expires_at' => Carbon::now()->addMinute(1440)
+                    'user_id' => $userModel->user_id,
+                    'expires_at' => Carbon::now()->addDay(1)
                 ]);
 
                 $refreshTokenModel = $refreshTokenRepository->create([

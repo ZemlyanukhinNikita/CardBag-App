@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 
-use app\Repositories\UserInterface;
+use App\Repositories\UserDataInterface;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
@@ -21,17 +21,17 @@ class UsersController extends Controller
 
     public function getAuthorizedUser(
         Request $request,
-        UserInterface $userRepository)
+        UserDataInterface $userDataRepository)
     {
         $this->validateFields($request);
 
-        if (!$userModel = $userRepository->findOneBy([['uid', $request->input('uid')],
+        if (!$userModel = $userDataRepository->findOneBy([['uid', $request->input('uid')],
             ['network_id', $request->input('network_id')]])) {
             abort(401, 'Invalid data');
         }
 
         return response()->json([
-            'full_name' => $userModel->full_name,
+            'full_name' => $userModel->user->full_name,
             'access_token' => $request->header('token'),
             'uid' => $userModel->uid
         ]);

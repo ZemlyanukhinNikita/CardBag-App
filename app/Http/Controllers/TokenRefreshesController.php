@@ -48,7 +48,8 @@ class TokenRefreshesController extends Controller
         $refreshTokenRepository->create(
             [
                 'refresh_token' => $newRefreshToken,
-                'expires_at' => Carbon::now()
+                'expires_at' => Carbon::now(),
+                'access_token_id' => $refreshTokenModel->id
             ]);
 
         $accessTokenRepository->create(
