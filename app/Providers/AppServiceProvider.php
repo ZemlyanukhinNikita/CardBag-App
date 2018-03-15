@@ -19,6 +19,8 @@ use app\Repositories\TokenRepository;
 use App\Repositories\UserDataInterface;
 use App\Repositories\UserDataRepository;
 use app\Repositories\UserInterface;
+use App\Repositories\UserNetworkInterface;
+use App\Repositories\UserNetworkRepository;
 use app\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;
 use Kreait\Firebase;
@@ -46,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CategoryInterface::class, CategoryRepository::class);
         $this->app->bind(PhotoInterface::class, PhotoRepository::class);
         $this->app->bind(NetworkInterface::class, NetworkRepository::class);
-        $this->app->bind(UserDataInterface::class, UserDataRepository::class);
+        $this->app->bind(UserNetworkInterface::class, UserNetworkRepository::class);
         $this->app->bind(Firebase::class, function () {
             $serviceAccount = new ServiceAccount();
             $firebase = new Factory();

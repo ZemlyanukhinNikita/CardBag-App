@@ -4,9 +4,9 @@
 namespace App\Repositories;
 
 
-use App\UserData;
+use App\UserNetwork;
 
-class UserDataRepository extends EloquentRepository implements UserDataInterface
+class UserNetworkRepository extends EloquentRepository implements UserNetworkInterface
 {
 
     /**
@@ -16,6 +16,6 @@ class UserDataRepository extends EloquentRepository implements UserDataInterface
      */
     public function getModel()
     {
-        return new UserData();
+        return new UserNetwork();
     }
 }

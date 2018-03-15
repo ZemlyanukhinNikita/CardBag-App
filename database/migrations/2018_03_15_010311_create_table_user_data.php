@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateTableUserData extends Migration
 {
@@ -13,14 +13,15 @@ class CreateTableUserData extends Migration
      */
     public function up()
     {
-        Schema::create('user_datas', function (Blueprint $table) {
-            $table->string('uid')->nullable();
+        Schema::create('user_networks', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('user_identity')->nullable();
             $table->integer('user_id')->unsigned()->nullable();
             $table->integer('network_id')->unsigned()->nullable();
             $table->timestamps();
         });
 
-        Schema::table('user_datas', function ($table) {
+        Schema::table('user_networks', function ($table) {
             $table->foreign('network_id')->references('id')->on('networks');
             $table->foreign('user_id')->references('id')->on('users');
         });
@@ -33,8 +34,8 @@ class CreateTableUserData extends Migration
      */
     public function down()
     {
-        Schema::table('user_datas', function (Blueprint $table) {
-            $table->dropColumn('uid');
+        Schema::table('user_networks', function (Blueprint $table) {
+            $table->dropColumn('user_identity');
         });
     }
 }

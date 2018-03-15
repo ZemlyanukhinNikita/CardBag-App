@@ -3,7 +3,7 @@
 use app\Repositories\AccessTokenInterface;
 use app\Repositories\NetworkInterface;
 use app\Repositories\RefreshTokenInterface;
-use App\Repositories\UserDataInterface;
+use App\Repositories\UserNetworkInterface;
 use app\Repositories\UserRepository;
 use App\Service\SocialNetworkFactory;
 use Carbon\Carbon;
@@ -24,12 +24,15 @@ class TokensController extends Controller
         ], $messages);
     }
 
-    public function getTokens(Request $request, AccessTokenInterface $accessTokenRepository,
-                              RefreshTokenInterface $refreshTokenRepository,
-                              SocialNetworkFactory $factory,
-                              UserRepository $userRepository, NetworkInterface $networkRepository,
-                                UserDataInterface $userDataRepository)
-    {
+    public function getTokens(
+        Request $request,
+        AccessTokenInterface $accessTokenRepository,
+        RefreshTokenInterface $refreshTokenRepository,
+        SocialNetworkFactory $factory,
+        UserRepository $userRepository,
+        NetworkInterface $networkRepository,
+        UserNetworkInterface $userNetworkRepository
+    ) {
         $this->validateTokenFields($request);
 
         $networkId = $request->input('network_id');
@@ -37,9 +40,10 @@ class TokensController extends Controller
 
         if ($userProfile = $factory->getSocialNetwork(
             $networkRepository->findOneBy([['id', $request->input('network_id')]])->name)
-            ->checkUserTokenInSocialNetwork($request->input('token'), $uid)) {
+            ->checkUserTokenInSocialNetwork($request->input('token'), $uid)
+        ) {
 
-        if($userModel = $userDataRepository->findOneBy([['network_id', $networkId],['uid', $uid]])) {
+            if ($userModel = $userNetworkRepository->findOneBy([['network_id', $networkId], ['user_identity', $uid]])) {
                 $accessTokenModel = $accessTokenRepository->create([
                     'access_token' => bin2hex(openssl_random_pseudo_bytes(64)),
                     'user_id' => $userModel->user_id,
@@ -51,15 +55,13 @@ class TokensController extends Controller
                     'access_token_id' => $accessTokenModel->id,
                     'expires_at' => Carbon::now()->addMonths(6)
                 ]);
-        } else {
+            } else {
                 $userModel = $userRepository->create([
                     'full_name' => $userProfile->getFullName(),
-                    'uid'  => $uid,
-                    'network_id' => $networkId
                 ]);
 
-                $userDataRepository->create([
-                    'uid'  => $uid,
+                $userNetworkRepository->create([
+                    'user_identity' => $uid,
                     'network_id' => $networkId,
                     'user_id' => $userModel->id
                 ]);

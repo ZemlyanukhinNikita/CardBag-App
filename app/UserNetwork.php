@@ -6,17 +6,19 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class UserData extends Model
+class UserNetwork extends Model
 {
+    protected $table = 'user_networks';
+
     protected $fillable = [
-        'uid',
+        'user_identity',
         'user_id',
         'network_id'
     ];
 
     public function network()
     {
-        return $this->hasMany(Network::class,'network_id', 'id');
+        return $this->belongsTo(Network::class, 'network_id', 'id');
     }
 
     public function user()

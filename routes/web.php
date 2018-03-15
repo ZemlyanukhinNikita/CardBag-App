@@ -11,7 +11,6 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->delete('cards/{uuid}', 'CardsController@deleteCard');
         $router->put('cards/{uuid}', 'CardsController@updateCard');
 
-        $router->post('user/auth', 'UsersController@getAuthorizedUser');
         $router->get('cards', 'CardsController@getAllUserCards');
     });
 

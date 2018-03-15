@@ -27,13 +27,9 @@ class User extends Model
         return $this->hasMany(AccessToken::class, 'id', 'user_id');
     }
 
-    public function refreshTokens()
+    public function userData()
     {
-        return $this->hasMany(RefreshToken::class,'id', 'user_id');
+        return $this->belongsTo(UserNetwork::class, 'id', 'user_id');
     }
 
-    public function networks()
-    {
-        return $this->hasMany(Network::class,'network_id', 'id');
-    }
 }
