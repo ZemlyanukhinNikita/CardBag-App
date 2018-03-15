@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Token extends Model
+class AccessToken extends Model
 {
-    protected $fillable = ['token', 'network_id', 'user_id', 'uid'];
+    protected $fillable = [
+        'access_token',
+        'user_id',
+        'expires_at'
+    ];
 
     public function user()
     {
