@@ -7,7 +7,7 @@ use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Log;
 use UserProfile;
 
-class CheckUserTokenGoogleService implements CheckTokenInterface
+class GoogleService implements SocialNetworkInterface
 {
     private $client;
 
@@ -20,25 +20,25 @@ class CheckUserTokenGoogleService implements CheckTokenInterface
         $this->client = $client;
     }
 
+    /**
+     * @param $token
+     * @param $uid
+     * @return bool|UserProfile
+     */
     public function checkUserTokenInSocialNetwork($token, $uid)
     {
         try {
-            $res = $this->client->request('GET', 'https://www.googleapis.com/oauth2/v3/userinfo?access_token=' . $token);
+            $res = $this->client->request('GET',
+                'https://www.googleapis.com/oauth2/v3/userinfo?access_token=' . $token);
             $result = json_decode($res->getBody());
-
             if ($result->sub !== $uid) {
-                abort(400, 'Uid do not match');
+                return false;
             }
             return new UserProfile($result->name, $token, $result->sub);
 
         } catch (RequestException $e) {
-            if ($e->getCode() === 401) {
-                abort(400, 'Token not found in Google');
-            }
-            if ($e->getCode() === 403) {
-                abort(400, 'Uid do not match');
-            }
             Log::error('Exception' . $e->getMessage() . ' ' . $e->getCode());
+            return false;
         }
     }
 }

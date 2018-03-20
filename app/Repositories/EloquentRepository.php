@@ -2,7 +2,6 @@
 
 namespace app\Repositories;
 
-
 use Illuminate\Database\Eloquent\Model;
 
 abstract class EloquentRepository implements ModelInterface
@@ -51,16 +50,22 @@ abstract class EloquentRepository implements ModelInterface
 
     /**
      * {@inheritDoc}
-     * Метод получения модели, где $field == $value
+     * Метод получения модели, где [[поле == значению],...]
+     * @param array $values
+     * @return mixed
+     */
+    public function findOneBy(array $values)
+    {
+        return $this->getModel()->where($values)->first();
+    }
+
+    /**
+     * {@inheritDoc}
+     * Метод получения одной модели, возможно удаленной
      * @param string $field
      * @param $value
      * @return mixed
      */
-    public function findOneBy(string $field, $value)
-    {
-        return $this->getModel()->where($field, $value)->first();
-    }
-
     public function findOneByWithTrashedBy(string $field, $value)
     {
         return $this->getModel()->withTrashed()->where($field, $value)->first();

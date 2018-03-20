@@ -73,6 +73,7 @@ $app->singleton('filesystem', function ($app) {
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
     'authorization' => App\Http\Middleware\AuthMiddleware::class,
+    'validateField' => App\Http\Middleware\ValidateFieldMiddleware::class,
 ]);
 
 /*
@@ -90,6 +91,8 @@ $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register('Wn\Generators\CommandsServiceProvider');
+$app->singleton('RobbieP\ZbarQrdecoder\ZbarQrdecoderServiceProvider');
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

@@ -13,7 +13,10 @@
         "league/flysystem-aws-s3-v3": "~1.0",
         "ramsey/uuid": "^3.7",
         "kreait/firebase-php": "^4.1",
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle": "^6.3",
+        "laravelista/lumen-vendor-publish": "^2.1",
+        "robbiep/zbar-qrdecoder": "^2.0",
+        "milon/barcode": "^5.3"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -25,7 +28,10 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/"
-        }
+        },
+        "files": [
+            "app/helpers.php"
+        ]
     },
     "autoload-dev": {
         "classmap": [
@@ -34,8 +40,7 @@
             "app/Service/",
             "app/Repositories/",
             "app/Dto/",
-            "app/Service/SocialNetworkCheckers",
-            "app/Service/UserAuthorize"
+            "app/Service/SocialNetworksServices"
         ]
     },
     "scripts": {

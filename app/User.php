@@ -22,8 +22,14 @@ class User extends Model
         return $this->hasMany(Card::class);
     }
 
-    public function token()
+    public function accessTokens()
     {
-        return $this->hasMany(Token::class);
+        return $this->hasMany(AccessToken::class, 'id', 'user_id');
     }
+
+    public function userData()
+    {
+        return $this->belongsTo(UserNetwork::class, 'id', 'user_id');
+    }
+
 }

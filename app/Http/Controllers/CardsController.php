@@ -2,6 +2,7 @@
 
 use app\Repositories\CardInterface;
 use app\Repositories\PhotoInterface;
+use app\Service\BarcodeService;
 use App\Service\CardService;
 use App\Service\PhotoService;
 use Illuminate\Database\Eloquent\Collection;
@@ -58,13 +59,16 @@ class CardsController extends Controller
      * @param Request $request
      * @param CardInterface $cardRepository
      * @param PhotoService $photoService
+     * @param BarcodeService $barcodeService
+     * @param PhotoInterface $photoRepository
      */
     public function addCard(
         Request $request,
         CardInterface $cardRepository,
-        PhotoService $photoService
-    )
-    {
+        PhotoService $photoService,
+        BarcodeService $barcodeService,
+        PhotoInterface $photoRepository
+    ) {
         $this->validateCardFields($request);
 
         $this->checkingValidityUuidCard($request->input('uuid'));
@@ -77,12 +81,25 @@ class CardsController extends Controller
 
         $frontPhoto = $photoService->checkingSendPhotoOnServer($request->input('front_photo'));
         $backPhoto = $photoService->checkingSendPhotoOnServer($request->input('back_photo'));
-
         $this->isExistValueInDataBase('front_photo', $frontPhoto->id, $cardRepository, 'Photo must be unique');
         $this->isExistValueInDataBase('back_photo', $backPhoto->id, $cardRepository, 'Photo must be unique');
 
         $photoService->checkingUserPermission($request->input('front_photo'));
         $photoService->checkingUserPermission($request->input('back_photo'));
+
+        $barcodeImageName = $barcodeService->getImageUrl($backPhoto->filename);
+
+        if ($barcodeImageName === null) {
+            $barcodeImageName = $barcodeService->getImageUrl($frontPhoto->filename);
+        }
+
+        $barcode = null;
+        $barcodePhotoId = null;
+        if ($barcodeImageName) {
+            $barcode = substr($barcodeImageName, 0, -4);
+            $barcodePhoto = $photoRepository->findOneBy([['filename', $barcodeImageName]]);
+            $barcodePhotoId = $barcodePhoto->id;
+        }
 
         $cardRepository->create([
             'user_id' => $request->user()->id,
@@ -92,7 +109,9 @@ class CardsController extends Controller
             'back_photo' => $backPhoto->id,
             'discount' => $this->replacingEmptyStringWithNull($request->input('discount')),
             'uuid' => $request->input('uuid'),
-            'updated_at' => $request->input('updated_at')
+            'updated_at' => $request->input('updated_at'),
+            'barcode_photo' => $barcodePhotoId,
+            'barcode' => $barcode
         ]);
     }
 
@@ -103,18 +122,22 @@ class CardsController extends Controller
      * @param PhotoService $photoService
      * @param PhotoInterface $photoRepository
      */
-    public function deleteCard($uuid, CardInterface $cardRepository, PhotoService $photoService, PhotoInterface $photoRepository)
-    {
+    public function deleteCard(
+        $uuid,
+        CardInterface $cardRepository,
+        PhotoService $photoService,
+        PhotoInterface $photoRepository
+    ) {
         $this->checkingValidityUuidCard($uuid);
 
-        $card = $cardRepository->findOneBy('uuid', (string)$uuid);
+        $card = $cardRepository->findOneBy([['uuid', (string)$uuid]]);
 
         if (!$card) {
             abort(400, 'card`s UUID not found in database');
         }
 
-        $frontPhoto = $photoRepository->findOneBy('id', $card->front_photo);
-        $backPhoto = $photoRepository->findOneBy('id', $card->back_photo);
+        $frontPhoto = $photoRepository->findOneBy([['id', $card->front_photo]]);
+        $backPhoto = $photoRepository->findOneBy([['id', $card->back_photo]]);
 
         $photoService->checkingUserPermission($frontPhoto->filename);
         $photoService->checkingUserPermission($backPhoto->filename);
@@ -132,14 +155,22 @@ class CardsController extends Controller
      * @param $uuid
      * @param CardInterface $cardRepository
      * @param PhotoService $photoService
+     * @param BarcodeService $barcodeService
+     * @param PhotoInterface $photoRepository
      */
-    public function updateCard(Request $request, $uuid, CardInterface $cardRepository, PhotoService $photoService)
-    {
+    public function updateCard(
+        Request $request,
+        $uuid,
+        CardInterface $cardRepository,
+        PhotoService $photoService,
+        BarcodeService $barcodeService,
+        PhotoInterface $photoRepository
+    ) {
         $this->checkingValidityUuidCard($uuid);
 
         $this->validateCardFields($request);
 
-        $card = $cardRepository->findOneBy('uuid', (string)$uuid);
+        $card = $cardRepository->findOneBy([['uuid', (string)$uuid]]);
         if (!$card) {
             abort(400, 'card`s UUID not found in database');
         }
@@ -154,6 +185,20 @@ class CardsController extends Controller
         $photoService->checkingUserPermission($request->input('front_photo'));
         $photoService->checkingUserPermission($request->input('back_photo'));
 
+        $barcodeImageName = $barcodeService->getImageUrl($backPhoto->filename);
+
+        if ($barcodeImageName === null) {
+            $barcodeImageName = $barcodeService->getImageUrl($frontPhoto->filename);
+        }
+
+        $barcode = null;
+        $barcodePhotoId = null;
+        if ($barcodeImageName) {
+            $barcode = substr($barcodeImageName, 0, -4);
+            $barcodePhoto = $photoRepository->findOneBy([['filename', $barcodeImageName]]);
+            $barcodePhotoId = $barcodePhoto->id;
+        }
+
         $cardRepository->update('uuid', $uuid,
             [
                 'title' => $request->input('title'),
@@ -162,6 +207,8 @@ class CardsController extends Controller
                 'category_id' => $request->input('category_id'),
                 'discount' => $this->replacingEmptyStringWithNull($request->input('discount')),
                 'updated_at' => $request->input('updated_at'),
+                'barcode_photo' => $barcodePhotoId,
+                'barcode' => $barcode
             ]);
 
         if ($frontPhoto->filename !== basename($request->input('front_photo'))) {

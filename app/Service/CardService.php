@@ -22,8 +22,7 @@ class CardService
     public function __construct(
         CardInterface $cardRepository,
         Request $request
-    )
-    {
+    ) {
         $this->cardRepository = $cardRepository;
         $this->request = $request;
     }
@@ -36,10 +35,11 @@ class CardService
     public function getUserCards()
     {
         foreach ($cards = $this->cardRepository->findAllWithEagerLoading('user_id', $this->request->user()->id,
-            ['frontPhoto', 'backPhoto'])
+            ['frontPhoto', 'backPhoto', 'barcodePhoto'])
                  as $card) {
             $card->front_photo = Storage::url('storage/' . $card->frontPhoto->filename);
             $card->back_photo = Storage::url('storage/' . $card->backPhoto->filename);
+            $card->barcodePhoto === null ? $card->barcode_photo = null : $card->barcode_photo = Storage::url('/' . $card->barcodePhoto->filename);
         }
         return $cards;
     }
